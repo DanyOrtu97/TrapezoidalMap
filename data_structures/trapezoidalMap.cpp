@@ -131,7 +131,19 @@ size_t TrapezoidalMap::findIndexedVerticalLine(const VerticalLines2D& verticalLi
 
 }
 
+std::vector<cg3::Segment2d> TrapezoidalMap::getVerticalLines() const
+{
+    std::vector<cg3::Segment2d> verticalLines;
+    for (size_t i = 0; i < VerticalLines.size(); i++) {
+        verticalLines.push_back(getVerticalLine(i));
+    }
+    return verticalLines;
+}
 
+cg3::Segment2d TrapezoidalMap::getVerticalLine(size_t id) const
+{
+    return cg3::Segment2d(tmd.getPoints()[tmd.getIndexedSegments()[id].first], tmd.getPoints()[tmd.getIndexedSegments()[id].second]);
+}
 
 
 void TrapezoidalMap::clearMap()

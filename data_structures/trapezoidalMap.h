@@ -38,6 +38,9 @@ public:
     size_t findVerticalLine(const cg3::Segment2d& segment, bool& found);
     size_t findIndexedVerticalLine(const VerticalLines2D& indexedSegment, bool& found);
 
+    std::vector<cg3::Segment2d> getVerticalLines() const;
+    cg3::Segment2d getVerticalLine(size_t id) const;
+
     //mancano i metodi per creare e distruggere poligoni, derivanti dalle vertical line
 
     //..... code here

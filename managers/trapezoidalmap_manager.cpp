@@ -160,6 +160,15 @@ TrapezoidalMapManager::~TrapezoidalMapManager()
  */
 void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& segment)
 {
+    //drawableTrapezoidalMap.
+    bool verticalLineInserted;
+    drawableTrapezoidalMap.addVerticalLine(segment, verticalLineInserted);
+
+
+
+
+    //The trapezoidal map (or the drawable object) has been changed, so we update the canvas for drawing.
+    updateCanvas();
 
 
     //---------------------------------------------------------------------

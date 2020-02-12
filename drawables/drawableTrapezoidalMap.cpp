@@ -5,6 +5,8 @@
 #include <cg3/viewer/drawable_objects/drawable_polygon2.h>
 
 
+TrapezoidalMapDataset tmd1;
+
 
 DrawableTrapezoidalMap::DrawableTrapezoidalMap():
     trapezoidColor(rand()%256, rand()%256, rand()%256),
@@ -20,9 +22,10 @@ DrawableTrapezoidalMap::DrawableTrapezoidalMap():
 //methods to draw vertical line and polygons
 void DrawableTrapezoidalMap::draw() const
 {
-    for (const cg3::Point2d& p : getPoints()) {
-        cg3::opengl::drawLine2(p, cg3::Point2d(p.y(),0), verticalLineColor, static_cast<int>(verticalLineSize));
-        cg3::opengl::drawLine2(p, cg3::Point2d(p.y(),1e+6), verticalLineColor, static_cast<int>(verticalLineSize));
+
+    for (const cg3::Segment2d& line : getVerticalLines()) {
+        cg3::opengl::drawLine2(line.p1(), cg3::Point2d(line.p1().y(), tmd1.getBoundingBox().min().y()), verticalLineColor, static_cast<int>(verticalLineSize));
+        cg3::opengl::drawLine2(line.p2(), cg3::Point2d(line.p2().y(), tmd1.getBoundingBox().min().y()), verticalLineColor, static_cast<int>(verticalLineSize));
     }
 }
 
