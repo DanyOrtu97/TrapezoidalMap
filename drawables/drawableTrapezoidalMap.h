@@ -25,8 +25,17 @@ public:
     const cg3::Color& getTrapezoidColor() const;
     void setTrapezoidColor(const cg3::Color& value);
 
+    const cg3::Color& getVerticalLineColor() const;
+    void setVerticalLineColor(const cg3::Color& value);
+
+    unsigned int getVerticalLineSize() const;
+    void setVerticalLineSize(unsigned int value);
+
 private:
     cg3::Color trapezoidColor;
+    cg3::Color verticalLineColor;
+
+    unsigned int verticalLineSize;
 
 };
 

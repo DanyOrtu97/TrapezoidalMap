@@ -114,7 +114,7 @@ TrapezoidalMapManager::~TrapezoidalMapManager()
     //reference to the drawable objects.
     //
     //Example:
-    //      mainWindow.deleteDrawableObject(&drawableTrapezoidalMap);
+    mainWindow.deleteDrawableObject(&drawableTrapezoidalMap);
     //
     //Try to AVOID using dynamic objects whenever it is possible (it will
     //be evaluated!)
@@ -270,7 +270,10 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
     //---------------------------------------------------------------------
     //Clear here your trapezoidal map data structure.
 
-
+    //Clear current data
+    drawableTrapezoidalMapDataset.clear();
+    drawableTrapezoidalMap.clearMap();
+    //DAG.clear();
 
     //#####################################################################
 }
