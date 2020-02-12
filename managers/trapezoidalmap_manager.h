@@ -12,6 +12,8 @@
 
 #include "drawables/drawable_trapezoidalmap_dataset.h"
 
+#include "drawables/drawableTrapezoidalMap.h"
+
 namespace Ui {
     class TrapezoidalMapManager;
 }
@@ -45,6 +47,9 @@ private:
     //Drawable dataset for the trapezoidal map. Each segment is consistent:
     //points in general position, no segment duplicates, non-intersecting segments
     DrawableTrapezoidalMapDataset drawableTrapezoidalMapDataset;
+
+    //drawableTrapezoidalMap
+    DrawableTrapezoidalMap drawableTrapezoidalMap;
 
     //Variables to allow to select a segment clicking on the canvas
     cg3::DrawablePoint2 firstPointSelected;

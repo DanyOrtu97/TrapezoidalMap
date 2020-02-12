@@ -66,8 +66,6 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
     mainWindow.pushDrawableObject(&drawableBoundingBox, "Bounding box");
     mainWindow.pushDrawableObject(&drawableTrapezoidalMapDataset, "Segments");
 
-
-
     //---------------------------------------------------------------------
     //Add the drawable objects you need. Note that the drawable trapezoidal map could only
     //draw the trapezoids (polygons, see GL_POLYGON!). You have already the segments drawn.
@@ -75,7 +73,7 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
     //drawableTrapezoidalMapDataset
     //
     //Example:
-    // mainWindow.pushDrawableObject(&drawableTrapezoidalMap);
+    mainWindow.pushDrawableObject(&drawableTrapezoidalMap, "Trapezoidal map");
     //
     //Note that you could keep a Drawable trapezoidal map (drawableTrapezoidalMap) object
     //always rendered (even when it is empty), instead of deleting it from the main window

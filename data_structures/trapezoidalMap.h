@@ -12,12 +12,15 @@
 /**
  * @brief This class allows to build the trapezoidal map step by step (incrementally)
  */
-class TrapezoidalMap : public TrapezoidalMapDataset{
+class TrapezoidalMap {
 
 public:
+    typedef std::pair<size_t, size_t> VerticalLines2D;
+
+
     TrapezoidalMap();
 
-    typedef std::pair<size_t, size_t> VerticalLines2D;
+
 
     //we need it to draw vertical line
     size_t addVerticalLIne(const cg3::Segment2d& segment, bool& segmentInserted);
@@ -31,7 +34,7 @@ public:
 
 private:
 
-    //list of vertical lines. I update it evry time that is necessary
+    //list of vertical lines. I update it every time that is necessary
     std::vector<VerticalLines2D> VerticalLines;
 
 };

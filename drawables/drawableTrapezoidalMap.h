@@ -3,18 +3,27 @@
 
 #include "data_structures/trapezoidalMap.h"
 
+#include "data_structures/trapezoidalmap_dataset.h"
+
 #include <cg3/viewer/interfaces/drawable_object.h>
 
 #include <cg3/utilities/color.h>
 
 
-class DrawableTrapezoidalMap : public TrapezoidalMap, public cg3::DrawableObject
+/**
+ * @brief Class to draw the trapezoidal map.
+ */
+class DrawableTrapezoidalMap : public TrapezoidalMap, public TrapezoidalMapDataset , public cg3::DrawableObject
 {
 public:
     DrawableTrapezoidalMap();
 
+    void draw() const;
+    cg3::Point3d sceneCenter() const;
+    double sceneRadius() const;
+
     const cg3::Color& getTrapezoidColor() const;
-    void fillTrapezoid(const cg3::Color& value);
+    void setTrapezoidColor(const cg3::Color& value);
 
 private:
     cg3::Color trapezoidColor;
