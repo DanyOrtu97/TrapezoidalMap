@@ -31,12 +31,12 @@ public:
     unsigned int getVerticalLineSize() const;
     void setVerticalLineSize(unsigned int value);
 
+
 private:
     cg3::Color trapezoidColor;
     cg3::Color verticalLineColor;
-
     unsigned int verticalLineSize;
-
+;
 };
 
 #endif // DRAWABLETRAPEZOIDALMAP_H

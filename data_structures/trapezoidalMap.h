@@ -20,26 +20,21 @@
 class TrapezoidalMap {
 
 public:
-    typedef std::pair<size_t, size_t> VerticalLines2D;
+    typedef std::pair<cg3::Point2d, cg3::Point2d> VerticalLines2D;
     // typedef ... Polygons2D;
 
     TrapezoidalMap();
 
+    void addVerticalLines(const cg3::Segment2d& segment);
 
-
-    //we need it to draw vertical line
     size_t addVerticalLine(const cg3::Segment2d& segment, bool& segmentInserted);
-    size_t addIndexedVerticalLine(const VerticalLines2D& segment, bool& segmentInserted);
 
-    //we need it to delete vertical line fro new insertion
-    //size_t deleteVerticalLine(const cg3::Segment2d& segment, bool& segmentInserted);
-
-    //before deletion we need to search
     size_t findVerticalLine(const cg3::Segment2d& segment, bool& found);
     size_t findIndexedVerticalLine(const VerticalLines2D& indexedSegment, bool& found);
 
     std::vector<cg3::Segment2d> getVerticalLines() const;
     cg3::Segment2d getVerticalLine(size_t id) const;
+
 
     //mancano i metodi per creare e distruggere poligoni, derivanti dalle vertical line
 
@@ -49,21 +44,9 @@ public:
     void clearMap();
 
 private:
-
-    //list of vertical lines. I update it every time that is necessary
-    std::vector<VerticalLines2D> VerticalLines;
-
-    //map of vertical lines
-    std::unordered_map<VerticalLines2D, size_t> LineMap;
-
-    //list of polygons
-    //std::vector<Polygons2D> Polygons;
-
-    //map of polygons
-    //std...
-
-    SegmentIntersectionChecker intersectionChecker;
-
+    std::vector<VerticalLines2D> verticalLines;
+    std::unordered_map<VerticalLines2D, size_t> verticalLinesMap;
+    cg3::BoundingBox2 boundingBox;
 };
 
 #endif // TRAPEZOIDALMAP_H
