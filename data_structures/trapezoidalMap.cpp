@@ -18,7 +18,9 @@ void TrapezoidalMap::addVerticalLines(const cg3::Segment2d& segment){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 
+
     bool segmentInserted;
+    cg3::Point2d intersectionPoint;
 
     cg3::Point2d upfirst;
     upfirst.setXCoord(p1.x());
@@ -34,7 +36,6 @@ void TrapezoidalMap::addVerticalLines(const cg3::Segment2d& segment){
     downsecond.setXCoord(p2.x());
     downsecond.setYCoord(-(1e+6));
 
-
     cg3::Segment2d s1p1;
     s1p1.set(p1, upfirst);
     cg3::Segment2d s2p1;
@@ -43,6 +44,13 @@ void TrapezoidalMap::addVerticalLines(const cg3::Segment2d& segment){
     s1p2.set(p2, upsecond);
     cg3::Segment2d s2p2;
     s2p2.set(p2, downsecond);
+
+    /*
+    bool intersecting1 = intersectionChecker.checkIntersections(s1p1);
+    bool intersecting2 = intersectionChecker.checkIntersections(s2p1);
+    bool intersecting3 = intersectionChecker.checkIntersections(s1p2);
+    bool intersecting4 = intersectionChecker.checkIntersections(s2p2);
+    */
 
     addVerticalLine(s1p1, segmentInserted);
     addVerticalLine(s2p1, segmentInserted);
@@ -60,6 +68,8 @@ size_t TrapezoidalMap::addVerticalLine(const cg3::Segment2d& segment, bool& segm
     size_t id;
 
     bool found;
+
+
     findVerticalLine(segment, found);
 
     bool degenerate = segment.p1() == segment.p2();
@@ -68,11 +78,13 @@ size_t TrapezoidalMap::addVerticalLine(const cg3::Segment2d& segment, bool& segm
     id = std::numeric_limits<size_t>::max();
 
     if (!degenerate && !found) {
-
-
+        segmentInserted=true;
         verticalLines.push_back(VerticalLines2D(segment.p1(), segment.p2()));
 
         verticalLinesMap.insert(std::make_pair(VerticalLines2D(segment.p1(), segment.p2()), id));
+
+        intersectionChecker.insert(segment);
+
     }
 
     return id;
@@ -142,6 +154,7 @@ void TrapezoidalMap::clearMap()
     verticalLinesMap.clear();
     boundingBox.setMin(cg3::Point2d(0,0));
     boundingBox.setMax(cg3::Point2d(0,0));
+    intersectionChecker.clear();
 }
 
 

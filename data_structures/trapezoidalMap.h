@@ -12,7 +12,7 @@
 #include <cg3/geometry/bounding_box2.h>
 
 #include "data_structures/trapezoidalmap_dataset.h"
-
+#include "data_structures/segment_intersection_checker.h"
 
 /**
  * @brief This class allows to build the trapezoidal map step by step (incrementally)
@@ -47,6 +47,8 @@ private:
     std::vector<VerticalLines2D> verticalLines;
     std::unordered_map<VerticalLines2D, size_t> verticalLinesMap;
     cg3::BoundingBox2 boundingBox;
+
+    SegmentIntersectionChecker intersectionChecker;
 };
 
 #endif // TRAPEZOIDALMAP_H

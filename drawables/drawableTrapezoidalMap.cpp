@@ -6,7 +6,7 @@
 
 
 DrawableTrapezoidalMap::DrawableTrapezoidalMap():
-    trapezoidColor(rand()%256, rand()%256, rand()%256),
+    trapezoidColor(rand()%255, rand()%255, rand()%255),
     verticalLineColor(255,0,0),
     verticalLineSize(3)
 
