@@ -10,21 +10,16 @@
 #include <cg3/geometry/polygon2.h>
 
 
-template <class T>
-class Dag{
+template <class T> class Dag{
 
 public:
     Dag();
-
 
     struct node {
         T value;
         struct node *leftChild;
         struct node *rightChild;
     };
-
-    typedef std::pair<cg3::Point2d, cg3::Point2d> Segments;
-    typedef cg3::Point2d Endpoints;
 
 
     void insertNewSegment(cg3::Segment2d segment);
@@ -36,18 +31,14 @@ public:
 
     int getNumberOfTrapezoids();
 
+    void printDag();
+
     void clearDag();
 
 
 
 private:
-    std::vector<Segments> segments;
-    std::vector<Endpoints> endpointsLeft;
-    std::vector<Endpoints> endpointsRight;
-    std::vector<int> leaves;
-
     int trapezoidIndex;
-
     node *structureDag;
 };
 

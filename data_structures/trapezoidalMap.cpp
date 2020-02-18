@@ -1,4 +1,5 @@
 #include "trapezoidalMap.h"
+#include "dag.h"
 
 
 TrapezoidalMap::TrapezoidalMap() :
@@ -15,6 +16,7 @@ TrapezoidalMap::TrapezoidalMap() :
  * @param[in] segment
  */
 void TrapezoidalMap::addVerticalLines(const cg3::Segment2d& segment){
+
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 

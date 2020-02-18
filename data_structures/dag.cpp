@@ -1,10 +1,12 @@
 #include "dag.h"
 
+
 template <class T>
-Dag<T>::Dag()
+Dag<T>::Dag():
+    structureDag(nullptr),
+    trapezoidIndex(0)
 {
-    structureDag = nullptr;
-    trapezoidIndex = 0;
+
 }
 
 
@@ -49,15 +51,21 @@ void Dag<T>::insertSubTree(cg3::Segment2d segment, int indice, node *root){
     rlr->leftChild = trapezoidIndex++;
     rll->rightChild = trapezoidIndex++;
 
-    rr->rightChild = trapezoidIndex ++;
+    rr->rightChild = trapezoidIndex++;
 }
 
 
 template <class T>
 int Dag<T>::findTrapezoidByPoint(cg3::Point2d){
+    int result=0;
     for (T el: structureDag){
         //code to retrieve when point2d is inside poligon
+        //prova per eliminare warning
+        if(el == 3){
+            result = el;
+        }
     }
+    return result;
 }
 
 
@@ -66,12 +74,14 @@ int Dag<T>::getNumberOfTrapezoids(){
     return trapezoidIndex;
 }
 
+template <class T>
+void Dag<T>::printDag(){
+    for (T el: structureDag){
+        std::cout<< el << ", " <<std::endl;
+    }
+}
 
 template <class T>
 void Dag<T>::clearDag(){
-    segments.clear();
-    endpointsLeft.clear();
-    endpointsRight.clear();
-    leaves.clear();
     structureDag = nullptr;
 }

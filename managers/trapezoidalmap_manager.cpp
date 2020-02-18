@@ -9,14 +9,13 @@
 #include <cg3/data_structures/arrays/arrays.h>
 #include <cg3/utilities/timer.h>
 #include "utils/fileutils.h"
+#include "data_structures/dag.h"
 
 //Limits for the bounding box
 //It defines where points can be added
 //Do not change the following line
 #define BOUNDINGBOX 1e+6
-
-
-Dag<class T> DAG;
+Dag<class T> dag;
 
 //----------------------------------------------------------------------------------------------
 //                         You have to write your code in the area below.
@@ -160,7 +159,8 @@ TrapezoidalMapManager::~TrapezoidalMapManager()
 void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& segment)
 {
     //inserting segments on Dag data structure
-    DAG.insertNewSegment(segment);
+    dag.insertNewSegment(segment);
+    dag.printDag();
 
     drawableTrapezoidalMap.addVerticalLines(segment);
 
@@ -280,7 +280,7 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
     //Clear current data
     drawableTrapezoidalMapDataset.clear();
     drawableTrapezoidalMap.clearMap();
-    DAG.clearDag();
+    dag.clearDag();
 
     //#####################################################################
 }
