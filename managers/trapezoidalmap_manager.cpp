@@ -16,7 +16,7 @@
 #define BOUNDINGBOX 1e+6
 
 
-Dag DAG;
+Dag<class T> DAG;
 
 //----------------------------------------------------------------------------------------------
 //                         You have to write your code in the area below.

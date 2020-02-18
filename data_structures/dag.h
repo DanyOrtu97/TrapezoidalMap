@@ -10,6 +10,7 @@
 #include <cg3/geometry/polygon2.h>
 
 
+template <class T>
 class Dag{
 
 public:
@@ -17,7 +18,7 @@ public:
 
 
     struct node {
-        int value; //da modificare come generico
+        T value;
         struct node *leftChild;
         struct node *rightChild;
     };
@@ -28,10 +29,12 @@ public:
 
     void insertNewSegment(cg3::Segment2d segment);
 
+    void insertSubTree(cg3::Segment2d segment, int indice, node *root);
 
     //da regolare il tipo (deve rendere un poligono, quadrante che contiene il punto)
-    void findPoint(cg3::Point2d);
+    int findTrapezoidByPoint(cg3::Point2d);
 
+    int getNumberOfTrapezoids();
 
     void clearDag();
 
@@ -43,8 +46,9 @@ private:
     std::vector<Endpoints> endpointsRight;
     std::vector<int> leaves;
 
-    //non sono sicuro
-    std::vector<node> structureDag;
+    int trapezoidIndex;
+
+    node *structureDag;
 };
 
 #endif // DAG_H
