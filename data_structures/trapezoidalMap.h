@@ -5,6 +5,8 @@
 #include <vector>
 #include <utility>
 
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 #include <cg3/geometry/point2.h>
 #include <cg3/geometry/segment2.h>
@@ -21,7 +23,7 @@ class TrapezoidalMap {
 
 public:
     typedef std::pair<cg3::Point2d, cg3::Point2d> VerticalLines2D;
-    // typedef ... Polygons2D;
+
 
     TrapezoidalMap();
 
