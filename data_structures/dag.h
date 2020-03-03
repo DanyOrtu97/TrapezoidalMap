@@ -7,7 +7,6 @@
 
 #include <cg3/geometry/point2.h>
 #include <cg3/geometry/segment2.h>
-#include "data_structures/nodesofdag.h"
 
 
 
@@ -18,7 +17,7 @@ public:
     Dag();
 
     struct node {
-        NodesOfDag nodeValue;
+       /*nodo nodeValue;*/
         node *leftChild;
         node *rightChild;
 

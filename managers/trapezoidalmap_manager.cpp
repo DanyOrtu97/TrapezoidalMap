@@ -158,13 +158,7 @@ TrapezoidalMapManager::~TrapezoidalMapManager()
  */
 void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& segment)
 {
-    //inserting segments on Dag data structure
-    /*dag.insertNewSegment(segment);
-    dag.printDag();
-    */
-
-    drawableTrapezoidalMap.addVerticalLines(segment);
-
+    drawableTrapezoidalMap.trapezoidalMapAlgorithm(segment);
 
     //The trapezoidal map (or the drawable object) has been changed, so we update the canvas for drawing.
     updateCanvas();

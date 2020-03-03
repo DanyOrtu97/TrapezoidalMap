@@ -27,22 +27,25 @@ public:
 
     TrapezoidalMap();
 
-    void addVerticalLines(const cg3::Segment2d& segment);
-
+    //methods to create and handle the vertical lines
     size_t addVerticalLine(const cg3::Segment2d& segment, bool& segmentInserted);
-
     size_t findVerticalLine(const cg3::Segment2d& segment, bool& found);
     size_t findIndexedVerticalLine(const VerticalLines2D& indexedSegment, bool& found);
-
     std::vector<cg3::Segment2d> getVerticalLines() const;
     cg3::Segment2d getVerticalLine(size_t id) const;
 
 
     //metodi per creare e distruggere poligoni, derivanti dalle vertical line
-
     void addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p3, cg3::Point2d p4);
     std::vector<Trapezoid> getTrapezoids() const;
     size_t trapezoidsNumber();
+
+
+    //method to update dag e trapezoidal map
+    void trapezoidalMapAlgorithm(cg3::Segment2d segment);
+
+    //method to find the trapezoidal in which the point p (the left endpoint of the segment) intersect
+    std::vector<std::array<cg3::Point2d, 4>> followSegment(std::vector<Trapezoid> trapezoids, /*Dag*/ cg3::Segment2d segment);
 
 
     //methods to dial points
