@@ -5,8 +5,12 @@
 #include <cg3/viewer/drawable_objects/drawable_polygon2.h>
 
 
+#include <cstdlib>
+int rand();
+
+
 DrawableTrapezoidalMap::DrawableTrapezoidalMap():
-    trapezoidColor(rand()%255, rand()%255, rand()%255),
+    trapezoidColor(0, 0, 180),
     verticalLineColor(255,0,0),
     verticalLineSize(3)
 
@@ -21,6 +25,11 @@ void DrawableTrapezoidalMap::draw() const
 {
     for (const cg3::Segment2d& seg : getVerticalLines()) {
         cg3::opengl::drawLine2(seg.p1(), seg.p2(), verticalLineColor, static_cast<int>(verticalLineSize));
+    }
+
+    //draw trapezoids (improve the color of trapezoids)
+    for (const std::array<cg3::Point2d, 4> trap : getTrapezoids()){
+        cg3::opengl::drawQuad2(trap, trapezoidColor/*cg3::Color(rand()%255, rand()%255, rand()%255)*/, 3, true);
     }
 }
 

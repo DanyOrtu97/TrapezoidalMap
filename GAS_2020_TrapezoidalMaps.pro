@@ -41,6 +41,7 @@ DISTFILES += \
 
 SOURCES +=  \
     data_structures/dag.cpp \
+    data_structures/nodesofdag.cpp \
     data_structures/segment_intersection_checker.cpp \
     data_structures/trapezoidalMap.cpp \
     data_structures/trapezoidalmap_dataset.cpp \
@@ -55,7 +56,11 @@ FORMS += \
 
 HEADERS += \
     data_structures/dag.h \
+    data_structures/nodesofdag.h \
+    data_structures/point.h \
+    data_structures/segment.h \
     data_structures/segment_intersection_checker.h \
+    data_structures/trapezoid.h \
     data_structures/trapezoidalMap.h \
     data_structures/trapezoidalmap_dataset.h \
     drawables/drawableTrapezoidalMap.h \

@@ -7,18 +7,21 @@
 
 #include <cg3/geometry/point2.h>
 #include <cg3/geometry/segment2.h>
-#include <cg3/geometry/polygon2.h>
+#include "data_structures/nodesofdag.h"
 
 
-template <class T> class Dag{
+
+
+class Dag{
 
 public:
     Dag();
 
     struct node {
-        T value;
-        struct node *leftChild;
-        struct node *rightChild;
+        NodesOfDag nodeValue;
+        node *leftChild;
+        node *rightChild;
+
     };
 
 
@@ -43,3 +46,4 @@ private:
 };
 
 #endif // DAG_H
+

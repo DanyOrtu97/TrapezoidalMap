@@ -5,8 +5,10 @@
 TrapezoidalMap::TrapezoidalMap() :
     boundingBox(cg3::Point2d(0,0),cg3::Point2d(0,0))
 {
-
-
+    /*
+    //inizialize the trapezoidal map with the bounding box
+    trapezoids.push_back(Trapezoid());
+    */
 }
 
 
@@ -20,23 +22,31 @@ void TrapezoidalMap::addVerticalLines(const cg3::Segment2d& segment){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 
+    //Punti bounding box
+    cg3::Point2d topLeft;
+    topLeft = createPoint(topLeft, -(1e+6), (1e+6));
+    cg3::Point2d bottomLeft;
+    bottomLeft = createPoint(bottomLeft, -(1e+6), -(1e+6));
+    cg3::Point2d topRight;
+    topRight = createPoint(topRight, (1e+6), (1e+6));
+    cg3::Point2d bottomRight;
+    bottomRight = createPoint(bottomRight, (1e+6), -(1e+6));
 
+    //creation of vertical lines
     bool segmentInserted;
     cg3::Point2d intersectionPoint;
 
     cg3::Point2d upfirst;
-    upfirst.setXCoord(p1.x());
-    upfirst.setYCoord(1e+6);
+    upfirst = createPoint(upfirst, p1.x(), 1e+6);
+
     cg3::Point2d downfirst;
-    downfirst.setXCoord(p1.x());
-    downfirst.setYCoord(-(1e+6));
+    downfirst = createPoint(downfirst, p1.x(), -(1e+6));
 
     cg3::Point2d upsecond;
-    upsecond.setXCoord(p2.x());
-    upsecond.setYCoord(1e+6);
+    upsecond = createPoint(upsecond, p2.x(), 1e+6);
+
     cg3::Point2d downsecond;
-    downsecond.setXCoord(p2.x());
-    downsecond.setYCoord(-(1e+6));
+    downsecond = createPoint(downsecond, p2.x(), -(1e+6));
 
     cg3::Segment2d s1p1;
     s1p1.set(p1, upfirst);
@@ -47,13 +57,15 @@ void TrapezoidalMap::addVerticalLines(const cg3::Segment2d& segment){
     cg3::Segment2d s2p2;
     s2p2.set(p2, downsecond);
 
-    /*
-    bool intersecting1 = intersectionChecker.checkIntersections(s1p1);
-    bool intersecting2 = intersectionChecker.checkIntersections(s2p1);
-    bool intersecting3 = intersectionChecker.checkIntersections(s1p2);
-    bool intersecting4 = intersectionChecker.checkIntersections(s2p2);
-    */
 
+    //AGGIUNTA POLIGONI
+    addPolygon(topLeft, upfirst, downfirst, bottomLeft); //A
+    //addPolygon(upfirst, upsecond, p2, p1); //B
+    //addPolygon(p1, p2, downsecond, downfirst); //C
+    //addPolygon(upsecond, topRight, bottomRight, downsecond); //D
+
+
+    //AGGIUNTA VERTICAL LINE
     addVerticalLine(s1p1, segmentInserted);
     addVerticalLine(s2p1, segmentInserted);
     addVerticalLine(s1p2, segmentInserted);
@@ -145,6 +157,37 @@ cg3::Segment2d TrapezoidalMap::getVerticalLine(size_t id) const
 }
 
 
+void TrapezoidalMap::addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p3, cg3::Point2d p4){
+    std::array<cg3::Point2d, 4> trapezoid = {p1, p2, p3, p4};
+    trapezoids.push_back(Trapezoid(trapezoid));
+    std::cout<< trapezoidsNumber() <<std::endl;
+    for ( Trapezoid t : trapezoids){
+        std::cout << "primo trapezoide: " << std::endl;
+        std::cout << t.at(0) << std::endl;
+        std::cout << t.at(1) << std::endl;
+        std::cout << t.at(2) << std::endl;
+        std::cout << t.at(3) << std::endl;
+    }
+
+
+}
+
+
+std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::getTrapezoids() const{
+    return trapezoids;
+}
+
+
+size_t TrapezoidalMap::trapezoidsNumber(){
+    return trapezoids.size();
+}
+
+cg3::Point2d TrapezoidalMap::createPoint(cg3::Point2d p, double x, double y){
+    p.setXCoord(x);
+    p.setYCoord(y);
+    return p;
+}
+
 /**
  * @brief Cleared structures for the trapezoidal map
  * @param[in]
@@ -157,6 +200,8 @@ void TrapezoidalMap::clearMap()
     boundingBox.setMin(cg3::Point2d(0,0));
     boundingBox.setMax(cg3::Point2d(0,0));
     intersectionChecker.clear();
+    trapezoids.clear();
+    trapezoidsMap.clear();
 }
 
 
