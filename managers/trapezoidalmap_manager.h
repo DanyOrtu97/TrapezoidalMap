@@ -78,8 +78,7 @@ private:
 
     //---------------------------------------------------------------------
     //Declare your private methods here if you need some
-    void createPointsOfBox();
-
+    void inzializeStructures();
 
 
     //#####################################################################

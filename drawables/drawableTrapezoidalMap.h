@@ -32,6 +32,7 @@ public:
     void setVerticalLineSize(unsigned int value);
 
 
+
 private:
     cg3::Color trapezoidColor;
     cg3::Color verticalLineColor;

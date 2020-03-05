@@ -23,14 +23,15 @@ DrawableTrapezoidalMap::DrawableTrapezoidalMap():
 //methods to draw vertical line
 void DrawableTrapezoidalMap::draw() const
 {
+    //draw trapezoids (improve the color of trapezoids, change at each click)
+    for (const std::array<cg3::Point2d, 4> trap : getTrapezoids()){
+        cg3::opengl::drawQuad2(trap, trapezoidColor/*cg3::Color(rand()%255, rand()%255, rand()%255)*/, 3, true);
+    }
+
     for (const cg3::Segment2d& seg : getVerticalLines()) {
         cg3::opengl::drawLine2(seg.p1(), seg.p2(), verticalLineColor, static_cast<int>(verticalLineSize));
     }
 
-    //draw trapezoids (improve the color of trapezoids)
-    for (const std::array<cg3::Point2d, 4> trap : getTrapezoids()){
-        cg3::opengl::drawQuad2(trap, trapezoidColor/*cg3::Color(rand()%255, rand()%255, rand()%255)*/, 3, true);
-    }
 }
 
 cg3::Point3d DrawableTrapezoidalMap::sceneCenter() const

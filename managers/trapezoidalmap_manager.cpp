@@ -1,6 +1,8 @@
 #include "trapezoidalmap_manager.h"
 #include "ui_trapezoidalmapmanager.h"
 
+#include "data_structures/Trapezoidalmap.h"
+
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QInputDialog>
@@ -83,7 +85,7 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
 
 
     //#####################################################################
-
+    inzializeStructures();
 
 
     //Fit the scene
@@ -158,7 +160,12 @@ TrapezoidalMapManager::~TrapezoidalMapManager()
  */
 void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& segment)
 {
+
+
     drawableTrapezoidalMap.trapezoidalMapAlgorithm(segment);
+
+
+
 
     //The trapezoidal map (or the drawable object) has been changed, so we update the canvas for drawing.
     updateCanvas();
@@ -285,7 +292,9 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
 
 //---------------------------------------------------------------------
 //Define your private methods here if you need some
-
+void TrapezoidalMapManager::inzializeStructures(){
+    drawableTrapezoidalMap.inizialize();
+}
 
 
 
