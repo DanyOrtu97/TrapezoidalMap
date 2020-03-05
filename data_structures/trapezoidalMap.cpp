@@ -1,6 +1,8 @@
 #include "trapezoidalMap.h"
 #include "dag.h"
 
+#include <drawables/drawableTrapezoidalMap.h>
+
 cg3::Point2d topLeft;
 cg3::Point2d bottomLeft;
 cg3::Point2d topRight;
@@ -43,19 +45,25 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 
+    std::cout<<"trapezoidi trovati"<<std::endl;
     //control in dag e trapezoidal map and after do it
     for (Trapezoid t : foundTrapezoids){
+        std::vector<std::array<cg3::Point2d, 4>> tra;
+        tra.clear();
 
-        //debug
-        std::cout<<"trapezoidi trovati"<<std::endl;
+        //debug  
         std::cout << t[0] << " " <<t[1] << " "<<t[2] << " "<<t[3] <<"   \n"<<std::endl;
 
         bool found;
-        std::unordered_map<Trapezoid, size_t> delet = findTrapezoid(t, found);
+        std::unordered_map<Trapezoid, size_t> delet;
+        delet.clear();
 
-        std::cout<< trapezoidsMap.begin()->first[0] <<std::endl;
+        delet = findTrapezoid(t, found);
 
-        trapezoidsMap.erase(delet.begin());
+        tra.push_back(t);
+
+        trapezoidsMap.erase(delet.begin()->first);
+        trapezoids.erase(tra.begin());
 
         leftp.erase(leftp[delet.begin()->second]);
         rightp.erase(rightp[delet.begin()->second]);
@@ -115,6 +123,8 @@ std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::followSegment(std::vect
 
     std::array<cg3::Point2d, 4> firstTrapezoid;
 
+    std::cout<<"dim: \n"<<std::endl;
+    std::cout<<trapezoids.size()<<std::endl;
 
     //ricerca del trapezoide in cui é p1 che andrà sostituita con la ricerca nel DAG
     for (Trapezoid trap : trapezoids){
@@ -272,25 +282,14 @@ void TrapezoidalMap::addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p
 
     std::array<cg3::Point2d, 4> trapezoid = {p1, p2, p3, p4};
 
-
-
     id = std::numeric_limits<size_t>::max();
+
 
     trapezoids.push_back(Trapezoid(trapezoid));
 
     trapezoidsMap.insert(std::make_pair(Trapezoid(trapezoid), id));
-
-    /*
-    std::cout<< trapezoidsNumber() <<std::endl;
-    for ( Trapezoid t : trapezoids){
-        std::cout << "primo trapezoide: " << std::endl;
-        std::cout << t.at(0) << std::endl;
-        std::cout << t.at(1) << std::endl;
-        std::cout << t.at(2) << std::endl;
-        std::cout << t.at(3) << std::endl;
-    }
-    */
 }
+
 
 std::unordered_map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findTrapezoid(const Trapezoid t, bool& found){
     found = false;
@@ -310,6 +309,8 @@ std::unordered_map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findInde
         return map;
     }
 }
+
+
 
 std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::getTrapezoids() const{
     return trapezoids;
