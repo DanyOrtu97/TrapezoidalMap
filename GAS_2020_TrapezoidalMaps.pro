@@ -55,12 +55,9 @@ FORMS += \
 
 HEADERS += \
     data_structures/dag.h \
-    data_structures/leaf.h \
     data_structures/segment_intersection_checker.h \
     data_structures/trapezoidalMap.h \
     data_structures/trapezoidalmap_dataset.h \
-    data_structures/x.h \
-    data_structures/y.h \
     drawables/drawableTrapezoidalMap.h \
     drawables/drawable_trapezoidalmap_dataset.h \
     managers/trapezoidalmap_manager.h \

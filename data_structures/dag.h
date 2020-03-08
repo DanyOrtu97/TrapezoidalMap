@@ -12,15 +12,21 @@ struct node{
     Types type;
     node *leftChild;
     node *rightChild;
-    node(cg3::Point2d p, cg3::Segment2d s, std::array<cg3::Point2d, 4> t){
-        //this->type = Types::X;
-    }
+    //node(cg3::Point2d p, cg3::Segment2d s, std::array<cg3::Point2d, 4> t){
+    //this->type = Types::X;
+    //}
 };
 
 class Dag{
 
 public:
     Dag();
+
+
+
+private:
+    node *leftChild;
+    node *rightChild;
 
 
 
