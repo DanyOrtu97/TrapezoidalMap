@@ -31,6 +31,8 @@ public:
     unsigned int getVerticalLineSize() const;
     void setVerticalLineSize(unsigned int value);
 
+    void insertColors();
+
 
 
 private:

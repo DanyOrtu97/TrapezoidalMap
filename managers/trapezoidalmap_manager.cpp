@@ -282,6 +282,7 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
     //Clear current data
     drawableTrapezoidalMapDataset.clear();
     drawableTrapezoidalMap.clearMap();
+    inzializeStructures();
     //dag.clearDag();
 
     //#####################################################################

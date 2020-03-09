@@ -12,7 +12,7 @@ int rand();
 DrawableTrapezoidalMap::DrawableTrapezoidalMap():
     trapezoidColor(0,0,40),
     verticalLineColor(255,0,0),
-    verticalLineSize(3)
+    verticalLineSize(6)
 {
 }
 
@@ -22,7 +22,7 @@ void DrawableTrapezoidalMap::draw() const
 {
     //draw trapezoids
     for (const std::array<cg3::Point2d, 4> trap : getTrapezoids()){
-        cg3::opengl::drawQuad2(trap, cg3::Color(rand()%180, rand()%180, rand()%180), 4, true);
+        cg3::opengl::drawQuad2(trap, cg3::Color(rand()%180, rand()%180, rand()%180), 1, true);
         cg3::opengl::drawLine2(trap[0], trap[3], verticalLineColor, static_cast<int>(verticalLineSize));
         cg3::opengl::drawLine2(trap[1], trap[2], verticalLineColor, static_cast<int>(verticalLineSize));
     }
