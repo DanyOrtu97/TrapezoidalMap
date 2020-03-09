@@ -28,8 +28,8 @@ public:
 
     //metodi per creare e distruggere poligoni
     void addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p3, cg3::Point2d p4);
-    std::unordered_map<Trapezoid, size_t> findTrapezoid(const Trapezoid t, bool& found);
-    std::unordered_map<Trapezoid, size_t> findIndexedTrapezoid(const Trapezoid& indexedTrapezoid, bool& found);
+    std::map<Trapezoid, size_t> findTrapezoid(const Trapezoid t, bool& found);
+    std::map<Trapezoid, size_t> findIndexedTrapezoid(const Trapezoid& indexedTrapezoid, bool& found);
 
     void update();
     std::vector<Trapezoid> getTrapezoids() const;
@@ -51,9 +51,18 @@ public:
 
     //methods to handle points
     cg3::Point2d createPoint(cg3::Point2d p, double x, double y);
+    double handleSlopeSegment(cg3::Segment2d s, cg3::Point2d p);
 
     //methods to update trapezoids and dag
     void CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment);
+    void multipleTrapezoid(std::vector<Trapezoid> trapezoids, Trapezoid t, const cg3::Segment2d& segment);
+
+    //find trapezoid (poi questa funzione userà il dag)
+    Trapezoid findTrapezoid(cg3::Point2d p, std::vector<Trapezoid> trapezoids);
+    int findIndexedTrapezoid(cg3::Point2d p, std::vector<Trapezoid> trapezoids);
+    void queryPoint(cg3::Point2d point);
+    Trapezoid getFoundTrapezoid() const;
+
 
 
     void clearMap();
@@ -61,12 +70,13 @@ public:
 private:
     cg3::BoundingBox2 boundingBox;
 
+    Trapezoid found;
     std::vector<Trapezoid> trapezoids;
-    std::unordered_map<Trapezoid, size_t> trapezoidsMap;
-    std::unordered_map<cg3::Point2d, size_t> leftpMap;
-    std::unordered_map<cg3::Point2d, size_t> rightpMap;
-    std::unordered_map<cg3::Segment2d, size_t> topMap;
-    std::unordered_map<cg3::Segment2d, size_t> bottomMap;
+    std::map<Trapezoid, size_t> trapezoidsMap;
+    std::map<cg3::Point2d, size_t> leftpMap;
+    std::map<cg3::Point2d, size_t> rightpMap;
+    std::map<cg3::Segment2d, size_t> topMap;
+    std::map<cg3::Segment2d, size_t> bottomMap;
 };
 
 #endif // TRAPEZOIDALMAP_H

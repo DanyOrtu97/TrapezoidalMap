@@ -221,6 +221,7 @@ void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& seg
 void TrapezoidalMapManager::queryTrapezoidalMap(const cg3::Point2d& queryPoint)
 {
 
+     drawableTrapezoidalMap.queryPoint(queryPoint);
 
     //---------------------------------------------------------------------
     //Execute the point location algorithm of your TrapezoidalMap to locate in which trapezoid
@@ -250,7 +251,6 @@ void TrapezoidalMapManager::queryTrapezoidalMap(const cg3::Point2d& queryPoint)
 
 
     //#####################################################################
-
 
 
     //---------------------------------------------------------------------

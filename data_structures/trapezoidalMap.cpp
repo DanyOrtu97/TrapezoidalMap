@@ -44,11 +44,9 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
     std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids = followSegment(trapezoids, /*dag*/ segment);
 
-    std::unordered_map<Trapezoid, size_t> delet;
+    std::map<Trapezoid, size_t> delet;
 
-    std::unordered_map<cg3::Segment2d, size_t> deletSeg;
-
-    //std::vector<Trapezoid> tra;
+    std::map<cg3::Segment2d, size_t> deletSeg;
 
     bool found;
 
@@ -72,12 +70,10 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
         delet = findTrapezoid(foundTrapezoids.front(), found);
         deletSeg.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[0], delet.begin()->first[1]), delet.begin()->second));
-        //tra.push_back(delet.begin()->first);
 
         trapezoidsMap.erase(delet.begin()->first);
 
         update();
-        //trapezoids.erase(tra.begin());
 
         //Inserisci e/o aggiorna vicini...
         CompletelyInsideTrapezoid(foundTrapezoids.front(), segment);
@@ -91,29 +87,27 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
     }
     else{
         for (Trapezoid t : foundTrapezoids){
-            //tra.clear();
             delet.clear();
             deletSeg.clear();
 
             delet = findTrapezoid(t, found);
             deletSeg.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[0], delet.begin()->first[1]), delet.begin()->second));
-            //tra.push_back(delet.begin()->first);
 
             trapezoidsMap.erase(delet.begin()->first);
 
             update();
-            //trapezoids.erase(tra.begin());
+
+            multipleTrapezoid(trapezoids, t, segment);
 
             leftpMap.erase(delet.begin()->second);
             rightpMap.erase(delet.begin()->second);
             topMap.erase(deletSeg.begin()->first);
             bottomMap.erase(deletSeg.begin()->first);
 
+        }    
 
-            //Inserisci e/o aggiorna vicini...
-            InsertNeighbors(trapezoids, segment, 2);
-
-        }
+        //Inserisci e/o aggiorna vicini...
+        InsertNeighbors(trapezoids, segment, 2);
     }
 }
 
@@ -136,8 +130,8 @@ void TrapezoidalMap::CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d
     cg3::Point2d downfirst;
     cg3::Point2d downsecond;
 
-    std::unordered_map<cg3::Segment2d, size_t>::iterator top = topMap.find(topS);
-    std::unordered_map<cg3::Segment2d, size_t>::iterator bottom = bottomMap.find(bottomS);
+    std::map<cg3::Segment2d, size_t>::iterator top = topMap.find(topS);
+    std::map<cg3::Segment2d, size_t>::iterator bottom = bottomMap.find(bottomS);
 
 
     //Segment already in the data structure (top -> 1e+6, bottom -> -1e+6 )
@@ -145,16 +139,16 @@ void TrapezoidalMap::CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d
         //std::cout<<"trova top mappa:"<<std::endl;
        // std::cout<< top->first.p1().y() << " " << top->first.p2().y()<<std::endl;
 
-        upfirst = createPoint(upfirst, p1.x(), top->first.p1().y());
-        upsecond = createPoint(upsecond, p2.x(), top->first.p2().y());
+        upfirst = createPoint(upfirst, p1.x(), handleSlopeSegment(top->first, p1));
+        upsecond = createPoint(upsecond, p2.x(), handleSlopeSegment(top->first, p2));
     }
 
     if (bottom != bottomMap.end()) {
         //std::cout<<"trova bottom mappa:"<<std::endl;
         //std::cout<< bottom->first.p1().y() << " " << bottom->first.p2().y()<<std::endl;
 
-        downfirst = createPoint(downfirst, p1.x(), bottom->first.p1().y());
-        downsecond = createPoint(downsecond, p2.x(), bottom->first.p2().y());
+        downfirst = createPoint(downfirst, p1.x(), handleSlopeSegment(bottom->first, p1));
+        downsecond = createPoint(downsecond, p2.x(), handleSlopeSegment(bottom->first, p2));
     }
 
     //AGGIUNTA POLIGONI
@@ -162,6 +156,11 @@ void TrapezoidalMap::CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d
     addPolygon(upfirst, upsecond, p2, p1); //B
     addPolygon(p1, p2, downsecond, downfirst); //C
     addPolygon(upsecond, topRight, bottomRight, downsecond); //D
+}
+
+
+void TrapezoidalMap::multipleTrapezoid(std::vector<Trapezoid> trapezoids, Trapezoid t, const cg3::Segment2d& segment){
+
 }
 
 //verify and return the trapezoid in which intersect the segment
@@ -172,51 +171,48 @@ std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::followSegment(std::vect
 
     std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids;
 
-    std::array<cg3::Point2d, 4> firstTrapezoid;
+    std::array<cg3::Point2d, 4> firstTrapezoid = findTrapezoid(p1, trapezoids);
 
-
-
-    //ricerca del trapezoide in cui é p1 che andrà sostituita con la ricerca nel DAG
-    //migliorare se capita in un punto della vertical line
-    int index = 0;
-    int j = 0;
-    for (Trapezoid trap : trapezoids){
-        if (trap[0].x() <= p1.x() && trap[0].y() >= p1.y() &&
-            trap[1].x() >= p1.x() && trap[1].y() >= p1.y() &&
-            trap[2].x() >= p1.x() && trap[2].y() <= p1.y() &&
-            trap[3].x() <= p1.x() && trap[3].y() <= p1.y()){
-            firstTrapezoid=trap;
-            j = index;
-        }
-        index++;
-    }
+    int j = findIndexedTrapezoid(p1, trapezoids);
 
     std::cout << "\n indice primo trapezoide" <<std::endl;
     std::cout << j <<std::endl;
     std::cout << firstTrapezoid[0] << " " << firstTrapezoid[1] << " " << firstTrapezoid[2] << " "
                                    << firstTrapezoid[3] <<std::endl;
 
-
-
-
+    //puttanaio da rivedere
+    /*
     if(trapezoids.size() > 1){
-        while(isToTheRight(p2, findRightp(trapezoids[j%(trapezoids.size())])) && j%(int)(trapezoids.size()) < (int)trapezoids.size()-1){
-            if(LiesAbove(findRightp(trapezoids[j%(trapezoids.size())]), segment) && j%(int)(trapezoids.size()) < (int)trapezoids.size()-2){
-                j+=2;
-            }
-            else if(j%(trapezoids.size()) == (int)trapezoids.size()-2){
+        foundTrapezoids.push_back(firstTrapezoid);
+        while(isToTheRight(p2, findRightp(trapezoids[j])) && j < (int)trapezoids.size()-1){
+            if(LiesAbove(findRightp(trapezoids[j]), segment)){
                 j++;
+                foundTrapezoids.push_back(trapezoids[j]);
+                j++;
+                std::cout<< "a"<<std::endl;
             }
             else{
-                j++;
+                if(j+1 == (int)trapezoids.size()-1){
+                    j++;
+                    foundTrapezoids.push_back(trapezoids[j]);
+                    j++;
+                    std::cout<< "b"<<std::endl;
+                }
+                else if (j+1 < (int)trapezoids.size()-1){
+                    j+=2;
+                    foundTrapezoids.push_back(trapezoids[j]);
+                    std::cout<< "c"<<std::endl;
+                }
+
             }
-            foundTrapezoids.push_back(trapezoids[j%(trapezoids.size())]);
+            std::cout << j <<std::endl;
         }
-        foundTrapezoids.push_back(firstTrapezoid);
     }
     else{
         foundTrapezoids.push_back(firstTrapezoid);
     }
+    */
+    foundTrapezoids.push_back(firstTrapezoid);
 
     return foundTrapezoids;
 }
@@ -232,18 +228,24 @@ bool TrapezoidalMap::isToTheRight(cg3::Point2d p, cg3::Point2d rightP){
 
 cg3::Point2d TrapezoidalMap::findLeftp(Trapezoid t){
     bool found;
-    size_t id = findTrapezoid(t, found).begin()->second;
-    return leftpMap[id];
+    size_t idL = findTrapezoid(t, found).begin()->second;
+    return leftpMap[idL];
 }
 
 cg3::Point2d TrapezoidalMap::findRightp(Trapezoid t){
     bool found;
-    size_t id = findTrapezoid(t, found).begin()->second;
-    return rightpMap[id];
+    size_t idR = findTrapezoid(t, found).begin()->second;
+    return rightpMap[idR];
 }
 
 bool TrapezoidalMap::LiesAbove(cg3::Point2d p, cg3::Segment2d segment){
-    //da rivedere
+
+    /*int det;
+    det = ((segment.p1().x() * ((segment.p2().y() * 1) - (1 * p.y())))-
+           (segment.p1().y() * ((segment.p2().x() * 1) - (1 * p.x())))+
+           (1 * ((segment.p2().x() * p.y()) - (segment.p2().y() * p.x()))));
+    std::cout<< det << std::endl;
+    if(det<0){*/
     if(segment.p1().y() <= p.y() && segment.p2().y() <= p.y()){
         return true;
     }
@@ -328,15 +330,15 @@ void TrapezoidalMap::addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p
     update();
 }
 
-std::unordered_map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findTrapezoid(const Trapezoid t, bool& found){
+std::map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findTrapezoid(const Trapezoid t, bool& found){
     found = false;
     return findIndexedTrapezoid(Trapezoid(t), found);
 }
 
-std::unordered_map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findIndexedTrapezoid(const Trapezoid& indexedTrapezoid, bool& found){
-    std::unordered_map<Trapezoid, size_t>::iterator it = trapezoidsMap.find(indexedTrapezoid);
+std::map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findIndexedTrapezoid(const Trapezoid& indexedTrapezoid, bool& found){
+    std::map<Trapezoid, size_t>::iterator it = trapezoidsMap.find(indexedTrapezoid);
 
-    std::unordered_map<std::array<cg3::Point2d, 4>, size_t> map;
+    std::map<std::array<cg3::Point2d, 4>, size_t> map;
 
     //Segment already in the data structure
     if (it != trapezoidsMap.end()) {
@@ -356,12 +358,58 @@ cg3::Point2d TrapezoidalMap::createPoint(cg3::Point2d p, double x, double y){
     return p;
 }
 
+double TrapezoidalMap::handleSlopeSegment(cg3::Segment2d s, cg3::Point2d p){
+    return (((p.x() - s.p1().x())/(s.p2().x() - s.p1().x()))*(s.p2().y() - s.p1().y()))+s.p1().y();
+}
+
 void TrapezoidalMap::update(){
     trapezoids.clear();
-    for (std::unordered_map<Trapezoid, size_t>::iterator it=trapezoidsMap.begin(); it!=trapezoidsMap.end(); ++it){
+    for (std::map<Trapezoid, size_t>::iterator it=trapezoidsMap.begin(); it!=trapezoidsMap.end(); ++it){
         trapezoids.push_back(it->first);
     }
 }
+
+std::array<cg3::Point2d, 4> TrapezoidalMap::findTrapezoid(cg3::Point2d p1, std::vector<Trapezoid> trapezoids){
+    std::array<cg3::Point2d, 4> firstTrapezoid;
+
+    //ricerca del trapezoide in cui é p1 che andrà sostituita con la ricerca nel DAG
+    //migliorare se capita in un punto della vertical line
+    for (Trapezoid trap : trapezoids){
+        if (trap[0].x() <= p1.x() && trap[0].y() >= p1.y() &&
+            trap[1].x() >= p1.x() && trap[1].y() >= p1.y() &&
+            trap[2].x() >= p1.x() && trap[2].y() <= p1.y() &&
+            trap[3].x() <= p1.x() && trap[3].y() <= p1.y()){
+            firstTrapezoid=trap;
+        }
+    }
+    return firstTrapezoid;
+}
+
+int TrapezoidalMap::findIndexedTrapezoid(cg3::Point2d p1, std::vector<Trapezoid> trapezoids){
+    int index=0, j=0;
+
+    //ricerca del trapezoide in cui é p1 che andrà sostituita con la ricerca nel DAG
+    //migliorare se capita in un punto della vertical line
+    for (Trapezoid trap : trapezoids){
+        if (trap[0].x() <= p1.x() && trap[0].y() >= p1.y() &&
+            trap[1].x() >= p1.x() && trap[1].y() >= p1.y() &&
+            trap[2].x() >= p1.x() && trap[2].y() <= p1.y() &&
+            trap[3].x() <= p1.x() && trap[3].y() <= p1.y()){
+            j = index;
+        }
+        index++;
+    }
+    return j;
+}
+
+void TrapezoidalMap::queryPoint(cg3::Point2d point){
+    found = findTrapezoid(point, trapezoids);
+}
+
+std::array<cg3::Point2d, 4> TrapezoidalMap::getFoundTrapezoid() const{
+    return found;
+}
+
 
 /**
  * @brief Cleared structures for the trapezoidal map
