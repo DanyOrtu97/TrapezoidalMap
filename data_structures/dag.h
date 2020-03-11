@@ -25,9 +25,9 @@ public:
 
     std::vector<std::array<cg3::Point2d, 4>> findTrapezoids(const cg3::Segment2d segment);
 
-    void insertSingleTrapezoid(const std::array<cg3::Point2d, 4>* trapezoid, const cg3::Segment2d segment);
+    void insertSingleTrapezoid(const std::array<cg3::Point2d, 4> trapezoid, const cg3::Segment2d segment);
 
-    void insertMultipleTrapezoids(const std::vector<std::array<cg3::Point2d, 4>>* foundTrapezoids, const cg3::Segment2d segment);
+    void insertMultipleTrapezoids(const std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids, const cg3::Segment2d segment);
 
 
 

@@ -4,13 +4,11 @@
 
 Dag::Dag(){
     dag = nullptr;
-
 }
 
 
 void Dag::inizializeDag(std::array<cg3::Point2d, 4> boundingBox){
-    class Leaf* trap = new class Leaf(&boundingBox);
-
+    class Leaf* trap = new class Leaf(boundingBox);
     dag = trap;
 }
 
@@ -21,14 +19,13 @@ void Dag::updateDag(const cg3::Segment2d segment){
 
 
     if(foundTrapezoids.size() > 1 ){
-        insertMultipleTrapezoids(&foundTrapezoids, segment);
+        insertMultipleTrapezoids(foundTrapezoids, segment);
     }
     else{
-        insertSingleTrapezoid(&foundTrapezoids.front(), segment);
+        insertSingleTrapezoid(foundTrapezoids.front(), segment);
     }
 
 }
-
 
 std::array<cg3::Point2d, 4>  Dag::findTrapezoid(cg3::Point2d point){
     nodeDag* root = dag;
@@ -53,15 +50,16 @@ std::array<cg3::Point2d, 4>  Dag::findTrapezoid(cg3::Point2d point){
     return ((class Leaf*)root)->getTrapezoid();
 }
 
+
 std::vector<std::array<cg3::Point2d, 4>> Dag::findTrapezoids(const cg3::Segment2d segment){
 
 }
 
-void Dag::insertSingleTrapezoid(const std::array<cg3::Point2d, 4>* foundTrapezoid, const cg3::Segment2d segment){
+void Dag::insertSingleTrapezoid(const std::array<cg3::Point2d, 4> foundTrapezoid, const cg3::Segment2d segment){
 
 }
 
-void Dag::insertMultipleTrapezoids(const std::vector<std::array<cg3::Point2d, 4>>* foundTrapezoids, const cg3::Segment2d segment){
+void Dag::insertMultipleTrapezoids(const std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids, const cg3::Segment2d segment){
 
 }
 

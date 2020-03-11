@@ -69,15 +69,15 @@ class Leaf: public nodeDag{
 
 public:
     Leaf() = default;
-    explicit Leaf(Trapezoid* t);
+    explicit Leaf(Trapezoid t);
     ~Leaf() override = default;
 
     Types getType() const override;
     Trapezoid getTrapezoid() const;
-    void setTrapezoid(Trapezoid* trapezoid);
+    void setTrapezoid(Trapezoid trapezoid);
 
 private:
-    Trapezoid* trapezoid;
+    Trapezoid trapezoid;
 
 };
 

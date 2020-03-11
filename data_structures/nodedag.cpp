@@ -69,7 +69,7 @@ void Y::setSegment(cg3::Segment2d segment){
 
 
 //methods for node of type leaf (trapezoid)
-Leaf::Leaf(Trapezoid* t){
+Leaf::Leaf(Trapezoid t){
     setTrapezoid(t);
     this->setLeftChild(nullptr);
     this->setRightChild(nullptr);
@@ -81,9 +81,9 @@ Types Leaf::getType() const{
 }
 
 std::array<cg3::Point2d, 4> Leaf::getTrapezoid() const{
-    return *trapezoid;
+    return trapezoid;
 }
 
-void Leaf::setTrapezoid(Trapezoid* trapezoid){
+void Leaf::setTrapezoid(Trapezoid trapezoid){
     this->trapezoid = trapezoid;
 }
