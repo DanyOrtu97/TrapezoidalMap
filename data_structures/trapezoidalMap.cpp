@@ -7,6 +7,7 @@ cg3::Point2d topLeft;
 cg3::Point2d bottomLeft;
 cg3::Point2d topRight;
 cg3::Point2d bottomRight;
+Dag dag;
 
 TrapezoidalMap::TrapezoidalMap() :
     boundingBox(cg3::Point2d(0,0),cg3::Point2d(0,0))
@@ -33,9 +34,7 @@ void TrapezoidalMap::inizialize(){
     InsertNeighbors(trapezoids, seg ,0);
 
     //inizialize the dag with the pointer of the first polygon (the bounding box)
-    //std::vector<std::array<cg3::Point2d, 4>> trapezoidsDag;
-    //trapezoidsDag[0] = {topLeft, topRight, bottomRight, bottomLeft};
-    //dag.inizializeDag(trapezoids);
+    dag.inizializeDag(trapezoids.front());
 
 }
 
@@ -172,6 +171,7 @@ std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::followSegment(std::vect
     std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids;
 
     std::array<cg3::Point2d, 4> firstTrapezoid = findTrapezoid(p1, trapezoids);
+    std::array<cg3::Point2d, 4> lastTrapezoid = findTrapezoid(p2, trapezoids);
 
     int j = findIndexedTrapezoid(p1, trapezoids);
 
@@ -179,6 +179,7 @@ std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::followSegment(std::vect
     std::cout << j <<std::endl;
     std::cout << firstTrapezoid[0] << " " << firstTrapezoid[1] << " " << firstTrapezoid[2] << " "
                                    << firstTrapezoid[3] <<std::endl;
+
 
     //puttanaio da rivedere
     /*
@@ -212,7 +213,41 @@ std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::followSegment(std::vect
         foundTrapezoids.push_back(firstTrapezoid);
     }
     */
-    foundTrapezoids.push_back(firstTrapezoid);
+    if(firstTrapezoid == lastTrapezoid){
+        foundTrapezoids.push_back(firstTrapezoid);
+    }else{
+        if(trapezoids.size() == 4){
+            foundTrapezoids.push_back(firstTrapezoid);
+            while(isToTheRight(p2, findRightp(trapezoids[j])) && j < (int)trapezoids.size()-1){
+                if(LiesAbove(findRightp(trapezoids[j]), segment)){
+                    j++;
+                    foundTrapezoids.push_back(trapezoids[j]);
+                    j++;
+                    std::cout<< "a"<<std::endl;
+                }
+                else{
+                    if(j+1 == (int)trapezoids.size()-1){
+                        j++;
+                        foundTrapezoids.push_back(trapezoids[j]);
+                        j++;
+                        std::cout<< "b"<<std::endl;
+                    }
+                    else if (j+1 < (int)trapezoids.size()-1){
+                        j+=2;
+                        foundTrapezoids.push_back(trapezoids[j]);
+                        std::cout<< "c"<<std::endl;
+                    }
+
+                }
+                std::cout << j <<std::endl;
+            }
+        }
+        else{
+            foundTrapezoids.push_back(firstTrapezoid);
+            foundTrapezoids.push_back(lastTrapezoid);
+        }
+    }
+
 
     return foundTrapezoids;
 }
@@ -403,10 +438,12 @@ int TrapezoidalMap::findIndexedTrapezoid(cg3::Point2d p1, std::vector<Trapezoid>
 }
 
 void TrapezoidalMap::queryPoint(cg3::Point2d point){
-    found = findTrapezoid(point, trapezoids);
+    found = dag.findTrapezoid(point);
+    //findTrapezoid(point, trapezoids);
 }
 
 std::array<cg3::Point2d, 4> TrapezoidalMap::getFoundTrapezoid() const{
+    std::cout<< found.begin()[0] <<std::endl;
     return found;
 }
 

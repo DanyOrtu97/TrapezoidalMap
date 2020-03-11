@@ -17,6 +17,7 @@ DrawableTrapezoidalMap::DrawableTrapezoidalMap():
 }
 
 
+
 //methods to draw trapezoidal map
 void DrawableTrapezoidalMap::draw() const
 {
