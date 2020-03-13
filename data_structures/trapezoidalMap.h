@@ -41,8 +41,6 @@ public:
     //methods to find the trapezoidal in which the point p (the left endpoint of the segment) intersect
     std::vector<std::array<cg3::Point2d, 4>> followSegment(std::vector<Trapezoid> trapezoids, /*Dag*/ cg3::Segment2d segment);
     bool isToTheRight(cg3::Point2d p, cg3::Point2d rightP);
-    cg3::Point2d findLeftp(Trapezoid t);
-    cg3::Point2d findRightp(Trapezoid t);
     bool LiesAbove(cg3::Point2d p, cg3::Segment2d segment);
 
     //method to fill vectors of adjacency
@@ -55,7 +53,7 @@ public:
 
     //methods to update trapezoids and dag
     void CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment);
-    void multipleTrapezoid(std::vector<Trapezoid> trapezoids, Trapezoid t, const cg3::Segment2d& segment);
+    void multipleTrapezoid(Trapezoid t, const cg3::Segment2d& segment, int number, int dim, std::map<cg3::Segment2d, size_t> deletSegTop, std::map<cg3::Segment2d, size_t> deletSegBottom);
 
     //find trapezoid (poi questa funzione userà il dag)
     Trapezoid findTrapezoid(cg3::Point2d p, std::vector<Trapezoid> trapezoids);

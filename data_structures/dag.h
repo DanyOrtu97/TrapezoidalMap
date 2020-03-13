@@ -21,24 +21,23 @@ public:
 
     void updateDag(const cg3::Segment2d segment);
 
-    std::array<cg3::Point2d, 4> findTrapezoid(const cg3::Point2d point);
+    std::array<cg3::Point2d, 4> findTrapezoid(const cg3::Point2d point, bool queryPoint);
 
     std::vector<std::array<cg3::Point2d, 4>> findTrapezoids(const cg3::Segment2d segment);
 
-    void insertSingleTrapezoid(const std::array<cg3::Point2d, 4> trapezoid, const cg3::Segment2d segment);
+    void insertSingleTrapezoid(const cg3::Segment2d segment);
 
-    void insertMultipleTrapezoids(const std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids, const cg3::Segment2d segment);
+    void insertMultipleTrapezoids(const cg3::Segment2d segment);
 
+    void setTrapezoidToInsert (std::vector<std::array<cg3::Point2d, 4>> traps);
 
-
-    //auxiliary functions
-    nodeDag* pointToPoint(class X *node ,const cg3::Point2d point);
-    nodeDag* pointToSegment(class Y *node, const cg3::Point2d point);
-    double determinant(const cg3::Segment2d seg, const cg3::Point2d point);
+    nodeDag* getDag();
 
 
 private:
     nodeDag* dag;
+    std::vector<std::array<cg3::Point2d, 4>> traps;
+    std::map<std::array<cg3::Point2d, 4>, nodeDag**> pointersMap;
 
 };
 #endif // DAG_H

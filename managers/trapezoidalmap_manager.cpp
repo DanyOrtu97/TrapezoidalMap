@@ -161,8 +161,16 @@ TrapezoidalMapManager::~TrapezoidalMapManager()
 void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& segment)
 {
 
+    if(segment.p2().x() < segment.p1().x()){
+        cg3::Segment2d seg;
+        seg.set(segment.p2(), segment.p1());
+        drawableTrapezoidalMap.trapezoidalMapAlgorithm(seg);
+    }
+    else{
+        drawableTrapezoidalMap.trapezoidalMapAlgorithm(segment);
+    }
 
-    drawableTrapezoidalMap.trapezoidalMapAlgorithm(segment);
+
 
 
 

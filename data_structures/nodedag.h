@@ -22,6 +22,13 @@ public:
     nodeDag *getRightChild() const;
     void setRightChild(nodeDag *rightChild);
 
+    nodeDag** getLeftChildPointer();
+    nodeDag** getRightChildPointer();
+
+    //auxiliary functions
+    long double determinant(const cg3::Segment2d seg, const cg3::Point2d point);
+
+
 
     virtual ~nodeDag();
 
@@ -41,6 +48,8 @@ public:
     Types getType() const override;
     cg3::Point2d getPoint() const;
     void setPoint(cg3::Point2d point);
+    nodeDag* pointToPoint(const cg3::Point2d point);
+
 
 private:
     cg3::Point2d point;
@@ -57,6 +66,7 @@ public:
     Types getType() const override;
     cg3::Segment2d getSegment() const;
     void setSegment(cg3::Segment2d segment);
+    nodeDag* pointToSegment(const cg3::Point2d point);
 
 private:
     cg3::Segment2d segment;
