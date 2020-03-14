@@ -17,13 +17,13 @@
 //It defines where points can be added
 //Do not change the following line
 #define BOUNDINGBOX 1e+6
-//Dag<class T> dag;
+
 
 //----------------------------------------------------------------------------------------------
 //                         You have to write your code in the area below.
 //----------------------------------------------------------------------------------------------
 
-
+Dag dagManager;
 
 /* ----- Constructors/Destructors ----- */
 
@@ -291,7 +291,7 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
     drawableTrapezoidalMapDataset.clear();
     drawableTrapezoidalMap.clearMap();
     inzializeStructures();
-    //dag.clearDag();
+    dagManager.clearDag();
 
     //#####################################################################
 }

@@ -21,23 +21,25 @@ public:
 
     void updateDag(const cg3::Segment2d segment);
 
-    std::array<cg3::Point2d, 4> findTrapezoid(const cg3::Point2d point, bool queryPoint);
+    std::array<cg3::Point2d, 4> findTrapezoid(const cg3::Point2d point, bool queryPoint, nodeDag* root);
 
     std::vector<std::array<cg3::Point2d, 4>> findTrapezoids(const cg3::Segment2d segment);
 
     void insertSingleTrapezoid(const cg3::Segment2d segment);
 
-    void insertMultipleTrapezoids(const cg3::Segment2d segment);
+    void insertMultipleTrapezoids(const cg3::Segment2d segment, std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids);
 
     void setTrapezoidToInsert (std::vector<std::array<cg3::Point2d, 4>> traps);
 
     nodeDag* getDag();
 
+    void clearDag();
+
 
 private:
     nodeDag* dag;
     std::vector<std::array<cg3::Point2d, 4>> traps;
-    std::map<std::array<cg3::Point2d, 4>, nodeDag**> pointersMap;
+    std::map<std::array<cg3::Point2d, 4>, nodeDag*> pointersMap;
 
 };
 #endif // DAG_H

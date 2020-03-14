@@ -7,15 +7,13 @@
 #include <data_structures/Trapezoidalmap.h>
 
 
-enum Types{X, Y, Leaf};
-
 
 class nodeDag{
 
 public:
     nodeDag() = default;
 
-    virtual Types getType() const=0;
+    virtual std::string  getType() const=0;
 
     nodeDag *getLeftChild() const;
     void setLeftChild(nodeDag *leftChild);
@@ -28,11 +26,9 @@ public:
     //auxiliary functions
     long double determinant(const cg3::Segment2d seg, const cg3::Point2d point);
 
-
-
     virtual ~nodeDag();
 
-private:
+protected:
     nodeDag *leftChildNode;
     nodeDag *rightChildNode;
 };
@@ -45,7 +41,8 @@ public:
     explicit X(cg3::Point2d p);
     ~X() override = default;
 
-    Types getType() const override;
+
+    std::string  getType() const override;
     cg3::Point2d getPoint() const;
     void setPoint(cg3::Point2d point);
     nodeDag* pointToPoint(const cg3::Point2d point);
@@ -63,7 +60,8 @@ public:
     explicit Y(cg3::Segment2d s);
     ~Y() override = default;
 
-    Types getType() const override;
+
+    std::string  getType() const override;
     cg3::Segment2d getSegment() const;
     void setSegment(cg3::Segment2d segment);
     nodeDag* pointToSegment(const cg3::Point2d point);
@@ -82,7 +80,7 @@ public:
     explicit Leaf(Trapezoid t);
     ~Leaf() override = default;
 
-    Types getType() const override;
+    std::string  getType() const override;
     Trapezoid getTrapezoid() const;
     void setTrapezoid(Trapezoid trapezoid);
 

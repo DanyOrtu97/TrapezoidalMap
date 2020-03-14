@@ -2,7 +2,7 @@
 
 #include "nodedag.h"
 
-
+#include <typeinfo>
 
 
 Dag::Dag(){
@@ -18,98 +18,150 @@ void Dag::inizializeDag(std::array<cg3::Point2d, 4> boundingBox){
 void Dag::updateDag(const cg3::Segment2d segment){
 
     //find trapezoid in the dag in which the segment intersect
-    std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids = findTrapezoids(segment);
-
-    if(foundTrapezoids.size() > 1){
-        insertMultipleTrapezoids(segment);
-    }
-    else{
-        insertSingleTrapezoid(segment);
-    }
-
-}
-
-std::array<cg3::Point2d, 4>  Dag::findTrapezoid(cg3::Point2d point, bool queryPoint){
-    nodeDag* root = dag;
-
-    while(dag->getType() != Types::Leaf){
-        if(dag->getType() == Types::X){ //tipo punto
-
-            dag = ((class X*)dag)->pointToPoint(point);
-
-        } //tipo segmento
-        else if(dag->getType() == Types::Y){
-
-            dag = ((class Y*)dag)->pointToSegment(point);
-        }
-    }
-
-    if(!queryPoint){
-        pointersMap = {};
-        pointersMap.insert(std::make_pair(((class Leaf*)dag)->getTrapezoid(), &dag));
-    }
-
-    return ((class Leaf*)dag)->getTrapezoid();
-}
-
-
-std::vector<std::array<cg3::Point2d, 4>> Dag::findTrapezoids(const cg3::Segment2d segment){
-    cg3::Point2d p1 = segment.p1();
-    cg3::Point2d p2 = segment.p2();
-
-
     std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids;
 
-    std::array<cg3::Point2d, 4> firstTrapezoid = findTrapezoid(p1, false);
-    std::array<cg3::Point2d, 4> lastTrapezoid = findTrapezoid(p2, false);
+    std::array<cg3::Point2d, 4> firstTrapezoid = findTrapezoid(segment.p1(), false, this->getDag());
+    std::array<cg3::Point2d, 4> lastTrapezoid = findTrapezoid(segment.p2(), false, this->getDag());
 
 
     if(firstTrapezoid == lastTrapezoid){
-        foundTrapezoids.push_back(firstTrapezoid);
+        insertSingleTrapezoid(segment);
     }
     else{
-        foundTrapezoids.push_back(firstTrapezoid);
-        foundTrapezoids.push_back(lastTrapezoid);
-    }
+        foundTrapezoids = findTrapezoids(segment);
+        insertMultipleTrapezoids(segment, foundTrapezoids);
 
-    return foundTrapezoids;
+    }
 }
 
+std::array<cg3::Point2d, 4>  Dag::findTrapezoid(cg3::Point2d point, bool queryPoint, nodeDag* root){
+    nodeDag* tmp = root;
+    nodeDag* parent = nullptr;
+
+    while(tmp->getType() != "PK4Leaf"){
+        parent = tmp;
+        if(tmp->getType() == "PK1X"){ //tipo punto
+
+            tmp = ((X*)tmp)->pointToPoint(point);
+
+        } //tipo segmento
+        else if(tmp->getType() == "PK1Y"){
+
+            tmp = ((Y*)tmp)->pointToSegment(point);
+        }
+
+    }
+
+    if(!queryPoint){
+        if(parent == nullptr){
+            pointersMap.insert(std::make_pair(((Leaf*)tmp)->getTrapezoid(), tmp));
+        }
+        else{
+            pointersMap.insert(std::make_pair(((Leaf*)tmp)->getTrapezoid(), parent));
+        }
+    }
+
+    return ((Leaf*)tmp)->getTrapezoid();
+}
 
 void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 
-
     //improve by the correct trapezoids
-    *pointersMap.begin()->second = new class X(p1);
-    class X* point2 = new class X(p2);
-    class Y* segment1 = new class Y(segment);
+    nodeDag* point1 = new X(p1);
+    nodeDag* point2 = new X(p2);
+    nodeDag* segment1 = new Y(segment);
 
-    (*pointersMap.begin()->second)->setLeftChild(new class Leaf(*(traps.begin()+((traps).size()-4))));
-    (*pointersMap.begin()->second)->setRightChild(point2);
+    /*
+     * verifica ordine trapezoidi
+     *
+     * sono tutti incasinati....
+     *
+     * inserire puntatori inoltre
+     */
+
+    point1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-4))));
+    point1->setRightChild(point2);
     point2->setLeftChild(segment1);
-    point2->setRightChild(new class Leaf(*(traps.begin()+((traps).size()-3))));
-    segment1->setLeftChild(new class Leaf(*(traps.begin()+((traps).size()-2))));
-    segment1->setRightChild(new class Leaf(*(traps.begin()+((traps).size()-1))));
+    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-3))));
+    segment1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-2))));
+    segment1->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
 
-    //cancella il dag quando effettua la ricerca e sovvrascrive
 
+    if(traps.size() <= 4){
+        dag = point1;
+    }
+    else{
+        if(pointersMap.begin()->second->getLeftChild()->getType() == "PK4Leaf" &&
+           pointersMap.begin()->second->getRightChild()->getType() != "PK4Leaf"){
+           pointersMap.begin()->second->setLeftChild(point1);
+        }
+        else if(pointersMap.begin()->second->getRightChild()->getType() == "PK4Leaf" &&
+                pointersMap.begin()->second->getLeftChild()->getType() != "PK4Leaf"){
+           pointersMap.begin()->second->setRightChild(point1);
+        }
+        else{
+            if(pointersMap.begin()->second->getRightChild()->getType() == "PK4Leaf" &&
+                   pointersMap.begin()->second->getLeftChild()->getType() == "PK4Leaf"){
+                    if(dag->determinant(((Y*)(pointersMap.begin()->second))->getSegment(), segment.p1()) < 0){
+                        (*((Y*)(pointersMap.begin()->second))).setLeftChild(point1);
+                    }
+                    else{
+                        (*((Y*)(pointersMap.begin()->second))).setRightChild(point1);
+                    }
+            }
+        }
+
+    }
     pointersMap.erase(pointersMap.begin());
 }
 
+std::vector<std::array<cg3::Point2d, 4>> Dag::findTrapezoids(const cg3::Segment2d segment){
+    cg3::Point2d p1 = segment.p1();
+    cg3::Point2d p2 = segment.p2();
 
-void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
+    std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids;
+
+    std::array<cg3::Point2d, 4> firstTrapezoid = findTrapezoid(segment.p1(), false, this->getDag());
+    std::array<cg3::Point2d, 4> lastTrapezoid = findTrapezoid(segment.p2(), false, this->getDag());
+
+
+
+    /* Trova nel dag tutti i trapezoidi tra il primo e l'ultimo
+     *
+     *
+     *
+     */
+
+
+
+
+
+
+    return foundTrapezoids;
+}
+
+void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids){
 
 }
 
 
 void Dag::setTrapezoidToInsert (std::vector<std::array<cg3::Point2d, 4>> trapezoids){
-    traps = trapezoids;
+    traps.clear();
+    //poi dovrà essere un puntatore a quei valori
+    for (std::array<cg3::Point2d, 4> t : trapezoids){
+        traps.push_back(t);
+    }
 }
 
 nodeDag* Dag::getDag(){
     return dag;
 }
 
+void Dag::clearDag(){
+    traps.clear();
+    dag = nullptr;
+    pointersMap.clear();
+}
 

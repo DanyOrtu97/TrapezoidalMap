@@ -45,13 +45,16 @@ nodeDag::~nodeDag(){
 //methods for node of type x (point)
 X::X(cg3::Point2d p){
     this->point = p;
-    this->setLeftChild(new class Leaf());
-    this->setRightChild(new class Leaf());
+    this->setLeftChild(new Leaf());
+    this->setRightChild(new Leaf());
 }
 
-Types X::getType() const{
-    return Types::X;
+
+std::string X::getType() const{
+    std::string s = typeid(this).name();
+    return s;
 }
+
 
 cg3::Point2d X::getPoint() const{
     return point;
@@ -63,10 +66,10 @@ void X::setPoint(cg3::Point2d point){
 
 nodeDag* X::pointToPoint(const cg3::Point2d point){
     if (point.x() < this->getPoint().x()){
-        return this->getLeftChild();
+        return this->leftChildNode;
     }
     else{
-        return this->getRightChild();
+        return this->rightChildNode;
     }
 }
 
@@ -74,12 +77,14 @@ nodeDag* X::pointToPoint(const cg3::Point2d point){
 //methods for node of type y (segment)
 Y::Y(cg3::Segment2d s){
     this->segment = s;
-    this->setLeftChild(new class Leaf());
-    this->setRightChild(new class Leaf());
+    this->setLeftChild(new Leaf());
+    this->setRightChild(new Leaf());
 }
 
-Types Y::getType() const{
-    return Types::Y;
+
+std::string  Y::getType() const{
+    std::string s = typeid(this).name();
+    return s;
 }
 
 cg3::Segment2d Y::getSegment() const{
@@ -91,12 +96,11 @@ void Y::setSegment(cg3::Segment2d segment){
 }
 
 nodeDag* Y::pointToSegment(const cg3::Point2d point){
-    //std::cout<<determinant(node->getSegment(), point)<<std::endl;
     if(determinant(this->getSegment(), point) < 0){
-        return this->getLeftChild();
+        return this->leftChildNode;
     }
     else{
-        return this->getRightChild();
+        return this->rightChildNode;
     }
 }
 
@@ -108,8 +112,9 @@ Leaf::Leaf(Trapezoid t){
 }
 
 
-Types Leaf::getType() const{
-   return Types::Leaf;
+std::string  Leaf::getType() const{
+    std::string s = typeid(this).name();
+    return s;
 }
 
 std::array<cg3::Point2d, 4> Leaf::getTrapezoid() const{

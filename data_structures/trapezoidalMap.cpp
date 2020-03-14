@@ -49,11 +49,6 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
     bool found;
 
-    /*
-    std::cout<<"Trapezoidi trovati: "<<std::endl;
-    std::cout << foundTrapezoids.size() << std::endl;
-*/
-
     //modificare trapezoidi trovati e inserire i nuovi
     /*
       Casi:
@@ -482,9 +477,9 @@ int TrapezoidalMap::findIndexedTrapezoid(cg3::Point2d p1, std::vector<Trapezoid>
 }
 
 void TrapezoidalMap::queryPoint(cg3::Point2d point){
-    found = findTrapezoid(point, trapezoids);
-    //dag.findTrapezoid(point);
-    //
+    found = dag.findTrapezoid(point, true, dag.getDag());
+    //findTrapezoid(point, trapezoids);
+    //dag.findTrapezoid(point, true, dag.getDag());
 }
 
 std::array<cg3::Point2d, 4> TrapezoidalMap::getFoundTrapezoid() const{
