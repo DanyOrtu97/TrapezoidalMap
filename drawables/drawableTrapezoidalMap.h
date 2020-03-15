@@ -33,7 +33,13 @@ public:
 
     void insertColors();
 
+    void setTrapezoidsColor();
 
+    std::vector<cg3::Color> getTrapezoidsColor();
+
+
+protected:
+    std::vector<cg3::Color> trapezoidsColor;
 
 private:
     cg3::Color trapezoidColor;

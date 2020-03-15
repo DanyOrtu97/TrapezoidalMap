@@ -70,10 +70,13 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
         trapezoidsMap.erase(delet.begin()->first);
 
-        update();
+        update();     
 
         //Inserisci e/o aggiorna vicini...
         CompletelyInsideTrapezoid(foundTrapezoids.front(), segment);
+
+        dag.updateDag(segment);
+        dag.clearTraps();
 
         leftpMap.erase(delet.begin()->first[0]);
         rightpMap.erase(delet.begin()->first[1]);
@@ -81,6 +84,7 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
         bottomMap.erase(deletSegBottom.begin()->first);
 
         InsertNeighbors(trapezoids, segment, 1);
+
     }
     else{
         int numberOfInsertion=0;
@@ -99,6 +103,9 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
             multipleTrapezoid(t, segment, numberOfInsertion, foundTrapezoids.size(), deletSegTop, deletSegBottom);
 
+            dag.updateDag(segment);
+            dag.clearTraps();
+
             topMap.erase(deletSegTop.begin()->first);
             bottomMap.erase(deletSegBottom.begin()->first);
 
@@ -112,12 +119,6 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
         //Inserisci e/o aggiorna vicini...
         InsertNeighbors(trapezoids, segment, 2);
     }
-
-
-
-    dag.setTrapezoidToInsert(trapezoids);
-    dag.updateDag(segment);
-    //nodeDag* ctrl = dag.getDag();
 
 }
 
@@ -218,6 +219,7 @@ std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::followSegment(std::vect
 
     std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids;
 
+    //sostituire ricerche con richerche nel dag
     std::array<cg3::Point2d, 4> firstTrapezoid = findTrapezoid(p1, trapezoids);
     std::array<cg3::Point2d, 4> lastTrapezoid = findTrapezoid(p2, trapezoids);
 
@@ -399,6 +401,8 @@ void TrapezoidalMap::addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p
     //trapezoids.push_back(Trapezoid(trapezoid));
 
     trapezoidsMap.insert(std::make_pair(Trapezoid(trapezoid), id));
+
+    dag.setTrapezoidToInsert(trapezoid, trapezoids.size());
 
     update();
 }

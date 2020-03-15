@@ -2,8 +2,9 @@
 
 #include "nodedag.h"
 
-#include <typeinfo>
+#include <data_structures/Trapezoidalmap.h>
 
+#include <typeinfo>
 
 Dag::Dag(){
     dag = nullptr;
@@ -84,12 +85,12 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
     point1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-4))));
     point1->setRightChild(point2);
     point2->setLeftChild(segment1);
-    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-3))));
+    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
     segment1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-2))));
-    segment1->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+    segment1->setRightChild(new Leaf(*(traps.begin()+((traps).size()-3))));
 
 
-    if(traps.size() <= 4){
+    if(nTrapezoids <= 4){
         dag = point1;
     }
     else{
@@ -143,20 +144,26 @@ std::vector<std::array<cg3::Point2d, 4>> Dag::findTrapezoids(const cg3::Segment2
 }
 
 void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids){
-
+    /* Aggiorna dag negli n trapezoidi trovati
+     *
+     * Ricorda ordine trapezoidi per ricerca
+     *
+     */
 }
 
 
-void Dag::setTrapezoidToInsert (std::vector<std::array<cg3::Point2d, 4>> trapezoids){
-    traps.clear();
+void Dag::setTrapezoidToInsert (std::array<cg3::Point2d, 4> trapezoid, int num){
     //poi dovrà essere un puntatore a quei valori
-    for (std::array<cg3::Point2d, 4> t : trapezoids){
-        traps.push_back(t);
-    }
+    nTrapezoids = num;
+    traps.push_back(trapezoid);
 }
 
 nodeDag* Dag::getDag(){
     return dag;
+}
+
+void Dag::clearTraps(){
+    traps.clear();
 }
 
 void Dag::clearDag(){

@@ -82,6 +82,7 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
     //the dataset.
 
 
+    drawableTrapezoidalMap.setTrapezoidsColor();
 
 
     //#####################################################################

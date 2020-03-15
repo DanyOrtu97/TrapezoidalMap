@@ -2,7 +2,7 @@
 #define DAG_H
 
 #include "data_structures/nodedag.h"
-
+#include <data_structures/Trapezoidalmap.h>
 
 class Dag{
 
@@ -29,14 +29,17 @@ public:
 
     void insertMultipleTrapezoids(const cg3::Segment2d segment, std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids);
 
-    void setTrapezoidToInsert (std::vector<std::array<cg3::Point2d, 4>> traps);
+    void setTrapezoidToInsert (std::array<cg3::Point2d, 4> trap, int num);
 
     nodeDag* getDag();
 
     void clearDag();
 
+    void clearTraps();
+
 
 private:
+    int nTrapezoids;
     nodeDag* dag;
     std::vector<std::array<cg3::Point2d, 4>> traps;
     std::map<std::array<cg3::Point2d, 4>, nodeDag*> pointersMap;
