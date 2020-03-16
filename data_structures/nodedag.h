@@ -6,7 +6,6 @@
 #include <cg3/geometry/segment2.h>
 
 
-
 class nodeDag{
 
 public:
@@ -18,9 +17,6 @@ public:
     void setLeftChild(nodeDag *leftChild);
     nodeDag *getRightChild() const;
     void setRightChild(nodeDag *rightChild);
-
-    nodeDag** getLeftChildPointer();
-    nodeDag** getRightChildPointer();
 
     //auxiliary functions
     long double determinant(const cg3::Segment2d seg, const cg3::Point2d point);
@@ -40,7 +36,6 @@ public:
     explicit X(cg3::Point2d p);
     ~X() override = default;
 
-
     std::string  getType() const override;
     cg3::Point2d getPoint() const;
     void setPoint(cg3::Point2d point);
@@ -49,7 +44,6 @@ public:
 
 private:
     cg3::Point2d point;
-
 };
 
 
@@ -59,7 +53,6 @@ public:
     explicit Y(cg3::Segment2d s);
     ~Y() override = default;
 
-
     std::string  getType() const override;
     cg3::Segment2d getSegment() const;
     void setSegment(cg3::Segment2d segment);
@@ -67,7 +60,6 @@ public:
 
 private:
     cg3::Segment2d segment;
-
 };
 
 
@@ -85,7 +77,6 @@ public:
 
 private:
     Trapezoid trapezoid;
-
 };
 
 #endif // NODEDAG_H

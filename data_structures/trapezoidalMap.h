@@ -36,8 +36,10 @@ public:
     std::vector<Trapezoid> getTrapezoids() const;
 
 
-    //method to update dag e trapezoidal map
+    //methods to update dag e trapezoidal map
     void trapezoidalMapAlgorithm(cg3::Segment2d segment);
+    void CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment);
+    void multipleTrapezoid(Trapezoid t, const cg3::Segment2d& segment, int number, int dim, std::map<cg3::Segment2d, size_t> deletSegTop, std::map<cg3::Segment2d, size_t> deletSegBottom);
 
     //method to fill vectors of adjacency
     void InsertNeighbors(std::vector<Trapezoid> t, cg3::Segment2d segment, int cases);
@@ -46,10 +48,7 @@ public:
     cg3::Point2d createPoint(cg3::Point2d p, double x, double y);
     double handleSlopeSegment(cg3::Segment2d s, cg3::Point2d p);
 
-    //methods to update trapezoids and dag
-    void CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment);
-    void multipleTrapezoid(Trapezoid t, const cg3::Segment2d& segment, int number, int dim, std::map<cg3::Segment2d, size_t> deletSegTop, std::map<cg3::Segment2d, size_t> deletSegBottom);
-
+    //methods for point location
     void queryPoint(cg3::Point2d point);
     Trapezoid getFoundTrapezoid() const;
 

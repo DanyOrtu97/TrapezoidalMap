@@ -21,14 +21,6 @@ void nodeDag::setRightChild(nodeDag *rightChild){
     rightChildNode = rightChild;
 }
 
-nodeDag** nodeDag::getLeftChildPointer(){
-    return &leftChildNode;
-}
-
-nodeDag** nodeDag::getRightChildPointer(){
-    return &rightChildNode;
-}
-
 
 long double nodeDag::determinant(const cg3::Segment2d segment, const cg3::Point2d p){
     return roundl((segment.p1().x() * ((segment.p2().y() * 1) - (1 * p.y())))-

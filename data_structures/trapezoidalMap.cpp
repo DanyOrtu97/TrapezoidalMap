@@ -12,7 +12,6 @@ Dag dag;
 TrapezoidalMap::TrapezoidalMap() :
     boundingBox(cg3::Point2d(0,0),cg3::Point2d(0,0))
 {
-
 }
 
 void TrapezoidalMap::inizialize(){
@@ -82,7 +81,9 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
     else{
         int numberOfInsertion=0;
 
-        dag.updateDag(segment);
+        //split node
+        nodeDag* splitNode= dag.findSplitNode(segment);
+        dag.findTrapezoids(segment, splitNode);
 
         std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids;
 
@@ -107,6 +108,7 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
             multipleTrapezoid(t, segment, numberOfInsertion, foundTrapezoids.size(), deletSegTop, deletSegBottom);
 
+            dag.updateDag(segment);
             dag.clearTraps();
 
             topMap.erase(deletSegTop.begin()->first);

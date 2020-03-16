@@ -1,15 +1,11 @@
 #include "dag.h"
-
 #include "nodedag.h"
-
 #include <data_structures/trapezoidalMap.h>
-
 #include <typeinfo>
-
-TrapezoidalMap trapezoidalMap;
 
 Dag::Dag(){
     dag = nullptr;
+    TrapezoidalMap trapezoidalMap;
 }
 
 
@@ -32,9 +28,7 @@ void Dag::updateDag(const cg3::Segment2d segment){
         pointersMap.clear();
         //split node
         nodeDag* splitNode= findSplitNode(segment);
-        findTrapezoids(segment, splitNode);
         insertMultipleTrapezoids(segment, splitNode);
-
     }
 }
 
@@ -72,18 +66,10 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 
-    //improve by the correct trapezoids
     nodeDag* point1 = new X(p1);
     nodeDag* point2 = new X(p2);
     nodeDag* segment1 = new Y(segment);
 
-    /*
-     * verifica ordine trapezoidi
-     *
-     * sono tutti incasinati....
-     *
-     * inserire puntatori inoltre
-     */
 
     point1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-4))));
     point1->setRightChild(point2);
@@ -201,13 +187,10 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
      * Ricorda ordine trapezoidi per ricerca
      *
      */
-
-
 }
 
 
 void Dag::setTrapezoidToInsert (std::array<cg3::Point2d, 4> trapezoid, int num){
-    //poi dovrà essere un puntatore a quei valori
     nTrapezoids = num;
     traps.push_back(trapezoid);
 }
