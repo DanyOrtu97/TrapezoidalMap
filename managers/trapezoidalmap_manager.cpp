@@ -1,8 +1,6 @@
 #include "trapezoidalmap_manager.h"
 #include "ui_trapezoidalmapmanager.h"
 
-#include "data_structures/Trapezoidalmap.h"
-
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QInputDialog>

@@ -8,6 +8,7 @@
 #include <cg3/geometry/point2.h>
 #include <cg3/geometry/segment2.h>
 #include <cg3/geometry/bounding_box2.h>
+#include <data_structures/dag.h>
 
 
 #include "data_structures/trapezoidalmap_dataset.h"
@@ -38,14 +39,8 @@ public:
     //method to update dag e trapezoidal map
     void trapezoidalMapAlgorithm(cg3::Segment2d segment);
 
-    //methods to find the trapezoidal in which the point p (the left endpoint of the segment) intersect
-    std::vector<std::array<cg3::Point2d, 4>> followSegment(std::vector<Trapezoid> trapezoids, /*Dag*/ cg3::Segment2d segment);
-    bool isToTheRight(cg3::Point2d p, cg3::Point2d rightP);
-    bool LiesAbove(cg3::Point2d p, cg3::Segment2d segment);
-
     //method to fill vectors of adjacency
     void InsertNeighbors(std::vector<Trapezoid> t, cg3::Segment2d segment, int cases);
-
 
     //methods to handle points
     cg3::Point2d createPoint(cg3::Point2d p, double x, double y);
@@ -55,13 +50,8 @@ public:
     void CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment);
     void multipleTrapezoid(Trapezoid t, const cg3::Segment2d& segment, int number, int dim, std::map<cg3::Segment2d, size_t> deletSegTop, std::map<cg3::Segment2d, size_t> deletSegBottom);
 
-    //find trapezoid (poi questa funzione userà il dag)
-    Trapezoid findTrapezoid(cg3::Point2d p, std::vector<Trapezoid> trapezoids);
-    int findIndexedTrapezoid(cg3::Point2d p, std::vector<Trapezoid> trapezoids);
     void queryPoint(cg3::Point2d point);
     Trapezoid getFoundTrapezoid() const;
-
-
 
     void clearMap();
 

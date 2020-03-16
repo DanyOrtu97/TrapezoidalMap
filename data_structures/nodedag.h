@@ -4,7 +4,6 @@
 
 #include <cg3/geometry/point2.h>
 #include <cg3/geometry/segment2.h>
-#include <data_structures/Trapezoidalmap.h>
 
 
 
