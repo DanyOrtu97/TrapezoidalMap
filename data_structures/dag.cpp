@@ -124,10 +124,10 @@ void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node){
             }
         }
         else if(node->getType() == "PK1Y"){
-            if(node->determinant(((Y*)node)->getSegment(), p1) < 0 && node->determinant(((Y*)node)->getSegment(), p2)){
+            if(node->determinant(((Y*)node)->getSegment(), p1) < 0 && node->determinant(((Y*)node)->getSegment(), p2) < 0){
                 findTrapezoids(segment, node->getLeftChild());
             }
-            else{
+            else if(node->determinant(((Y*)node)->getSegment(), p1) > 0 && node->determinant(((Y*)node)->getSegment(), p2) > 0){
                 findTrapezoids(segment, node->getRightChild());
             }
         }
@@ -142,6 +142,7 @@ void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node){
     }
 
 }
+
 
 nodeDag* Dag::findSplitNode(const cg3::Segment2d segment){
     nodeDag* leftPoint = this->getDag();
