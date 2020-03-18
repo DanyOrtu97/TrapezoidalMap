@@ -40,7 +40,7 @@ public:
     void trapezoidalMapAlgorithm(cg3::Segment2d segment);
     void CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment);
     void multipleTrapezoid(const cg3::Segment2d& segment, std::vector<Trapezoid> foundTrapezoid);
-
+    void updateNeighbors(cg3::Segment2d top, cg3::Segment2d bottom, cg3::Point2d left, cg3::Point2d right);
 
     //methods to handle points
     cg3::Point2d createPoint(cg3::Point2d p, double x, double y);
