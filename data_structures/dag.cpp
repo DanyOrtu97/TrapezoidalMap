@@ -25,7 +25,6 @@ void Dag::updateDag(const cg3::Segment2d segment){
         insertSingleTrapezoid(segment);
     }
     else{
-        pointersMap.clear();
         //split node
         nodeDag* splitNode= findSplitNode(segment);
         insertMultipleTrapezoids(segment, splitNode);
@@ -143,7 +142,6 @@ void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node){
 
 }
 
-
 nodeDag* Dag::findSplitNode(const cg3::Segment2d segment){
     nodeDag* leftPoint = this->getDag();
     nodeDag* rightPoint = this->getDag();
@@ -187,6 +185,11 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
      *
      * Ricorda ordine trapezoidi per ricerca
      *
+     * nTrapezoids = traps in totale nella struttura
+     *
+     * PointersMap = indirizzo degli n trapezoidi da modificare
+     *
+     * traps = trapezoidi nuovi da inserire negli indirizzi corrispondenti
      */
 }
 
