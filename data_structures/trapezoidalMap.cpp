@@ -105,10 +105,10 @@ void TrapezoidalMap::CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d
     deletSegTop.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[0], delet.begin()->first[1]), delet.begin()->second));
     deletSegBottom.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[3], delet.begin()->first[2]), delet.begin()->second));
 
-    if(t == trapezoids[1]){
+    if(t == trapezoids[2]){
         up=false;
     }
-    if(t == trapezoids[2]){
+    if(t == trapezoids[1]){
         up=true;
     }
 
@@ -180,7 +180,6 @@ void TrapezoidalMap::CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d
 
 
 }
-
 
 void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vector<Trapezoid> foundTrapezoids){
     std::map<Trapezoid, size_t> delet;
@@ -288,7 +287,7 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                 }
                 else{
                     rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
-                    addPolygon(upfirst, foundTrapezoids[i][1], rightPSeg ,p1);
+                    addPolygon(upfirst, foundTrapezoids[i][1], rightPSeg, p1);
                     updateNeighbors(cg3::Segment2d(upfirst, foundTrapezoids[i][1]), cg3::Segment2d(p1, rightPSeg), p1, *itR);
                     downsecond=createPoint(downsecond, p2.x(), handleSlopeSegment(deletSegBottom.begin()->first, p2));
                     addPolygon(p1, p2, downsecond, downfirst);
@@ -360,6 +359,23 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                             updateNeighbors(cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(foundTrapezoids[i][3], foundTrapezoids[i][2]), foundTrapezoids[i][3], foundTrapezoids[i][2]);
 
                         }
+
+                        if(countNonBoxUp==1 && countNonBoxDown==1){
+                            rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
+                            downfirst=createPoint(downfirst, p1.x(), handleSlopeSegment(deletSegBottom.begin()->first, p1));
+                            addPolygon(p1, rightPSeg, *itR, downfirst);
+                            updateNeighbors(cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, *itR), p1, *itR);
+
+
+                        }
+
+                        if(countNonBoxUp==1 && countNonBoxDown==0){
+                            rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
+                            downfirst=createPoint(downfirst, p1.x(), handleSlopeSegment(deletSegBottom.begin()->first, p1));
+                            addPolygon(p1, rightPSeg, foundTrapezoids[i][2], downfirst);
+                            updateNeighbors(cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst,  foundTrapezoids[i][2]), p1, *itR);
+                        }
+
                     }
                     else{
                         addPolygon(p1, rightPSeg, foundTrapezoids[i][2], downfirst);
@@ -415,18 +431,35 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
 
                     }
                     if(countNonBoxUp >= 1 && foundTrapezoids[i][0].y() != (1e+6)){
-                        leftPSeg = createPoint(leftPSeg, midpointR.x(), handleSlopeSegment(segment, midpointR));
-                        rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
-                        addPolygon(midpointR, *itR ,rightPSeg, leftPSeg);
-                        updateNeighbors(cg3::Segment2d(midpointR, *itR), cg3::Segment2d(leftPSeg, rightPSeg), midpointR, *itR);
-
-                        if(foundTrapezoids[i][2].y() == -(1e+6)){
-                            downsecond=createPoint(downsecond, p2.x(), handleSlopeSegment(deletSegBottom.begin()->first, p2));
-                            leftPSeg = createPoint(leftPSeg, itL->x(), handleSlopeSegment(segment, *itL));
-                            addPolygon(leftPSeg, p2, downsecond, foundTrapezoids[i][3]);
-                            updateNeighbors(cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(foundTrapezoids[i][3], downsecond), *itL, p2);
+                        if(countNonBoxUp==1 || countNonBoxUp > 2){
+                            if(countNonBoxUp > 2  && foundTrapezoids[i][2].y() == -(1e+6)){
+                                upfirst=createPoint(upfirst, p1.x(), handleSlopeSegment(deletSegTop.begin()->first, p1));
+                                rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
+                                addPolygon(upfirst, *itR, rightPSeg, p1);
+                                updateNeighbors(cg3::Segment2d(upfirst, *itR), cg3::Segment2d(p1, rightPSeg), p1, *itR);
+                            }
+                            else{
+                                leftPSeg = createPoint(leftPSeg, midpointR.x(), handleSlopeSegment(segment, midpointR));
+                                rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
+                                addPolygon(midpointR, *itR ,rightPSeg, leftPSeg);
+                                updateNeighbors(cg3::Segment2d(midpointR, *itR), cg3::Segment2d(leftPSeg, rightPSeg), midpointR, *itR);
+                            }
                         }
 
+                        if(countNonBoxUp==2){
+                            upfirst=createPoint(upfirst, p1.x(), handleSlopeSegment(deletSegTop.begin()->first, p1));
+                            rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
+                            addPolygon(upfirst, *itR, rightPSeg, p1);
+                            updateNeighbors(cg3::Segment2d(upfirst, *itR), cg3::Segment2d(p1, rightPSeg), midpointR, *itR);
+
+                        }
+
+                    }
+                    if(countNonBoxUp >= 1 && foundTrapezoids[i][2].y() == -(1e+6)){
+                        downsecond=createPoint(downsecond, p2.x(), handleSlopeSegment(deletSegBottom.begin()->first, p2));
+                        leftPSeg = createPoint(leftPSeg, itL->x(), handleSlopeSegment(segment, *itL));
+                        addPolygon(leftPSeg, p2, downsecond, foundTrapezoids[i][3]);
+                        updateNeighbors(cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(foundTrapezoids[i][3], downsecond), *itL, p2);
                     }
 
                 }
