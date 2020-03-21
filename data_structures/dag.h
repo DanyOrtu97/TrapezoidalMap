@@ -20,7 +20,7 @@ public:
 
     nodeDag* findSplitNode(const cg3::Segment2d segment);
 
-    void insertSingleTrapezoid(const cg3::Segment2d segment);
+    void insertSingleTrapezoid(const cg3::Segment2d segment, bool multiSplit);
 
     void insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitNode);
 

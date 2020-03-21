@@ -88,7 +88,7 @@ void Y::setSegment(cg3::Segment2d segment){
 }
 
 nodeDag* Y::pointToSegment(const cg3::Point2d point){
-    if(determinant(this->getSegment(), point) < 0){
+    if(determinant(this->getSegment(), point) > 0){
         return this->leftChildNode;
     }
     else{

@@ -50,6 +50,8 @@ public:
     void queryPoint(cg3::Point2d point);
     Trapezoid getFoundTrapezoid() const;
 
+    bool degeneratedTrapezoid(const Trapezoid t);
+
     void clearMap();
 
 private:
