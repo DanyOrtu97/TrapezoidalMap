@@ -39,16 +39,13 @@ void DrawableTrapezoidalMap::draw() const
             }
         }
         else{
-<<<<<<< HEAD
             if(t.degeneratedTrapezoid(trap)){
 
             }
             else{
                 cg3::opengl::drawQuad2(trap, trapezoidColor /*this->trapezoidsColor[i]*/, 2, false /*true*/);
             }
-=======
             cg3::opengl::drawQuad2(trap, trapezoidColor /*this->trapezoidsColor[i]*/, 2, false /*true*/);
->>>>>>> 71e958c67d343affe32c788aa3ee8dc327e1d3a9
             //cg3::opengl::drawLine2(trap[0], trap[3], verticalLineColor, static_cast<int>(verticalLineSize));
             //cg3::opengl::drawLine2(trap[1], trap[2], verticalLineColor, static_cast<int>(verticalLineSize));
             i++;
