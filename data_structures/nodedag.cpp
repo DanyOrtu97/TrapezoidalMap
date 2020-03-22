@@ -21,6 +21,14 @@ void nodeDag::setRightChild(nodeDag *rightChild){
     rightChildNode = rightChild;
 }
 
+nodeDag** nodeDag::getLeftChildP(){
+    return &leftChildNode;
+}
+
+nodeDag** nodeDag::getRightChildP(){
+    return &rightChildNode;
+}
+
 
 long double nodeDag::determinant(const cg3::Segment2d segment, const cg3::Point2d p){
     return roundl((segment.p1().x() * ((segment.p2().y() * 1) - (1 * p.y())))-
@@ -56,12 +64,12 @@ void X::setPoint(cg3::Point2d point){
     this->point = point;
 }
 
-nodeDag* X::pointToPoint(const cg3::Point2d point){
+nodeDag** X::pointToPoint(const cg3::Point2d point){
     if (point.x() < this->getPoint().x()){
-        return this->leftChildNode;
+        return this->getLeftChildP();
     }
     else{
-        return this->rightChildNode;
+        return this->getRightChildP();
     }
 }
 
@@ -87,12 +95,12 @@ void Y::setSegment(cg3::Segment2d segment){
     this->segment = segment;
 }
 
-nodeDag* Y::pointToSegment(const cg3::Point2d point){
+nodeDag** Y::pointToSegment(const cg3::Point2d point){
     if(determinant(this->getSegment(), point) > 0){
-        return this->leftChildNode;
+        return this->getLeftChildP();
     }
     else{
-        return this->rightChildNode;
+        return this->getRightChildP();
     }
 }
 

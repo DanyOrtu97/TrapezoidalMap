@@ -22,12 +22,9 @@ void Dag::updateDag(const cg3::Segment2d segment){
     //split node
     nodeDag* splitNode= findSplitNode(segment);
     if(firstTrapezoid == lastTrapezoid){
-        if(splitNode == pointersMap.begin()->second){
-             insertSingleTrapezoid(segment, false);
-        }
-        else{
-            insertSingleTrapezoid(segment, true);
-        }
+
+        insertSingleTrapezoid(segment);
+
         pointersMap.clear();
     }
     else{
@@ -37,36 +34,28 @@ void Dag::updateDag(const cg3::Segment2d segment){
 }
 
 std::array<cg3::Point2d, 4>  Dag::findTrapezoid(cg3::Point2d point, bool queryPoint, nodeDag* root){
-    nodeDag* tmp = root;
-    nodeDag* parent = nullptr;
+    nodeDag** tmp = &root;
 
-    while(tmp->getType() != "PK4Leaf"){
-        parent = tmp;
-        if(tmp->getType() == "PK1X"){
+    while((*tmp)->getType() != "PK4Leaf"){
+        if((*tmp)->getType() == "PK1X"){
 
-            tmp = ((X*)tmp)->pointToPoint(point);
+            tmp = ((X*)*tmp)->pointToPoint(point);
 
         }
-        else if(tmp->getType() == "PK1Y"){
+        else if((*tmp)->getType() == "PK1Y"){
 
-            tmp = ((Y*)tmp)->pointToSegment(point);
+            tmp = ((Y*)*tmp)->pointToSegment(point);
         }
 
     }
-
     if(!queryPoint){
-        if(parent == nullptr){
-            pointersMap.insert(std::make_pair(((Leaf*)tmp)->getTrapezoid(), tmp));
-        }
-        else{
-            pointersMap.insert(std::make_pair(((Leaf*)tmp)->getTrapezoid(), parent));
-        }
+        addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), tmp));
     }
 
-    return ((Leaf*)tmp)->getTrapezoid();
+    return ((Leaf*)*tmp)->getTrapezoid();
 }
 
-void Dag::insertSingleTrapezoid(const cg3::Segment2d segment, bool multiSplit){
+void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 
@@ -87,82 +76,53 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment, bool multiSplit){
         dag = point1;
     }
     else{
-        if(pointersMap.begin()->second->getLeftChild()->getType() == "PK4Leaf" &&
-           pointersMap.begin()->second->getRightChild()->getType() != "PK4Leaf"){
-           pointersMap.begin()->second->setLeftChild(point1);
-        }
-        else if(pointersMap.begin()->second->getRightChild()->getType() == "PK4Leaf" &&
-                pointersMap.begin()->second->getLeftChild()->getType() != "PK4Leaf"){
-           pointersMap.begin()->second->setRightChild(point1);
-        }
-        else{
-            if(pointersMap.begin()->second->getRightChild()->getType() == "PK4Leaf" &&
-                   pointersMap.begin()->second->getLeftChild()->getType() == "PK4Leaf"){
-                    if(dag->determinant(((Y*)(pointersMap.begin()->second))->getSegment(), segment.p1()) > 0){
-                        if(multiSplit){
-                            (*((Y*)(pointersMap.begin()->second))).setLeftChild(point1);
-                            pointersMap.clear();
-                            std::array<cg3::Point2d, 4> lastTrapezoid = findTrapezoid(segment.p2(), false, this->getDag());
-                            (*((Y*)(pointersMap.begin()->second))).setLeftChild(point1);
-                        }
-                        else{
-                            (*((Y*)(pointersMap.begin()->second))).setLeftChild(point1);
-                        }
-                    }
-                    else{
-                        if(multiSplit){
-                            (*((Y*)(pointersMap.begin()->second))).setRightChild(point1);
-                            pointersMap.clear();
-                            std::array<cg3::Point2d, 4> lastTrapezoid = findTrapezoid(segment.p2(), false, this->getDag());
-                            (*((Y*)(pointersMap.begin()->second))).setRightChild(point1);
-
-                        }
-                        else{
-                            (*((Y*)(pointersMap.begin()->second))).setRightChild(point1);
-                        }
-                    }
-            }
-        }
-
+        /*
+         * Elimina multisplit e gestisci bene puntatori doppi -> devono aggiornare tutti i valori a cui puntano
+         */
+         ((*(pointersMap.begin()->second)))=point1;
     }
-    //scrivere sul pointer e modificarli entrambi, non solo uno
     pointersMap.erase(pointersMap.begin());
 }
 
-void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node){
+void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* temp){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 
-    nodeDag* parent = nullptr;
+    nodeDag** tmp= &node;
 
-    if(node->getType() != "PK4Leaf"){
-        parent=node;
-        if(node->getType() == "PK1X"){
-            if(p1.x() < ((X*)node)->getPoint().x()){
-                findTrapezoids(segment, node->getLeftChild());
+    if((*tmp)->getType() != "PK4Leaf"){
+        temp=*tmp;
+        if((*tmp)->getType() == "PK1X"){
+            if(p1.x() < ((X*)(*tmp))->getPoint().x()){
+                findTrapezoids(segment, (*tmp)->getLeftChild(), temp);
             }
-            if(p2.x() > ((X*)node)->getPoint().x()){
-                findTrapezoids(segment, node->getRightChild());
+            if(p2.x() > ((X*)(*tmp))->getPoint().x()){
+                findTrapezoids(segment, (*tmp)->getRightChild(), temp);
             }
         }
-        else if(node->getType() == "PK1Y"){
-            if(node->determinant(((Y*)node)->getSegment(), p1) > 0 && node->determinant(((Y*)node)->getSegment(), p2) > 0){
-                findTrapezoids(segment, node->getLeftChild());
+        else if((*tmp)->getType() == "PK1Y"){
+            if((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) > 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) > 0){
+                findTrapezoids(segment, (*tmp)->getLeftChild(), temp);
             }
-            else if(node->determinant(((Y*)node)->getSegment(), p1) < 0 && node->determinant(((Y*)node)->getSegment(), p2) < 0){
-                findTrapezoids(segment, node->getRightChild());
+            else if((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) < 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) < 0){
+                findTrapezoids(segment, (*tmp)->getRightChild(), temp);
             }
         }
     }
     else{
-        if(parent == nullptr){
-            pointersMap.insert(std::make_pair(((Leaf*)node)->getTrapezoid(), node));
+        if(temp->getLeftChild()->getType() == "PK4Leaf"){
+            addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
         }
         else{
-            pointersMap.insert(std::make_pair(((Leaf*)node)->getTrapezoid(), parent));
+            addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
         }
-    }
 
+
+    }
+}
+
+void Dag::addMapElement(const std::pair<std::array<cg3::Point2d, 4>, nodeDag**> element){
+    pointersMap.insert(element);
 }
 
 nodeDag* Dag::findSplitNode(const cg3::Segment2d segment){
@@ -178,12 +138,12 @@ nodeDag* Dag::findSplitNode(const cg3::Segment2d segment){
          */
         if(leftPoint->getType() == "PK1X"){
 
-            leftPoint = ((X*)leftPoint)->pointToPoint(segment.p1());
+            leftPoint = *((X*)leftPoint)->pointToPoint(segment.p1());
 
         }
         else if(leftPoint->getType() == "PK1Y"){
 
-            leftPoint = ((Y*)leftPoint)->pointToSegment(segment.p1());
+            leftPoint = *((Y*)leftPoint)->pointToSegment(segment.p1());
         }
 
         /*
@@ -191,12 +151,12 @@ nodeDag* Dag::findSplitNode(const cg3::Segment2d segment){
          */
         if(rightPoint->getType() == "PK1X"){
 
-            rightPoint = ((X*)rightPoint)->pointToPoint(segment.p2());
+            rightPoint = *((X*)rightPoint)->pointToPoint(segment.p2());
 
         }
         else if(rightPoint->getType() == "PK1Y"){
 
-            rightPoint = ((Y*)rightPoint)->pointToSegment(segment.p2());
+            rightPoint = *((Y*)rightPoint)->pointToSegment(segment.p2());
         }
     }
 
@@ -209,167 +169,103 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
     nodeDag* point1 = new X(p1);
     nodeDag* point2 = new X(p2);
     nodeDag* segment1a = new Y(segment);
-    bool up;
+    bool up, invert=false;
 
-    for(std::map<std::array<cg3::Point2d, 4>, nodeDag*>::iterator it = pointersMap.begin(); it!=pointersMap.end(); it++){
+    nodeDag* segmentInner;
+    nodeDag* segmentInner1;
 
-        if(it == pointersMap.begin()){ //first trapezoid found
+    int contaStep=0;
 
-            point1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size())))));
-            point1->setRightChild(segment1a);
-            if(it->second->getLeftChild()->getType() == "PK4Leaf" &&
-               it->second->getRightChild()->getType() != "PK4Leaf"){
-                if(pointersMap.size() == 2){ //two traps
-                    segment1a->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-1)))));
-                    segment1a->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-2)))));
-                    it->second->setLeftChild(point1);
+    for(std::map<std::array<cg3::Point2d, 4>, nodeDag**>::iterator it = pointersMap.begin(); it!=pointersMap.end(); it++){
+        if(it == pointersMap.begin()){
+            if(splitNode->getType() == "PK1X"){
+                if(dag->determinant(segment, (((X*)splitNode))->getPoint()) < 0){
+                    up=true;
                 }
-
                 else{
-                    if(pointersMap.size() > 3){
-                        segment1a->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-1)))));
-                        segment1a->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-2)))));
-                        it->second->setLeftChild(point1);
-                    }
-                    else{
-                        if(splitNode->getType() == "PK1X" && dag->determinant(segment, ((X*)splitNode)->getPoint()) < 0){ //sopra
-                            segment1a->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-5)))));
-                            segment1a->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-1)))));
-                            it->second->setLeftChild(point1);
-                        }
-                        else{
-                            segment1a->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-1)))));
-                            segment1a->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-5)))));
-                            it->second->setLeftChild(point1);
-                        }
-
-                    }
+                    up=false;
                 }
             }
-            else if(it->second->getRightChild()->getType() == "PK4Leaf" &&
-                    it->second->getLeftChild()->getType() != "PK4Leaf"){
-                if(pointersMap.size() == 2){ //two traps
-                    segment1a->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-2)))));
-                    segment1a->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-1)))));
-                    it->second->setRightChild(point1);
-                }
-                //some stuff
+            point1->setRightChild(segment1a);
+            point1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-contaStep)))));
+            contaStep++;
+            if(pointersMap.size() == 2 || pointersMap.size() > 3){ //two traps
+                segment1a->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-contaStep)))));
+                contaStep++;
+                segment1a->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-contaStep)))));
+                contaStep++;
+                (*it->second)=point1;
             }
             else{
-                if(it->second->getRightChild()->getType() == "PK4Leaf" &&
-                       it->second->getLeftChild()->getType() == "PK4Leaf"){
-                        if(dag->determinant(((Y*)(it->second))->getSegment(), segment.p1()) > 0){
-                            if(pointersMap.size() == 2){ //two traps
-                                segment1a->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-1)))));
-                                segment1a->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-2)))));
-                                (*((Y*)(it->second))).setLeftChild(point1);
-                                up=true;
-                            }
-                            //some stuff
-                        }
-                        else{
-                            if(pointersMap.size() == 2){ //two traps
-                                segment1a->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-1)))));
-                                segment1a->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-2)))));
-                                (*((Y*)(it->second))).setRightChild(point1);
-                                up=false;
-                            }
-                            //some stuff
-                        }
-                }
+
             }
         }
         else if(it == --(pointersMap.end())){
             nodeDag* segment1b = new Y(segment);
-            point2->setLeftChild(segment1b);
-            point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-3)))));
-            if(it->second->getLeftChild()->getType() == "PK4Leaf" &&
-               it->second->getRightChild()->getType() != "PK4Leaf"){
-                if(pointersMap.size() == 2){ //two traps
+            point2->setLeftChild(segment1b);            
+            if(pointersMap.size() == 2){
+                point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-3)))));
+                if(up){
                     segment1b->setLeftChild(segment1a->getLeftChild());
                     segment1b->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                     it->second->setLeftChild(point2);
-                }
-                //some stuff
-
-            }
-            else if(it->second->getRightChild()->getType() == "PK4Leaf" &&
-                    it->second->getLeftChild()->getType() != "PK4Leaf"){
-                if(up){
-                    if(pointersMap.size() == 2){ //two traps
-                        segment1b->setLeftChild(segment1a->getLeftChild());
-                        segment1b->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                        it->second->setRightChild(point2);
-                    }
-                    //some stuff
                 }
                 else{
-                    if(pointersMap.size() == 2){ //two traps
-                        segment1b->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                        segment1b->setRightChild(segment1a->getRightChild());
-                        it->second->setRightChild(point2);
-                    }
-                    //some stuff
+                    segment1b->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                    segment1b->setRightChild(segment1a->getRightChild());
                 }
+                (*it->second)=point2;
             }
             else{
-                if(it->second->getRightChild()->getType() == "PK4Leaf" &&
-                       it->second->getLeftChild()->getType() == "PK4Leaf"){
-                        if(dag->determinant(((Y*)(it->second))->getSegment(), segment.p1()) > 0){
-                            if(pointersMap.size() == 2){ //two traps
-                                segment1b->setLeftChild(segment1a->getLeftChild());
-                                segment1b->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                                (*((Y*)(it->second))).setLeftChild(point2);
-                            }
-                            //some stuff
-                        }
-                        else{
-                            if(pointersMap.size() == 2){ //two traps
-                                segment1b->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                                segment1b->setRightChild(segment1a->getRightChild());
-                                (*((Y*)(it->second))).setRightChild(point2);
-                            }
-                            //some stuff
-                        }
-                }
+                point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-2))));
+                segment1b->setLeftChild(segmentInner->getLeftChild());
+                segment1b->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                (*it->second)=point2;
             }
         }
         else{ //more than two traps
-            nodeDag* segment1ca = new Y(segment);
-            nodeDag* segment1cb = new Y(segment);
-            nodeDag* segment1cc = new Y(segment);
-            nodeDag* segment1cd = new Y(segment);
-            /*
-            if(pointersMap.begin()->second->getLeftChild()->getType() == "PK4Leaf" &&
-               pointersMap.begin()->second->getRightChild()->getType() != "PK4Leaf"){
-               segment1ca->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-4)))));
-               segment1ca->setRightChild(segment1a->getRightChild());
-               pointersMap.begin()->second->setLeftChild(segment1ca);
-            }
-            else if(pointersMap.begin()->second->getRightChild()->getType() == "PK4Leaf" &&
-                    pointersMap.begin()->second->getLeftChild()->getType() != "PK4Leaf"){
-                segment1cb->setLeftChild();
-                segment1cb->setRightChild();
-                pointersMap.begin()->second->setRightChild(segment1cb);
+            if(pointersMap.size() > 2 && it == ++pointersMap.begin()){
+                segmentInner = new Y(segment);
+                if(up){
+                    segmentInner->setLeftChild(segment1a->getLeftChild());
+                    segmentInner->setRightChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                    contaStep++;
+                }
+                else{
+                    segmentInner->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                    contaStep++;
+                    segmentInner->setRightChild(segment1a->getRightChild());
+                }
+                invert=!invert;
+                (*it->second)=segmentInner;
             }
             else{
-                if(pointersMap.begin()->second->getRightChild()->getType() == "PK4Leaf" &&
-                       pointersMap.begin()->second->getLeftChild()->getType() == "PK4Leaf"){
-                        if(dag->determinant(((Y*)(pointersMap.begin()->second))->getSegment(), segment.p1()) > 0){
-                            segment1cc->setLeftChild(segment1ca->getLeftChild());
-                            segment1cc->setRightChild(new Leaf(*(traps.begin()+((traps).size()-(traps.size()-6)))));
-                            (*((Y*)(pointersMap.begin()->second))).setLeftChild(segment1cc);
-                        }
-                        else{
-                            segment1cd->setLeftChild();
-                            segment1cd->setRightChild();
-                            (*((Y*)(pointersMap.begin()->second))).setRightChild(segment1cd);
-                        }
+                segmentInner1 = new Y(segment);
+                if(invert){
+                    if(up){
+                        segmentInner1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                        contaStep++;
+                        segmentInner1->setRightChild(segmentInner->getRightChild());
+                    }
+                    else{
+                        segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                        segmentInner1->setRightChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                        contaStep++;
+                    }
                 }
+                else{
+                    if(up){
+                        segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                        segmentInner1->setRightChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                    }
+                    else{
+                        segmentInner1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                        segmentInner1->setRightChild(segmentInner->getRightChild());
+                    }
+                }
+                segmentInner = segmentInner1;
+                (*it->second)=segmentInner;
             }
-            */
         }
-
     }
 }
 
@@ -383,7 +279,7 @@ nodeDag* Dag::getDag(){
     return dag;
 }
 
-std::map<std::array<cg3::Point2d, 4>, nodeDag*> Dag::getPointerMap(){
+std::map<std::array<cg3::Point2d, 4>, nodeDag**> Dag::getPointerMap(){
     return pointersMap;
 }
 

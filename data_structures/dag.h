@@ -16,11 +16,11 @@ public:
 
     std::array<cg3::Point2d, 4> findTrapezoid(const cg3::Point2d point, bool queryPoint, nodeDag* root);
 
-    void findTrapezoids(const cg3::Segment2d segment, nodeDag* node);
+    void findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* temp);
 
     nodeDag* findSplitNode(const cg3::Segment2d segment);
 
-    void insertSingleTrapezoid(const cg3::Segment2d segment, bool multiSplit);
+    void insertSingleTrapezoid(const cg3::Segment2d segment);
 
     void insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitNode);
 
@@ -28,7 +28,9 @@ public:
 
     nodeDag* getDag();
 
-    std::map<std::array<cg3::Point2d, 4>, nodeDag*> getPointerMap();
+    void addMapElement(const std::pair<std::array<cg3::Point2d, 4>, nodeDag**> element);
+
+    std::map<std::array<cg3::Point2d, 4>, nodeDag**> getPointerMap();
 
     void clearDag();
 
@@ -39,7 +41,7 @@ private:
     int nTrapezoids;
     nodeDag* dag;
     std::vector<std::array<cg3::Point2d, 4>> traps;
-    std::map<std::array<cg3::Point2d, 4>, nodeDag*> pointersMap;
+    std::map<std::array<cg3::Point2d, 4>, nodeDag**> pointersMap;
 
 };
 #endif // DAG_H
