@@ -22,9 +22,6 @@ public:
     cg3::Point3d sceneCenter() const;
     double sceneRadius() const;
 
-    const cg3::Color& getTrapezoidColor() const;
-    void setTrapezoidColor(const cg3::Color& value);
-
     const cg3::Color& getVerticalLineColor() const;
     void setVerticalLineColor(const cg3::Color& value);
 
@@ -39,10 +36,8 @@ protected:
     std::vector<cg3::Color> trapezoidsColor;
 
 private:
-    cg3::Color trapezoidColor;
     cg3::Color verticalLineColor;
     unsigned int verticalLineSize;
-;
 };
 
 #endif // DRAWABLETRAPEZOIDALMAP_H

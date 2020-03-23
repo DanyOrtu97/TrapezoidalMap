@@ -14,42 +14,45 @@ TrapezoidalMap t;
 
 DrawableTrapezoidalMap::DrawableTrapezoidalMap():
     trapezoidsColor(),
-    trapezoidColor(0,0,40),
     verticalLineColor(255,0,0),
     verticalLineSize(6)
 {
 }
 
 
-
-//methods to draw trapezoidal map
+/**
+ * @brief This method draw vertical lines and trapezoids
+ */
 void DrawableTrapezoidalMap::draw() const
 {
     int i =0;
-    //draw trapezoids
-
     for (const std::array<cg3::Point2d, 4> trap : getTrapezoids()){
         if (getFoundTrapezoid().size()>1 && trap == getFoundTrapezoid()){
+            /*
             if(t.degeneratedTrapezoid(trap)){
 
             }
             else{
-                cg3::opengl::drawQuad2(trap, (cg3::Color(0,20,255)).hue(), 1, true);
+
             }
+            */
+             cg3::opengl::drawQuad2(trap, (cg3::Color(0,20,255)).hue(), 1, true);
         }
         else{
+            /*
             if(t.degeneratedTrapezoid(trap)){
 
             }
             else{
                 cg3::opengl::drawQuad2(trap, this->trapezoidsColor[i], 2, true);
             }
+            */
+            cg3::opengl::drawQuad2(trap, this->trapezoidsColor[i], 2, true);
             cg3::opengl::drawLine2(trap[0], trap[3], verticalLineColor, static_cast<int>(verticalLineSize));
             cg3::opengl::drawLine2(trap[1], trap[2], verticalLineColor, static_cast<int>(verticalLineSize));
             i++;
         }
     }
-
 }
 
 
@@ -66,17 +69,6 @@ double DrawableTrapezoidalMap::sceneRadius() const
     return boundingBox.diag();
 }
 
-
-const cg3::Color& DrawableTrapezoidalMap::getTrapezoidColor() const
-{
-    return trapezoidColor;
-}
-
-
-void DrawableTrapezoidalMap::setTrapezoidColor(const cg3::Color &value)
-{
-    trapezoidColor = value;
-}
 
 const cg3::Color& DrawableTrapezoidalMap::getVerticalLineColor() const
 {

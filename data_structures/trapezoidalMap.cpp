@@ -13,6 +13,9 @@ TrapezoidalMap::TrapezoidalMap() :
 {
 }
 
+/**
+ * @brief Method to inizialize the trapezoidal map
+ */
 void TrapezoidalMap::inizialize(){
 
     topLeft = createPoint(topLeft, -(1e+6), (1e+6));
@@ -25,13 +28,13 @@ void TrapezoidalMap::inizialize(){
     cg3::Point2d leftp;
     cg3::Point2d rightp;
 
+    size_t id2;
+
     //inizialize the trapezoidal map with the bounding box
     addPolygon(topLeft, topRight, bottomRight, bottomLeft);
 
     std::vector<std::array<cg3::Point2d, 4>> trapezoids;
     std::array<cg3::Point2d, 4> trapezoid = {topLeft, topRight, bottomRight, bottomLeft};
-
-    size_t id2;
 
     leftp.set(trapezoid[0].x(), trapezoid[0].y());
     rightp.set(trapezoid[1].x(), trapezoid[1].y());
@@ -51,7 +54,9 @@ void TrapezoidalMap::inizialize(){
 
 }
 
-
+/**
+ * @brief Method to update the trapezoidal map by the new trapezoids
+ */
 void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
     std::array<cg3::Point2d, 4> firstTrapezoid = dag.findTrapezoid(segment.p1(), false, dag.getDag());
@@ -92,7 +97,9 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
 }
 
-
+/**
+ * @brief Method to update the trapezoidal map in the case of single trapezoid insertion
+ */
 void TrapezoidalMap::CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment){
     std::map<Trapezoid, size_t> delet;
     std::map<cg3::Segment2d, size_t> deletSegTop, deletSegBottom;
@@ -176,10 +183,11 @@ void TrapezoidalMap::CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d
     else{
         updateNeighbors(cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight), segment.p2(), topRight);
     }
-
-
 }
 
+/**
+ * @brief Method to update the trapezoidal map in the case of multiple trapezoid insertion
+ */
 void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vector<Trapezoid> foundTrapezoids){
     std::map<Trapezoid, size_t> delet;
 
@@ -216,6 +224,7 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
 
         std::list<cg3::Point2d>::iterator itR = rightpList.begin();
         std::list<cg3::Point2d>::iterator itL = leftpList.begin();
+
         while(itR != rightpList.end()){
             if (itR->x() == topRight.x()){
                 break;
@@ -479,6 +488,9 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
     }
 }
 
+/**
+ * @brief Method to update the neighbors of each trapezoid
+ */
 void TrapezoidalMap::updateNeighbors(cg3::Segment2d top, cg3::Segment2d bottom, cg3::Point2d left, cg3::Point2d right){
     size_t id2 = std::numeric_limits<size_t>::max();
     topMap.insert(std::make_pair(cg3::Segment2d(top), id2));
@@ -487,6 +499,9 @@ void TrapezoidalMap::updateNeighbors(cg3::Segment2d top, cg3::Segment2d bottom, 
     rightpList.push_back(right);
 }
 
+/**
+ * @brief Method to add polygon in the structures of trapezoidal map
+ */
 void TrapezoidalMap::addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p3, cg3::Point2d p4){
     size_t id;
 
@@ -494,31 +509,30 @@ void TrapezoidalMap::addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p
 
     id = std::numeric_limits<size_t>::max();
 
-    bool noInsertion=false;
-
     /*
-     * Verificare che funzioni e che non dia errori nel dag
-     */
-
+    bool noInsertion=false;
     if(p1 == p2 && p3 == p4){
         noInsertion= true;
     }
-
     if(!noInsertion){
-        trapezoidsMap.insert(std::make_pair(Trapezoid(trapezoid), id));
-        update();
-    }
+    }*/
 
+    trapezoidsMap.insert(std::make_pair(Trapezoid(trapezoid), id));
+    update();
     dag.setTrapezoidToInsert(trapezoid, trapezoids.size());
-
-
 }
 
+/**
+ * @brief Method to find trapezoid in the map
+ */
 std::map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findTrapezoid(const Trapezoid t, bool& found){
     found = false;
     return findIndexedTrapezoid(Trapezoid(t), found);
 }
 
+/**
+ * @brief Method to find trapezoid in the map by index in constant time
+ */
 std::map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findIndexedTrapezoid(const Trapezoid& indexedTrapezoid, bool& found){
     std::map<Trapezoid, size_t>::iterator it = trapezoidsMap.find(indexedTrapezoid);
 
@@ -531,20 +545,32 @@ std::map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findIndexedTrapezo
     return map;
 }
 
+/**
+ * @brief Method to return the trapezoids
+ */
 std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::getTrapezoids() const{
     return trapezoids;
 }
 
+/**
+ * @brief Method to create a point
+ */
 cg3::Point2d TrapezoidalMap::createPoint(cg3::Point2d p, double x, double y){
     p.setXCoord(x);
     p.setYCoord(y);
     return p;
 }
 
+/**
+ * @brief Method to handle the slope of segment (y coordinate)
+ */
 double TrapezoidalMap::handleSlopeSegment(cg3::Segment2d s, cg3::Point2d p){
     return (((p.x() - s.p1().x())/(s.p2().x() - s.p1().x()))*(s.p2().y() - s.p1().y()))+s.p1().y();
 }
 
+/**
+ * @brief Method to update the trapezoids
+ */
 void TrapezoidalMap::update(){
     trapezoids.clear();
     for (std::map<Trapezoid, size_t>::iterator it=trapezoidsMap.begin(); it!=trapezoidsMap.end(); ++it){
@@ -552,14 +578,23 @@ void TrapezoidalMap::update(){
     }
 }
 
+/**
+ * @brief Method to set the trapezoid after the query point
+ */
 void TrapezoidalMap::queryPoint(cg3::Point2d point){
     found = dag.findTrapezoid(point, true, dag.getDag());
 }
 
+/**
+ * @brief Method to return the trapezoid after the point location query
+ */
 std::array<cg3::Point2d, 4> TrapezoidalMap::getFoundTrapezoid() const{
     return found;
 }
 
+/**
+ * @brief Method to handle the degerated cases (triangles)
+ */
 bool TrapezoidalMap::degeneratedTrapezoid(const Trapezoid t){
     if(t[0] == t[1]){
         return true;
@@ -580,11 +615,9 @@ bool TrapezoidalMap::degeneratedTrapezoid(const Trapezoid t){
 
 /**
  * @brief Cleared structures for the trapezoidal map
- * @param[in]
  */
 void TrapezoidalMap::clearMap()
 {
-
     boundingBox.setMin(cg3::Point2d(0,0));
     boundingBox.setMax(cg3::Point2d(0,0));
     trapezoids.clear();

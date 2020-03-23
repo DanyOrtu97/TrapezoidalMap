@@ -1,7 +1,6 @@
 #ifndef TRAPEZOIDALMAP_H
 #define TRAPEZOIDALMAP_H
 
-#include <unordered_map>
 #include <vector>
 #include <utility>
 
@@ -9,8 +8,6 @@
 #include <cg3/geometry/segment2.h>
 #include <cg3/geometry/bounding_box2.h>
 #include <data_structures/dag.h>
-
-
 #include "data_structures/trapezoidalmap_dataset.h"
 #include "data_structures/segment_intersection_checker.h"
 
