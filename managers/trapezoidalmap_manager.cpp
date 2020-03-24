@@ -158,7 +158,7 @@ TrapezoidalMapManager::~TrapezoidalMapManager()
  * @param[in] segment Segment
  */
 void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& segment)
-{
+{ 
 
     if(segment.p2().x() < segment.p1().x()){
         cg3::Segment2d seg;
