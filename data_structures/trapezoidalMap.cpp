@@ -201,9 +201,11 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
     cg3::Point2d upfirst, upsecond, downfirst, downsecond;
 
     cg3::Point2d rightPSeg, leftPSeg;
-    cg3::Point2d midpointR, midpointL;
+    cg3::Point2d midpointR, midpointL, tmp;
 
     int countNonBoxUp=0, countNonBoxDown=0;
+
+    bool firstTrap=false;
 
     for (int i=0; i<(int)foundTrapezoids.size(); i++){
         bool found;
@@ -305,6 +307,7 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
         }
         else{ //Trovati più di 2 trapezoidi
             if(i==0){
+                firstTrap=true;
                 upfirst=createPoint(upfirst, p1.x(), handleSlopeSegment(deletSegTop.begin()->first, p1));
                 downfirst=createPoint(downfirst, p1.x(), handleSlopeSegment(deletSegBottom.begin()->first, p1));
                 addPolygon(topLeft, upfirst, downfirst, bottomLeft);
@@ -381,19 +384,34 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                             downfirst=createPoint(downfirst, p1.x(), handleSlopeSegment(deletSegBottom.begin()->first, p1));
                             addPolygon(p1, rightPSeg, foundTrapezoids[i][2], downfirst);
                             updateNeighbors(cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst,  foundTrapezoids[i][2]), p1, *itR);
-
-
                         }
 
                     }
                     else{
-                        addPolygon(p1, rightPSeg, foundTrapezoids[i][2], downfirst);
-                        updateNeighbors(cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, foundTrapezoids[i][2]), p1, *itR);
+                        if((p1 <= foundTrapezoids[i][1] && foundTrapezoids[i][3].y() == -(1e+6)) || firstTrap){
+                            firstTrap=false;
+                            addPolygon(p1, rightPSeg, foundTrapezoids[i][2], downfirst);
+                            updateNeighbors(cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, foundTrapezoids[i][2]), p1, *itR);
+                            tmp = *itR;
+                        }
+                        else if(foundTrapezoids[i][2].y() != -(1e+6) && foundTrapezoids[i][1].y() == (1e+6)){
+                            rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
+                            leftPSeg = createPoint(leftPSeg, tmp.x(), handleSlopeSegment(segment, tmp));
+                            addPolygon(leftPSeg, rightPSeg, *itR, tmp);
+                            updateNeighbors(cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(*itR, tmp), tmp, *itR);
+                        }
+                        else{
+                            leftPSeg = createPoint(leftPSeg, tmp.x(), handleSlopeSegment(segment, tmp));
+                            addPolygon(leftPSeg, rightPSeg, *itR, tmp);
+                            updateNeighbors(cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(*itR, tmp), tmp, *itR);
+                        }
+
                         if(countNonBoxUp >=1 && foundTrapezoids[i][0].y() == (1e+6)){
                             upsecond=createPoint(upsecond, p2.x(), handleSlopeSegment(deletSegTop.begin()->first, p2));
                             leftPSeg = createPoint(leftPSeg, itL->x(), handleSlopeSegment(segment, *itL));
                             addPolygon(foundTrapezoids[i][0], upsecond, p2, leftPSeg);
                             updateNeighbors(cg3::Segment2d(foundTrapezoids[i][0], upsecond), cg3::Segment2d(leftPSeg, p2), *itL, p2);
+
                         }
                         else if(countNonBoxUp == 1 && foundTrapezoids[i][0].y() != (1e+6)){
                             if(foundTrapezoids[(int)foundTrapezoids.size()-1][0].y() != (1e+6)){
@@ -407,6 +425,7 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                             }
 
                         }
+
                     }
                 }
                 else if (dag.getDag()->determinant(segment, *itR) > 0 && dag.getDag()->determinant(segment, *itL) > 0){ //sotto

@@ -129,14 +129,22 @@ void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* t
         }
     }
     else{
-        if(temp->getLeftChild()->getType() == "PK4Leaf"){
-            addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
+        if((temp)->getType() == "PK1Y"){
+            if((temp)->determinant(((Y*)(temp))->getSegment(), p1) > 0 && (temp)->determinant(((Y*)(temp))->getSegment(), p2) > 0){
+                addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
+            }
+            else{
+                addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
+            }
         }
-        else{
-            addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
+        else if((temp)->getType() == "PK1X"){
+            if(p1.x() < ((X*)(temp))->getPoint().x()){
+                addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
+            }
+            else if(p2.x() > ((X*)(temp))->getPoint().x()){
+                addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
+            }
         }
-
-
     }
 }
 
@@ -243,7 +251,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
             contaStep++;
             (*it->second)=point1;
         }
-        else if(it == --(pointersMap.end())){ //review order
+        else if(it == --(pointersMap.end())){
             nodeDag* segment1b = new Y(segment);
             point2->setLeftChild(segment1b);            
             if(pointersMap.size() == 2){
@@ -259,9 +267,33 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                 (*it->second)=point2;
             }
             else{
-                point2->setRightChild(new Leaf(*(traps.begin()+(traps).size()-1)));
-                segment1b->setLeftChild(segmentInner->getLeftChild());
-                segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                if(pointersMap.size() == 3){
+                    invert=false;
+                }
+                if(invert){
+                    if(up){
+                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                        segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                        segment1b->setRightChild(segmentInner->getRightChild());
+                    }
+                    else{
+                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                        segment1b->setLeftChild(segmentInner->getLeftChild());
+                        segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                    }
+                }
+                else{
+                    if(up){
+                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                        segment1b->setLeftChild(segmentInner->getLeftChild());
+                        segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                    }
+                    else{
+                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                        segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                        segment1b->setRightChild(segmentInner->getRightChild());
+                    }
+                }
                 (*it->second)=point2;
             }
         }
@@ -270,11 +302,11 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                 segmentInner = new Y(segment);
                 if(up){
                     segmentInner->setLeftChild(segment1a->getLeftChild());
-                    segmentInner->setRightChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
                     contaStep++;
                 }
                 else{
-                    segmentInner->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                    segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
                     contaStep++;
                     segmentInner->setRightChild(segment1a->getRightChild());
                 }
@@ -286,30 +318,33 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                 segmentInner1 = new Y(segment);
                 if(invert){
                     if(up){
-                        segmentInner1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                        segmentInner1->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
                         contaStep++;
                         segmentInner1->setRightChild(segmentInner->getRightChild());
                     }
                     else{
                         segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                        segmentInner1->setRightChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                        segmentInner1->setRightChild(new Leaf(*(traps.begin()+contaStep)));
                         contaStep++;
                     }
+                    invert=!invert;
                 }
                 else{
                     if(up){
                         segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                        segmentInner1->setRightChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                        segmentInner1->setRightChild(new Leaf(*(traps.begin()+contaStep)));
                         contaStep++;
                     }
                     else{
-                        segmentInner1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-contaStep))));
+                        segmentInner1->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
                         contaStep++;
                         segmentInner1->setRightChild(segmentInner->getRightChild());
                     }
+                    invert=!invert;
                 }
                 segmentInner = segmentInner1;
                 (*it->second)=segmentInner;
+
             }
         }
     }

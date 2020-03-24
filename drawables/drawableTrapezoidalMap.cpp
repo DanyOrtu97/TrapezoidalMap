@@ -48,8 +48,8 @@ void DrawableTrapezoidalMap::draw() const
             }
             */
             cg3::opengl::drawQuad2(trap, this->trapezoidsColor[i], 2, true);
-            cg3::opengl::drawLine2(trap[0], trap[3], verticalLineColor, static_cast<int>(verticalLineSize));
-            cg3::opengl::drawLine2(trap[1], trap[2], verticalLineColor, static_cast<int>(verticalLineSize));
+            //cg3::opengl::drawLine2(trap[0], trap[3], verticalLineColor, static_cast<int>(verticalLineSize));
+            //cg3::opengl::drawLine2(trap[1], trap[2], verticalLineColor, static_cast<int>(verticalLineSize));
             i++;
         }
     }
