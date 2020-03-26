@@ -525,17 +525,9 @@ void TrapezoidalMap::addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p
 
     id = std::numeric_limits<size_t>::max();
 
-
-    bool noInsertion=false;
-
-    if(p1 == p2 && p3 == p4){
-        noInsertion= true;
-    }
-    if(!noInsertion){
-        trapezoidsMap.insert(std::make_pair(Trapezoid(trapezoid), id));
-        update();
-        dag.setTrapezoidToInsert(trapezoid, trapezoids.size());
-    }
+    trapezoidsMap.insert(std::make_pair(Trapezoid(trapezoid), id));
+    update();
+    dag.setTrapezoidToInsert(trapezoid, trapezoids.size());
 }
 
 /**

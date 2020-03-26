@@ -28,29 +28,29 @@ void DrawableTrapezoidalMap::draw() const
     int i =0;
     for (const std::array<cg3::Point2d, 4> trap : getTrapezoids()){
         if (getFoundTrapezoid().size()>1 && trap == getFoundTrapezoid()){
-            /*if(t.degeneratedTrapezoid(trap)){
+            if(t.degeneratedTrapezoid(trap)){
                 cg3::opengl::drawTriangle2(t.findTriangleByQuad(trap), (cg3::Color(0,20,255)).hue(), 1, true);
             }
             else{
                 cg3::opengl::drawQuad2(trap, (cg3::Color(0,20,255)).hue(), 1, true);
-            }*/
-            cg3::opengl::drawQuad2(trap, (cg3::Color(0,20,255)).hue(), 1, true);
+            }
+            //cg3::opengl::drawQuad2(trap, (cg3::Color(0,20,255)).hue(), 1, true);
 
         }
         else{
-            /*
+
             if(t.degeneratedTrapezoid(trap)){
-                cg3::opengl::drawTriangle2(t.findTriangleByQuad(trap), this->trapezoidsColor[i], 2, false);
+                cg3::opengl::drawTriangle2(t.findTriangleByQuad(trap), this->trapezoidsColor[i], 2, true);
             }
             else{
-                cg3::opengl::drawQuad2(trap, this->trapezoidsColor[i], 2, false);
+                cg3::opengl::drawQuad2(trap, this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
                 cg3::opengl::drawLine2(trap[0], trap[3], verticalLineColor, static_cast<int>(verticalLineSize));
                 cg3::opengl::drawLine2(trap[1], trap[2], verticalLineColor, static_cast<int>(verticalLineSize));
             }
-            */
-            cg3::opengl::drawQuad2(trap, this->trapezoidsColor[i], 2, true);
-            cg3::opengl::drawLine2(trap[0], trap[3], verticalLineColor, static_cast<int>(verticalLineSize));
-            cg3::opengl::drawLine2(trap[1], trap[2], verticalLineColor, static_cast<int>(verticalLineSize));
+
+            //cg3::opengl::drawQuad2(trap, this->trapezoidsColor[i], 2, true);
+            //cg3::opengl::drawLine2(trap[0], trap[3], verticalLineColor, static_cast<int>(verticalLineSize));
+            //cg3::opengl::drawLine2(trap[1], trap[2], verticalLineColor, static_cast<int>(verticalLineSize));
             i++;
         }
     }
@@ -92,7 +92,7 @@ void DrawableTrapezoidalMap::setVerticalLineSize(unsigned int value)
 }
 
 void DrawableTrapezoidalMap::setTrapezoidsColor(){
-    for(int i=0;i<20;i++){
+    for(int i=0;i<30;i++){
         trapezoidsColor.push_back((cg3::Color(rand()%210, rand()%200, rand()%180)).fromHsv(rand()%359, rand()%128, 192 + rand()%63));
     }
 }
