@@ -93,7 +93,7 @@ void DrawableTrapezoidalMap::setVerticalLineSize(unsigned int value)
 
 void DrawableTrapezoidalMap::setTrapezoidsColor(){
     for(int i=0;i<20;i++){
-        trapezoidsColor.push_back(cg3::Color(rand()%210, rand()%200, rand()%180));
+        trapezoidsColor.push_back((cg3::Color(rand()%210, rand()%200, rand()%180)).fromHsv(rand()%359, rand()%128, 192 + rand()%63));
     }
 }
 
