@@ -1,11 +1,14 @@
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
 
+#include <data_structures/nodedag.h>
 
-class algorithms
-{
-public:
-    algorithms();
-};
+namespace GasAlgorithms {
+
+
+
+} //namespace GasAlgorithms
 
 #endif // ALGORITHMS_H
+
+

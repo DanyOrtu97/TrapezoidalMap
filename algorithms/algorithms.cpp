@@ -1,6 +1,10 @@
 #include "algorithms.h"
 
-algorithms::algorithms()
-{
+#include <data_structures/dag.h>
 
-}
+namespace GasAlgorithms {
+
+
+
+
+} //namespace GasAlgorithms

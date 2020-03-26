@@ -201,7 +201,7 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
     cg3::Point2d upfirst, upsecond, downfirst, downsecond;
 
     cg3::Point2d rightPSeg, leftPSeg;
-    cg3::Point2d midpointR, midpointL, tmp;
+    cg3::Point2d midpointR, midpointL, tmp, tmpL;
 
     int countNonBoxUp=0, countNonBoxDown=0;
 
@@ -305,7 +305,7 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                 }
             }
         }
-        else{ //Trovati più di 2 trapezoidi
+        else{ //foundTrapezoids > 2
             if(i==0){
                 firstTrap=true;
                 upfirst=createPoint(upfirst, p1.x(), handleSlopeSegment(deletSegTop.begin()->first, p1));
@@ -422,6 +422,7 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                             }
                             else{
                                 midpointR = *itL;
+                                tmpL= *itL;
                             }
 
                         }
@@ -476,19 +477,16 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                         }
 
                         if(countNonBoxUp==2 && countNonBoxDown>1){
-                            upfirst=createPoint(upfirst, p1.x(), handleSlopeSegment(deletSegTop.begin()->first, p1));
+                            leftPSeg = createPoint(leftPSeg, tmpL.x(), handleSlopeSegment(segment, tmpL));
                             rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
-                            addPolygon(upfirst, *itR, rightPSeg, p1);
-                            updateNeighbors(cg3::Segment2d(upfirst, *itR), cg3::Segment2d(p1, rightPSeg), midpointR, *itR);
+                            addPolygon(tmpL, *itR, rightPSeg, leftPSeg);
+                            updateNeighbors(cg3::Segment2d(tmpL, *itR), cg3::Segment2d(leftPSeg, rightPSeg), tmpL, *itR);
                         }
                         else if(countNonBoxUp==2 && countNonBoxDown<=1){
-                            std::list<cg3::Point2d>::iterator itLTemp = --itL;
-                            upfirst=createPoint(upfirst, itLTemp->x(), handleSlopeSegment(deletSegTop.begin()->first, *itLTemp));
                             rightPSeg = createPoint(rightPSeg, itR->x(), handleSlopeSegment(segment, *itR));
-                            leftPSeg = createPoint(leftPSeg, itL->x(), handleSlopeSegment(segment, *itL));
-                            addPolygon(upfirst ,*itR, rightPSeg, leftPSeg);
-                            updateNeighbors(cg3::Segment2d(upfirst, *itR), cg3::Segment2d(leftPSeg, rightPSeg), *itLTemp, *itR);
-                            itL++;
+                            leftPSeg = createPoint(leftPSeg, tmpL.x(), handleSlopeSegment(segment, tmpL));
+                            addPolygon(tmpL ,*itR, rightPSeg, leftPSeg);
+                            updateNeighbors(cg3::Segment2d(tmpL, *itR), cg3::Segment2d(leftPSeg, rightPSeg), tmpL, *itR);
                         }
 
                     }
@@ -500,7 +498,6 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                     }
 
                 }
-
             }
 
         }
@@ -528,17 +525,17 @@ void TrapezoidalMap::addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p
 
     id = std::numeric_limits<size_t>::max();
 
-    /*
+
     bool noInsertion=false;
+
     if(p1 == p2 && p3 == p4){
         noInsertion= true;
     }
     if(!noInsertion){
-    }*/
-
-    trapezoidsMap.insert(std::make_pair(Trapezoid(trapezoid), id));
-    update();
-    dag.setTrapezoidToInsert(trapezoid, trapezoids.size());
+        trapezoidsMap.insert(std::make_pair(Trapezoid(trapezoid), id));
+        update();
+        dag.setTrapezoidToInsert(trapezoid, trapezoids.size());
+    }
 }
 
 /**
@@ -630,6 +627,26 @@ bool TrapezoidalMap::degeneratedTrapezoid(const Trapezoid t){
     else{
         return false;
     }
+}
+
+/**
+ * @brief Method to handle the degerated cases (triangles) by find the 3 points of the Trapezoid
+ */
+std::array<cg3::Point2d, 3> TrapezoidalMap::findTriangleByQuad(const Trapezoid t){
+    std::array<cg3::Point2d, 3> triangle;
+    if(t[0] == t[1]){
+        triangle = {t[1], t[2], t[3]};
+    }
+    else if(t[1] == t[2]){
+        triangle = {t[2], t[3], t[0]};
+    }
+    else if(t[2] == t[3]){
+        triangle = {t[3], t[0], t[1]};
+    }
+    else if(t[3] == t[0]){
+        triangle = {t[0], t[1], t[2]};
+    }
+    return triangle;
 }
 
 /**

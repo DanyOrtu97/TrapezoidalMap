@@ -47,7 +47,9 @@ public:
     void queryPoint(cg3::Point2d point);
     Trapezoid getFoundTrapezoid() const;
 
+    //methods to handle the trapeoids that are triangles
     bool degeneratedTrapezoid(const Trapezoid t);
+    std::array<cg3::Point2d, 3> findTriangleByQuad(const Trapezoid trap);
 
     void clearMap();
 
