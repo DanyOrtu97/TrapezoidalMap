@@ -5,22 +5,32 @@
 
 /**
  * @brief This method return the pointer at the left child
+ * @param[out] left nodeDag*
  */
 nodeDag* nodeDag::getLeftChild() const{
     return leftChildNode;
 }
 
+/**
+ * @brief This method set the value of the left child
+ * @param[in] left nodeDag*
+ */
 void nodeDag::setLeftChild(nodeDag *leftChild){
    leftChildNode = leftChild;
 }
 
 /**
  * @brief This method return the pointer at the right child
+ * @param[out] right nodeDag*
  */
 nodeDag* nodeDag::getRightChild() const{
     return rightChildNode;
 }
 
+/**
+ * @brief This method set the value of the right child
+ * @param[in] right nodeDag*
+ */
 void nodeDag::setRightChild(nodeDag *rightChild){
     rightChildNode = rightChild;
 }
@@ -28,6 +38,7 @@ void nodeDag::setRightChild(nodeDag *rightChild){
 
 /**
  * @brief This method return the double pointer at the left child
+ * @param[out] left nodeDag**
  */
 nodeDag** nodeDag::getLeftChildP(){
     return &leftChildNode;
@@ -35,11 +46,15 @@ nodeDag** nodeDag::getLeftChildP(){
 
 /**
  * @brief This method return the double pointer at the right child
+ * @param[out] right nodeDag**
  */
 nodeDag** nodeDag::getRightChildP(){
     return &rightChildNode;
 }
 
+/**
+ * @brief Destructor of nodeDag
+ */
 nodeDag::~nodeDag(){
     rightChildNode=nullptr;
     leftChildNode=nullptr;
@@ -47,6 +62,8 @@ nodeDag::~nodeDag(){
 
 /**
  * @brief This method return the value of the determinant between one segment and one point
+ * @param[in] segment Segment, p Point
+ * @param[out] determinant of the matrix between the segment and the point
  */
 long double nodeDag::determinant(const cg3::Segment2d segment, const cg3::Point2d p){
     return roundl((segment.p1().x() * ((segment.p2().y() * 1) - (1 * p.y())))-
@@ -57,6 +74,7 @@ long double nodeDag::determinant(const cg3::Segment2d segment, const cg3::Point2
 
 /**
  * @brief Constructor of node of type X(point)
+ * @param[in] p Point
  */
 X::X(cg3::Point2d p){
     this->point = p;
@@ -64,24 +82,35 @@ X::X(cg3::Point2d p){
     this->setRightChild(new Leaf());
 }
 
-
+/**
+ * @brief Return the type of the node
+ * @param[out] string of the type of the node
+ */
 std::string X::getType() const{
     std::string s = typeid(this).name();
     return s;
 }
 
-
+/**
+ * @brief Return the point on an X node
+ * @param[out] p Point
+ */
 cg3::Point2d X::getPoint() const{
     return point;
 }
 
+/**
+ * @brief Set the point in an X node
+ * @param[in] point Point
+ */
 void X::setPoint(cg3::Point2d point){
     this->point = point;
 }
 
-
 /**
  * @brief Method to select the correct direction by two point
+ * @param[in] point Point
+ * @param[out] pointer nodeDag**
  */
 nodeDag** X::pointToPoint(const cg3::Point2d point){
     if (point.x() < this->getPoint().x()){
@@ -95,6 +124,7 @@ nodeDag** X::pointToPoint(const cg3::Point2d point){
 
 /**
  * @brief Constructor of node of type Y(segment)
+ * @param[in] s Segment
  */
 Y::Y(cg3::Segment2d s){
     this->segment = s;
@@ -102,16 +132,27 @@ Y::Y(cg3::Segment2d s){
     this->setRightChild(new Leaf());
 }
 
-
+/**
+ * @brief Return the type of the node
+ * @param[out] string of the type of the node
+ */
 std::string  Y::getType() const{
     std::string s = typeid(this).name();
     return s;
 }
 
+/**
+ * @brief Return the segment on an Y node
+ * @param[out] s Segment
+ */
 cg3::Segment2d Y::getSegment() const{
    return segment;
 }
 
+/**
+ * @brief Set the segment in an Y node
+ * @param[in] segment Segment
+ */
 void Y::setSegment(cg3::Segment2d segment){
     this->segment = segment;
 }
@@ -119,6 +160,8 @@ void Y::setSegment(cg3::Segment2d segment){
 
 /**
  * @brief Method to select the correct direction by one segment and one point using the determinant
+ * @param[in] point Point
+ * @param[out] pointer nodeDag**
  */
 nodeDag** Y::pointToSegment(const cg3::Point2d point){
     if(determinant(this->getSegment(), point) > 0){
@@ -132,6 +175,7 @@ nodeDag** Y::pointToSegment(const cg3::Point2d point){
 
 /**
  * @brief Constructor of node of type Leaf(trapezoid)
+ * @param[in] t Trapezoid
  */
 Leaf::Leaf(Trapezoid t){
     setTrapezoid(t);
@@ -139,16 +183,27 @@ Leaf::Leaf(Trapezoid t){
     this->setRightChild(nullptr);
 }
 
-
+/**
+ * @brief Return the type of the node
+ * @param[out] string of the type of the node
+ */
 std::string  Leaf::getType() const{
     std::string s = typeid(this).name();
     return s;
 }
 
+/**
+ * @brief Return the trapezoid on Leaf node
+ * @param[out] t Trapezoid
+ */
 std::array<cg3::Point2d, 4> Leaf::getTrapezoid() const{
     return trapezoid;
 }
 
+/**
+ * @brief Set the trapezoid in a Leaf node
+ * @param[in] trapezoid Trapezoid
+ */
 void Leaf::setTrapezoid(Trapezoid trapezoid){
     this->trapezoid = trapezoid;
 }

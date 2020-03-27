@@ -21,7 +21,6 @@ public:
     nodeDag **getLeftChildP();
     nodeDag **getRightChildP();
 
-    //auxiliary functions
     long double determinant(const cg3::Segment2d seg, const cg3::Point2d point);
 
     virtual ~nodeDag();

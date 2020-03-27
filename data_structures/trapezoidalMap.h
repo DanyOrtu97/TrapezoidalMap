@@ -24,7 +24,6 @@ public:
 
     void inizialize();
 
-    //metodi per creare e distruggere poligoni
     void addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p3, cg3::Point2d p4);
     std::map<Trapezoid, size_t> findTrapezoid(const Trapezoid t, bool& found);
     std::map<Trapezoid, size_t> findIndexedTrapezoid(const Trapezoid& indexedTrapezoid, bool& found);
@@ -32,24 +31,15 @@ public:
     void update();
     std::vector<Trapezoid> getTrapezoids() const;
 
-
     //methods to update dag e trapezoidal map
     void trapezoidalMapAlgorithm(cg3::Segment2d segment);
     void CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment);
     void multipleTrapezoid(const cg3::Segment2d& segment, std::vector<Trapezoid> foundTrapezoid);
     void updateNeighbors(cg3::Segment2d top, cg3::Segment2d bottom, cg3::Point2d left, cg3::Point2d right);
 
-    //methods to handle points
-    cg3::Point2d createPoint(cg3::Point2d p, double x, double y);
-    double handleSlopeSegment(cg3::Segment2d s, cg3::Point2d p);
-
     //methods for point location
     void queryPoint(cg3::Point2d point);
     Trapezoid getFoundTrapezoid() const;
-
-    //methods to handle the trapeoids that are triangles
-    bool degeneratedTrapezoid(const Trapezoid t);
-    std::array<cg3::Point2d, 3> findTriangleByQuad(const Trapezoid trap);
 
     void clearMap();
 

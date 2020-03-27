@@ -8,9 +8,7 @@
 
 #include <data_structures/trapezoidalMap.h>
 
-int rand();
-
-TrapezoidalMap t;
+#include <algorithms/algorithms.h>
 
 DrawableTrapezoidalMap::DrawableTrapezoidalMap():
     trapezoidsColor(),
@@ -18,7 +16,6 @@ DrawableTrapezoidalMap::DrawableTrapezoidalMap():
     verticalLineSize(4)
 {
 }
-
 
 /**
  * @brief This method draw vertical lines and trapezoids
@@ -28,8 +25,8 @@ void DrawableTrapezoidalMap::draw() const
     int i =0;
     for (const std::array<cg3::Point2d, 4> trap : getTrapezoids()){
         if (getFoundTrapezoid().size()>1 && trap == getFoundTrapezoid()){
-            if(t.degeneratedTrapezoid(trap)){
-                cg3::opengl::drawTriangle2(t.findTriangleByQuad(trap), (cg3::Color(0,20,255)).hue(), 1, true);
+            if(GasAlgorithms::degeneratedTrapezoid(trap)){
+                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), (cg3::Color(0,20,255)).hue(), 1, true);
             }
             else{
                 cg3::opengl::drawQuad2(trap, (cg3::Color(0,20,255)).hue(), 1, true);
@@ -38,9 +35,8 @@ void DrawableTrapezoidalMap::draw() const
 
         }
         else{
-
-            if(t.degeneratedTrapezoid(trap)){
-                cg3::opengl::drawTriangle2(t.findTriangleByQuad(trap), this->trapezoidsColor[i], 2, true);
+            if(GasAlgorithms::degeneratedTrapezoid(trap)){
+                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), this->trapezoidsColor[i], 2, true);
             }
             else{
                 cg3::opengl::drawQuad2(trap, this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
@@ -91,12 +87,20 @@ void DrawableTrapezoidalMap::setVerticalLineSize(unsigned int value)
     verticalLineSize = value;
 }
 
+/**
+ * @brief Method to generate some colors for the trapezoids
+ */
 void DrawableTrapezoidalMap::setTrapezoidsColor(){
     for(int i=0;i<30;i++){
         trapezoidsColor.push_back((cg3::Color(rand()%210, rand()%200, rand()%180)).fromHsv(rand()%359, rand()%128, 192 + rand()%63));
     }
 }
 
+
+/**
+ * @brief Method to return the vector of colors for the trapezoids
+ * @param[out] Vector of colors
+ */
 std::vector<cg3::Color> DrawableTrapezoidalMap::getTrapezoidsColor(){
     return trapezoidsColor;
 }
