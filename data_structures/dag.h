@@ -3,6 +3,7 @@
 
 #include "data_structures/nodedag.h"
 #include <data_structures/trapezoidalMap.h>
+#include <data_structures/trapezoid.h>
 
 
 class Dag{
@@ -10,21 +11,20 @@ class Dag{
 public:
     Dag();
 
-    void inizializeDag(const std::array<cg3::Point2d, 4> boundingBox);
+    void inizializeDag(const trapezoid boundingBox);
     void updateDag(const cg3::Segment2d segment);
 
-    std::array<cg3::Point2d, 4> findTrapezoid(const cg3::Point2d point, bool queryPoint, nodeDag* root);
+    trapezoid findTrapezoid(const cg3::Point2d point, bool queryPoint, nodeDag* root);
     void findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* temp);
 
     void insertSingleTrapezoid(const cg3::Segment2d segment);
     void insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitNode);
 
-    void setTrapezoidToInsert (std::array<cg3::Point2d, 4> trap, int num);
+    void setTrapezoidToInsert(trapezoid trap, int num);
 
     nodeDag* getDag();
 
-    void addMapElement(const std::pair<std::array<cg3::Point2d, 4>, nodeDag**> element);
-    std::map<std::array<cg3::Point2d, 4>, nodeDag**> getPointerMap();
+    std::map<trapezoid, nodeDag**> getPointerMap();
 
     void clearDag();
     void clearTraps();
@@ -33,8 +33,8 @@ public:
 private:
     int nTrapezoids;
     nodeDag* dag;
-    std::vector<std::array<cg3::Point2d, 4>> traps;
-    std::map<std::array<cg3::Point2d, 4>, nodeDag**> pointersMap;
+    std::vector<trapezoid> traps;
+    std::map<trapezoid, nodeDag**> pointersMap;
 
 };
 #endif // DAG_H

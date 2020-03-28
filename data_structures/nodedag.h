@@ -4,7 +4,7 @@
 
 #include <cg3/geometry/point2.h>
 #include <cg3/geometry/segment2.h>
-
+#include <data_structures/trapezoid.h>
 
 class nodeDag{
 
@@ -69,19 +69,18 @@ private:
 
 
 class Leaf: public nodeDag{
-    typedef std::array<cg3::Point2d, 4> Trapezoid;
 
 public:
     Leaf() = default;
-    explicit Leaf(Trapezoid t);
+    explicit Leaf(trapezoid t);
     ~Leaf() override = default;
 
     std::string  getType() const override;
-    Trapezoid getTrapezoid() const;
-    void setTrapezoid(Trapezoid trapezoid);
+    trapezoid getTrapezoid();
+    void setTrapezoid(trapezoid trapezoid);
 
 private:
-    Trapezoid trapezoid;
+    trapezoid trapezoide;
 };
 
 #endif // NODEDAG_H

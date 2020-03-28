@@ -20,7 +20,6 @@ TrapezoidalMap::TrapezoidalMap() :
  * @brief Method to inizialize the trapezoidal map
  */
 void TrapezoidalMap::inizialize(){
-
     topLeft = GasAlgorithms::createPoint(topLeft, -(1e+6), (1e+6));
     bottomLeft = GasAlgorithms::createPoint(bottomLeft, -(1e+6), -(1e+6));
     topRight = GasAlgorithms::createPoint(topRight, (1e+6), (1e+6));
@@ -34,26 +33,31 @@ void TrapezoidalMap::inizialize(){
     size_t id2;
 
     //inizialize the trapezoidal map with the bounding box
-    addPolygon(topLeft, topRight, bottomRight, bottomLeft);
+    //addPolygon(topLeft, topRight, bottomRight, bottomLeft);
 
-    std::vector<std::array<cg3::Point2d, 4>> trapezoids;
-    std::array<cg3::Point2d, 4> trapezoid = {topLeft, topRight, bottomRight, bottomLeft};
+    //std::vector<std::array<cg3::Point2d, 4>>
+    std::array<cg3::Point2d, 4> trap = {topLeft, topRight, bottomRight, bottomLeft};
 
-    leftp.set(trapezoid[0].x(), trapezoid[0].y());
-    rightp.set(trapezoid[1].x(), trapezoid[1].y());
-    top.set(trapezoid[0], trapezoid[1]);
-    bottom.set(trapezoid[3],trapezoid[2]);
+    leftp.set(trap[0].x(), trap[0].y());
+    rightp.set(trap[1].x(), trap[1].y());
+    top.set(trap[0], trap[1]);
+    bottom.set(trap[3],trap[2]);
 
     id2 = std::numeric_limits<size_t>::max();
 
+    /*
     topMap.insert(std::make_pair(cg3::Segment2d(top), id2));
     bottomMap.insert(std::make_pair(cg3::Segment2d(bottom), id2));
     leftpList.push_back(leftp);
     rightpList.push_back(rightp);
+    */
+    trapezoid trapez = trapezoid(topLeft, topRight, bottomRight, bottomLeft, leftp, rightp, top, bottom);
+
+    trapezoidsMap.insert(std::make_pair(trapez, id2));
+    trapezoids.push_back(trapez);
 
     //inizialize the dag with the pointer of the first polygon (the bounding box)
-    trapezoids.push_back(trapezoid);
-    dag.inizializeDag(trapezoids.front());
+    dag.inizializeDag(trapez);
 
 }
 
@@ -63,12 +67,12 @@ void TrapezoidalMap::inizialize(){
  */
 void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
-    std::array<cg3::Point2d, 4> firstTrapezoid = dag.findTrapezoid(segment.p1(), false, dag.getDag());
-    std::array<cg3::Point2d, 4> lastTrapezoid = dag.findTrapezoid(segment.p2(), false, dag.getDag());
+    trapezoid firstTrapezoid = dag.findTrapezoid(segment.p1(), false, dag.getDag());
+    trapezoid lastTrapezoid = dag.findTrapezoid(segment.p2(), false, dag.getDag());
 
-    std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids;
+    std::vector<trapezoid> foundTrapezoids;
 
-    if (firstTrapezoid == lastTrapezoid){   
+    if (firstTrapezoid.getTrapezoid() == lastTrapezoid.getTrapezoid()){
 
         dag.clearTraps();
 
@@ -83,12 +87,9 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
 
         dag.findTrapezoids(segment, splitNode, nullptr);
 
+        std::map<trapezoid, nodeDag**> TrapMapDag = dag.getPointerMap();
 
-        std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids;
-
-        std::map<std::array<cg3::Point2d, 4>, nodeDag**> TrapMapDag = dag.getPointerMap();
-
-        for(std::map<std::array<cg3::Point2d, 4>, nodeDag**>::iterator it = TrapMapDag.begin(); it!=TrapMapDag.end(); it++){
+        for(std::map<trapezoid, nodeDag**>::iterator it = TrapMapDag.begin(); it!=TrapMapDag.end(); it++){
             foundTrapezoids.push_back(it->first);
         }
 
@@ -107,31 +108,23 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
  * @brief Method to update the trapezoidal map in the case of single trapezoid insertion
  * @param[in] t Trapezoid, segment Segment
  */
-void TrapezoidalMap::CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment){
-    std::map<Trapezoid, size_t> delet;
-    std::map<cg3::Segment2d, size_t> deletSegTop, deletSegBottom;
+void TrapezoidalMap::CompletelyInsideTrapezoid(trapezoid t, const cg3::Segment2d& segment){
+    std::map<trapezoid, size_t> delet;
+    //std::map<cg3::Segment2d, size_t> deletSegTop, deletSegBottom;
     std::list<cg3::Point2d> deletPoint;
     bool found;
-    bool up=false;
+    //bool up=false;
 
     delet = findTrapezoid(t, found);
+    /*
     deletSegTop.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[0], delet.begin()->first[1]), delet.begin()->second));
     deletSegBottom.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[3], delet.begin()->first[2]), delet.begin()->second));
+    */
 
-    if(t == trapezoids[2]){
-        up=false;
-    }
-    if(t == trapezoids[1]){
-        up=true;
-    }
-
-    trapezoidsMap.erase(delet.begin()->first);
-    update();
-
-    topLeft = t[0];
-    bottomLeft = t[3];
-    topRight = t[1];
-    bottomRight = t[2];
+    topLeft = t.getTrapezoid()[0];
+    bottomLeft = t.getTrapezoid()[3];
+    topRight = t.getTrapezoid()[1];
+    bottomRight = t.getTrapezoid()[2];
 
     cg3::Segment2d topS;
     topS.set(topLeft, topRight);
@@ -145,63 +138,52 @@ void TrapezoidalMap::CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d
     cg3::Point2d downfirst;
     cg3::Point2d downsecond;
 
+    /*
     std::map<cg3::Segment2d, size_t>::iterator top = topMap.find(topS);
     std::map<cg3::Segment2d, size_t>::iterator bottom = bottomMap.find(bottomS);
+    */
 
+    //if (top != topMap.end()) {
+        upfirst = GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(topS, p1));
+        upsecond = GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(topS, p2));
+    //}
 
-    if (top != topMap.end()) {
-        upfirst = GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(top->first, p1));
-        upsecond = GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(top->first, p2));
-    }
+    //if (bottom != bottomMap.end()) {
+        downfirst = GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(bottomS, p1));
+        downsecond = GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(bottomS, p2));
+    //}
 
-    if (bottom != bottomMap.end()) {
-        downfirst = GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(bottom->first, p1));
-        downsecond = GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(bottom->first, p2));
-    }
+    //deletPoint.clear();
+    //deletPoint.insert(deletPoint.begin(), delet.begin()->first[0]);
+    //leftpList.erase(deletPoint.begin());
+    //deletPoint.clear();
+    //deletPoint.insert(deletPoint.begin(), delet.begin()->first[1]);
+    //rightpList.erase(deletPoint.begin());
+    //topMap.erase(deletSegTop.begin()->first);
+    //bottomMap.erase(deletSegBottom.begin()->first);
 
-    deletPoint.clear();
-    deletPoint.insert(deletPoint.begin(), delet.begin()->first[0]);
-    leftpList.erase(deletPoint.begin());
-    deletPoint.clear();
-    deletPoint.insert(deletPoint.begin(), delet.begin()->first[1]);
-    rightpList.erase(deletPoint.begin());
-    topMap.erase(deletSegTop.begin()->first);
-    bottomMap.erase(deletSegBottom.begin()->first);
+    trapezoidsMap.erase(delet.begin()->first);
+    update();
 
-    //AGGIUNTA
-    addPolygon(topLeft, upfirst, downfirst, bottomLeft); //A
-    if(up){
-        updateNeighbors(cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst), bottomLeft, segment.p1());
-    }
-    else{
-        updateNeighbors(cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst), topLeft, segment.p1());
-    }
+    addPolygon(topLeft, upfirst, downfirst, bottomLeft, t.getLeftP(), p1, cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst)); //A
 
-    addPolygon(upfirst, upsecond, p2, p1); //B
-    updateNeighbors(cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2), segment.p1(), segment.p2());
+    addPolygon(upfirst, upsecond, p2, p1, p1, p2, cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2)); //B
 
-    addPolygon(p1, p2, downsecond, downfirst); //C
-    updateNeighbors(cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond), segment.p1(), segment.p2());
+    addPolygon(p1, p2, downsecond, downfirst, p1, p2, cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond)); //C
 
-    addPolygon(upsecond, topRight, bottomRight, downsecond); //D
-    if(up){
-        updateNeighbors(cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight), segment.p2(), bottomRight);
-    }
-    else{
-        updateNeighbors(cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight), segment.p2(), topRight);
-    }
+    addPolygon(upsecond, topRight, bottomRight, downsecond, p2, t.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight)); //D
 }
 
 /**
  * @brief Method to update the trapezoidal map in the case of multiple trapezoid insertion
  * @param[in] segment Segment, vector of Trapezoid: foundTrapezoids
  */
-void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vector<Trapezoid> foundTrapezoids){
-    std::map<Trapezoid, size_t> delet;
+void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vector<trapezoid> foundTrapezoids){
+    std::map<trapezoid, size_t> delet;
 
-    std::map<cg3::Segment2d, size_t> deletSegTop, deletSegBottom;
+    //std::map<cg3::Segment2d, size_t> deletSegTop, deletSegBottom;
 
-    std::list<cg3::Point2d> deletPoint;
+    //std::list<cg3::Point2d> deletPoint;
 
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
@@ -216,22 +198,27 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
     bool firstTrap=false;
 
     for (int i=0; i<(int)foundTrapezoids.size(); i++){
+        trapezoid trap = foundTrapezoids[i];
+
         bool found;
 
         delet.clear();
+        /*
         deletSegTop.clear();
         deletSegBottom.clear();
         deletPoint.clear();
+        */
 
-        topLeft = foundTrapezoids[i][0];
-        bottomLeft = foundTrapezoids[i][3];
-        topRight = foundTrapezoids[i][1];
-        bottomRight = foundTrapezoids[i][2];
+        topLeft = trap.getTrapezoid()[0];
+        bottomLeft = trap.getTrapezoid()[3];
+        topRight = trap.getTrapezoid()[1];
+        bottomRight = trap.getTrapezoid()[2];
 
-        delet = findTrapezoid(foundTrapezoids[i], found);
-        deletSegTop.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[0], delet.begin()->first[1]), delet.begin()->second));
-        deletSegBottom.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[3], delet.begin()->first[2]), delet.begin()->second));
+        delet = findTrapezoid(trap, found);
+        //deletSegTop.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[0], delet.begin()->first[1]), delet.begin()->second));
+        //deletSegBottom.insert(std::make_pair(cg3::Segment2d(delet.begin()->first[3], delet.begin()->first[2]), delet.begin()->second));
 
+        /*
         std::list<cg3::Point2d>::iterator itR = rightpList.begin();
         std::list<cg3::Point2d>::iterator itL = leftpList.begin();
 
@@ -251,12 +238,13 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                 itL++;
             }
         }
+        */
 
 
         trapezoidsMap.erase(delet.begin()->first);
-
         update();
 
+        /*
         deletPoint.clear();
         deletPoint.insert(deletPoint.begin(), *itL);
         leftpList.erase(deletPoint.begin());
@@ -265,246 +253,204 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
         rightpList.erase(deletPoint.begin());
         topMap.erase(deletSegTop.begin()->first);
         bottomMap.erase(deletSegBottom.begin()->first);
-
+        */
 
         if(foundTrapezoids.size() == 2){
             if(i==0){
-                midpointR = *itR;
-                upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(deletSegTop.begin()->first, p1));
-                downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p1));
-
-                addPolygon(topLeft, upfirst, downfirst, bottomLeft);
-                updateNeighbors(cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst), topLeft, p1);
+                midpointR = trap.getRightP();
+                upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p1));
+                downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p1));
+                addPolygon(topLeft, upfirst, downfirst, bottomLeft, topLeft, p1, cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst));
             }
             else if(i == (int)foundTrapezoids.size()-1){
-                upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegTop.begin()->first, p2));
-                downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p2));
-                leftPSeg = GasAlgorithms::createPoint(leftPSeg, itL->x(), GasAlgorithms::handleSlopeSegment(segment, *itL));
+                upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p2));
+                downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p2));
+                leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
+                addPolygon(upsecond, topRight, bottomRight, downsecond, p2, topRight, cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
 
-                addPolygon(upsecond, topRight, bottomRight, downsecond);
-                updateNeighbors(cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight), p2, topRight);
-
-                if(dag.getDag()->determinant(segment, *itL) < 0){
-                    addPolygon(leftPSeg, p2, downsecond, foundTrapezoids[i][3]);
-                    updateNeighbors(cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(foundTrapezoids[i][3], downsecond), *itL, p2);
+                if(dag.getDag()->determinant(segment, trap.getLeftP()) < 0){
+                    addPolygon(leftPSeg, p2, downsecond, trap.getTrapezoid()[3], trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getTrapezoid()[3], downsecond));
                 }
                 else{
-                    addPolygon(foundTrapezoids[i][0], upsecond, p2, leftPSeg);
-                    updateNeighbors(cg3::Segment2d(foundTrapezoids[i][0], upsecond), cg3::Segment2d(leftPSeg, p2), foundTrapezoids[i][0], p2);
+                    addPolygon(trap.getTrapezoid()[0], upsecond, p2, leftPSeg, trap.getTrapezoid()[0], p2, cg3::Segment2d(trap.getTrapezoid()[0], upsecond), cg3::Segment2d(leftPSeg, p2));
                 }
             }
-            if(p2.x() > itR->x()){
-                if(dag.getDag()->determinant(segment, *itR) < 0){
-                    rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                    upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegTop.begin()->first, p2));
-                    addPolygon(upfirst, upsecond, p2, p1);
-                    updateNeighbors(cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2), p1, p2);
-                    addPolygon(p1, rightPSeg, foundTrapezoids[i][2], downfirst);
-                    updateNeighbors(cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, foundTrapezoids[i][2]), p1, *itR);
-
+            if(p2.x() > trap.getRightP().x()){
+                if(dag.getDag()->determinant(segment, trap.getRightP()) < 0){
+                    rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                    upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p2));
+                    addPolygon(upfirst, upsecond, p2, p1, p1, p2, cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2));
+                    addPolygon(p1, rightPSeg, trap.getTrapezoid()[2], downfirst, p1, trap.getRightP(),cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, trap.getTrapezoid()[2]) );
                 }
                 else{
-                    rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                    addPolygon(upfirst, foundTrapezoids[i][1], rightPSeg, p1);
-                    updateNeighbors(cg3::Segment2d(upfirst, foundTrapezoids[i][1]), cg3::Segment2d(p1, rightPSeg), p1, *itR);
-                    downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p2));
-                    addPolygon(p1, p2, downsecond, downfirst);
-                    updateNeighbors(cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond), p1, p2);
+                    rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                    addPolygon(upfirst, trap.getTrapezoid()[1], rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, trap.getTrapezoid()[1]), cg3::Segment2d(p1, rightPSeg));
+                    downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p2));
+                    addPolygon(p1, p2, downsecond, downfirst, p1, p2, cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond));
                 }
             }
         }
         else{ //foundTrapezoids > 2
             if(i==0){
                 firstTrap=true;
-                upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(deletSegTop.begin()->first, p1));
-                downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p1));
-                addPolygon(topLeft, upfirst, downfirst, bottomLeft);
-                updateNeighbors(cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst), topLeft, p1);
+                upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p1));
+                downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p1));
+                addPolygon(topLeft, upfirst, downfirst, bottomLeft, topLeft, p1, cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst));
             }
             else if(i == (int)foundTrapezoids.size()-1){
-                upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegTop.begin()->first, p2));
-                downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p2));
-                addPolygon(upsecond, topRight, bottomRight, downsecond);
-                updateNeighbors(cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight), p2, topRight);
+                upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p2));
+                downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p2));
+                addPolygon(upsecond, topRight, bottomRight, downsecond, p2, topRight, cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
 
-                if(dag.getDag()->determinant(segment, *itL) < 0){ //sopra
-                    leftPSeg = GasAlgorithms::createPoint(leftPSeg, itL->x(), GasAlgorithms::handleSlopeSegment(segment, *itL));
-                    addPolygon(leftPSeg, p2, downsecond, foundTrapezoids[i][3]);
-                    updateNeighbors(cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(foundTrapezoids[i][3], downsecond), *itL, p2);
-
+                if(dag.getDag()->determinant(segment, trap.getLeftP()) < 0){ //sopra
+                    leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
+                    addPolygon(leftPSeg, p2, downsecond, trap.getTrapezoid()[3], trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getTrapezoid()[3], downsecond));
                     if(countNonBoxUp > 0){
 
                     }
                     else{
-                        addPolygon(upfirst, upsecond, p2, p1);
-                        updateNeighbors(cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2), p1, p2);
+                        addPolygon(upfirst, upsecond, p2, p1, p1, p2, cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2));
                     }
-
                 }
-                else if(dag.getDag()->determinant(segment, *itL) > 0){
-                    leftPSeg = GasAlgorithms::createPoint(leftPSeg, itL->x(), GasAlgorithms::handleSlopeSegment(segment, *itL));
-                    addPolygon(foundTrapezoids[i][0], upsecond, p2, leftPSeg);
-                    updateNeighbors(cg3::Segment2d(foundTrapezoids[i][0], upsecond), cg3::Segment2d(leftPSeg, p2), *itL, p2);
-
+                else if(dag.getDag()->determinant(segment, trap.getLeftP()) > 0){
+                    leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
+                    addPolygon(trap.getTrapezoid()[0], upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getTrapezoid()[0], upsecond), cg3::Segment2d(leftPSeg, p2));
                     if(countNonBoxDown > 0){
 
                     }
                     else{
-                        addPolygon(p1,p2, downsecond, downfirst);
-                        updateNeighbors(cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond), p1, p2);
+                        addPolygon(p1,p2, downsecond, downfirst, p1, p2, cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond));
                     }
-
                 }
             }
 
-            if(p2.x() > itR->x()){
-                if(deletSegTop.begin()->first.p1().y() != (1e+6)){
+            if(p2.x() > trap.getRightP().x()){
+                if(trap.getTop().p1().y() != (1e+6)){
                     countNonBoxUp++;
                 }
-                if(deletSegBottom.begin()->first.p1().y() != -(1e+6)){
+                if(trap.getBottom().p1().y() != -(1e+6)){
                     countNonBoxDown++;
                 }
 
-                if(dag.getDag()->determinant(segment, *itR) < 0 ){ //sopra
-                    upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegTop.begin()->first, p2));
-                    rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                    downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p1));
-                    midpointL= *itL;
-                    if(dag.getDag()->determinant(segment, *itL) < 0){
-                        if(p1.x() < itL->x() && p2.x() > itR->x()){
-                            leftPSeg = GasAlgorithms::createPoint(leftPSeg, itL->x(), GasAlgorithms::handleSlopeSegment(segment, *itL));
-                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(),GasAlgorithms:: handleSlopeSegment(segment, *itR));
-                            addPolygon(leftPSeg, rightPSeg, foundTrapezoids[i][2], foundTrapezoids[i][3]);
-                            updateNeighbors(cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(foundTrapezoids[i][3], foundTrapezoids[i][2]), foundTrapezoids[i][3], foundTrapezoids[i][2]);
-
+                if(dag.getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
+                    upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p2));
+                    rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                    downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p1));
+                    midpointL= trap.getLeftP();
+                    if(dag.getDag()->determinant(segment, trap.getLeftP()) < 0){
+                        if(p1.x() < trap.getLeftP().x() && p2.x() > trap.getRightP().x()){
+                            leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
+                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(),GasAlgorithms:: handleSlopeSegment(segment, trap.getRightP()));
+                            addPolygon(leftPSeg, rightPSeg, trap.getTrapezoid()[2], trap.getTrapezoid()[3], trap.getTrapezoid()[3], trap.getTrapezoid()[2], cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(trap.getTrapezoid()[3], trap.getTrapezoid()[2]));
                         }
 
                         if(countNonBoxUp==1 && countNonBoxDown==1){
-                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                            downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p1));
-                            addPolygon(p1, rightPSeg, *itR, downfirst);
-                            updateNeighbors(cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, *itR), p1, *itR);
+                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                            downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p1));
+                            addPolygon(p1, rightPSeg, trap.getRightP(), downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, trap.getRightP()));
 
                         }
 
                         if(countNonBoxUp==1 && countNonBoxDown==0){
-                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                            downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p1));
-                            addPolygon(p1, rightPSeg, foundTrapezoids[i][2], downfirst);
-                            updateNeighbors(cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst,  foundTrapezoids[i][2]), p1, *itR);
+                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                            downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p1));
+                            addPolygon(p1, rightPSeg, trap.getTrapezoid()[2], downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst,  trap.getTrapezoid()[2]));
                         }
 
                     }
                     else{
-                        if((p1 <= foundTrapezoids[i][1] && foundTrapezoids[i][3].y() == -(1e+6)) || firstTrap){
+                        if((p1 <= trap.getTrapezoid()[1] && trap.getTrapezoid()[3].y() == -(1e+6)) || firstTrap){
                             firstTrap=false;
-                            addPolygon(p1, rightPSeg, foundTrapezoids[i][2], downfirst);
-                            updateNeighbors(cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, foundTrapezoids[i][2]), p1, *itR);
-                            tmp = *itR;
+                            addPolygon(p1, rightPSeg, trap.getTrapezoid()[2], downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, trap.getTrapezoid()[2]));
+                            tmp = trap.getRightP();
                         }
-                        else if(foundTrapezoids[i][2].y() != -(1e+6) && foundTrapezoids[i][1].y() == (1e+6)){
-                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
+                        else if(trap.getTrapezoid()[2].y() != -(1e+6) && trap.getTrapezoid()[1].y() == (1e+6)){
+                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
                             leftPSeg = GasAlgorithms::createPoint(leftPSeg, tmp.x(), GasAlgorithms::handleSlopeSegment(segment, tmp));
-                            addPolygon(leftPSeg, rightPSeg, *itR, tmp);
-                            updateNeighbors(cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(*itR, tmp), tmp, *itR);
+                            addPolygon(leftPSeg, rightPSeg, trap.getRightP(), tmp, tmp, trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(trap.getRightP(), tmp));
                         }
                         else{
                             leftPSeg = GasAlgorithms::createPoint(leftPSeg, tmp.x(), GasAlgorithms::handleSlopeSegment(segment, tmp));
-                            addPolygon(leftPSeg, rightPSeg, *itR, tmp);
-                            updateNeighbors(cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(*itR, tmp), tmp, *itR);
+                            addPolygon(leftPSeg, rightPSeg, trap.getRightP(), tmp, tmp, trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(trap.getRightP(), tmp));
                         }
 
-                        if(countNonBoxUp >=1 && foundTrapezoids[i][0].y() == (1e+6)){
-                            upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegTop.begin()->first, p2));
-                            leftPSeg = GasAlgorithms::createPoint(leftPSeg, itL->x(), GasAlgorithms::handleSlopeSegment(segment, *itL));
-                            addPolygon(foundTrapezoids[i][0], upsecond, p2, leftPSeg);
-                            updateNeighbors(cg3::Segment2d(foundTrapezoids[i][0], upsecond), cg3::Segment2d(leftPSeg, p2), *itL, p2);
-
+                        if(countNonBoxUp >=1 && trap.getTrapezoid()[0].y() == (1e+6)){
+                            upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p2));
+                            leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
+                            addPolygon(trap.getTrapezoid()[0], upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getTrapezoid()[0], upsecond), cg3::Segment2d(leftPSeg, p2));
                         }
-                        else if(countNonBoxUp == 1 && foundTrapezoids[i][0].y() != (1e+6)){
-                            if(foundTrapezoids[(int)foundTrapezoids.size()-1][0].y() != (1e+6)){
-                                upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegTop.begin()->first, p2));
-                                leftPSeg = GasAlgorithms::createPoint(leftPSeg, itL->x(), GasAlgorithms::handleSlopeSegment(segment, *itL));
-                                addPolygon(*itL, upsecond, p2, leftPSeg);
-                                updateNeighbors(cg3::Segment2d(*itL, upsecond), cg3::Segment2d(leftPSeg, p2), *itL, p2);
+                        else if(countNonBoxUp == 1 && trap.getTrapezoid()[0].y() != (1e+6)){
+                            if(foundTrapezoids[(int)foundTrapezoids.size()-1].getTrapezoid()[0].y() != (1e+6)){
+                                upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p2));
+                                leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
+                                addPolygon(trap.getLeftP(), upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getLeftP(), upsecond), cg3::Segment2d(leftPSeg, p2));
                             }
                             else{
-                                midpointR = *itL;
-                                tmpL= *itL;
+                                midpointR = trap.getLeftP();
+                                tmpL= trap.getLeftP();
                             }
 
                         }
 
                     }
                 }
-                else if (dag.getDag()->determinant(segment, *itR) > 0 && dag.getDag()->determinant(segment, *itL) > 0){ //sotto
-                    rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                    leftPSeg = GasAlgorithms::createPoint(leftPSeg, itL->x(), GasAlgorithms::handleSlopeSegment(segment, *itL));
-                    downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p2));
+                else if (dag.getDag()->determinant(segment, trap.getRightP()) > 0 && dag.getDag()->determinant(segment, trap.getLeftP()) > 0){ //sotto
+                    rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                    leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
+                    downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p2));
 
 
-                    if(p1.x() < itL->x() && p2.x() > itR->x()){
-                        addPolygon(foundTrapezoids[i][0], foundTrapezoids[i][1], rightPSeg, leftPSeg);
-                        updateNeighbors(cg3::Segment2d(foundTrapezoids[i][0], foundTrapezoids[i][1]), cg3::Segment2d(leftPSeg, rightPSeg), *itL, *itR);
+                    if(p1.x() < trap.getLeftP().x() && p2.x() > trap.getRightP().x()){
+                        addPolygon(trap.getTrapezoid()[0], trap.getTrapezoid()[1], rightPSeg, leftPSeg, trap.getLeftP(), trap.getRightP(), cg3::Segment2d(trap.getTrapezoid()[0], trap.getTrapezoid()[1]), cg3::Segment2d(leftPSeg, rightPSeg));
                     }
                     else{
-                        addPolygon(upfirst, foundTrapezoids[i][1], rightPSeg, p1);
-                        updateNeighbors(cg3::Segment2d(upfirst, foundTrapezoids[i][1]), cg3::Segment2d(p1, rightPSeg), p1, *itR);
+                        addPolygon(upfirst, trap.getTrapezoid()[1], rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, trap.getTrapezoid()[1]), cg3::Segment2d(p1, rightPSeg));
                     }
 
                 }
-                else if(dag.getDag()->determinant(segment, *itR) > 0 && dag.getDag()->determinant(segment, *itL) < 0){ //sotto r e sopra l
-                    if(countNonBoxDown > 0 && foundTrapezoids[(foundTrapezoids.size()-1)][3].y() != -(1e+6)){
-                        leftPSeg = GasAlgorithms::createPoint(leftPSeg, itL->x(), GasAlgorithms::handleSlopeSegment(segment, *itL));
-                        downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p2));
-                        addPolygon(leftPSeg, p2, downsecond, foundTrapezoids[i][3]);
-                        updateNeighbors(cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(foundTrapezoids[i][3], downsecond), *itL, p2);
+                else if(dag.getDag()->determinant(segment, trap.getRightP()) > 0 && dag.getDag()->determinant(segment, trap.getLeftP()) < 0){ //sotto r e sopra l
+                    if(countNonBoxDown > 0 && foundTrapezoids[(foundTrapezoids.size()-1)].getTrapezoid()[3].y() != -(1e+6)){
+                        leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
+                        downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p2));
+                        addPolygon(leftPSeg, p2, downsecond, trap.getTrapezoid()[3], trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getTrapezoid()[3], downsecond));
                     }
 
                     if(countNonBoxDown == 1 && countNonBoxUp==0){
-                        rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                        addPolygon(upfirst, foundTrapezoids[i][1], rightPSeg, p1);
-                        updateNeighbors(cg3::Segment2d(upfirst, foundTrapezoids[i][1]), cg3::Segment2d(p1, rightPSeg), p1, *itR);
-
+                        rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                        addPolygon(upfirst, trap.getTrapezoid()[1], rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, trap.getTrapezoid()[1]), cg3::Segment2d(p1, rightPSeg));
                     }
-                    if(countNonBoxUp >= 1 && foundTrapezoids[i][0].y() != (1e+6)){
+                    if(countNonBoxUp >= 1 && trap.getTrapezoid()[0].y() != (1e+6)){
                         if(countNonBoxUp==1 || countNonBoxUp > 2){
 
-                            if(countNonBoxUp > 2  && foundTrapezoids[i][2].y() == -(1e+6) && upfirst.y() != (1e+6)){
-                                upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(deletSegTop.begin()->first, p1));
-                                rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                                addPolygon(upfirst, *itR, rightPSeg, p1);
-                                updateNeighbors(cg3::Segment2d(upfirst, *itR), cg3::Segment2d(p1, rightPSeg), p1, *itR);
+                            if(countNonBoxUp > 2  && trap.getTrapezoid()[2].y() == -(1e+6) && upfirst.y() != (1e+6)){
+                                upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p1));
+                                rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                                addPolygon(upfirst, trap.getRightP(), rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, trap.getRightP()), cg3::Segment2d(p1, rightPSeg));
                             }
                             else{
                                 leftPSeg = GasAlgorithms::createPoint(leftPSeg, midpointR.x(), GasAlgorithms::handleSlopeSegment(segment, midpointR));
-                                rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                                addPolygon(midpointR, *itR ,rightPSeg, leftPSeg);
-                                updateNeighbors(cg3::Segment2d(midpointR, *itR), cg3::Segment2d(leftPSeg, rightPSeg), midpointR, *itR);
+                                rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                                addPolygon(midpointR, trap.getRightP() ,rightPSeg, leftPSeg,  midpointR, trap.getRightP(), cg3::Segment2d(midpointR, trap.getRightP()), cg3::Segment2d(leftPSeg, rightPSeg));
                             }
                         }
 
                         if(countNonBoxUp==2 && countNonBoxDown>1){
                             leftPSeg = GasAlgorithms::createPoint(leftPSeg, tmpL.x(), GasAlgorithms::handleSlopeSegment(segment, tmpL));
-                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
-                            addPolygon(tmpL, *itR, rightPSeg, leftPSeg);
-                            updateNeighbors(cg3::Segment2d(tmpL, *itR), cg3::Segment2d(leftPSeg, rightPSeg), tmpL, *itR);
+                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
+                            addPolygon(tmpL, trap.getRightP(), rightPSeg, leftPSeg, tmpL, trap.getRightP(), cg3::Segment2d(tmpL, trap.getRightP()), cg3::Segment2d(leftPSeg, rightPSeg));
                         }
                         else if(countNonBoxUp==2 && countNonBoxDown<=1){
-                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, itR->x(), GasAlgorithms::handleSlopeSegment(segment, *itR));
+                            rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
                             leftPSeg = GasAlgorithms::createPoint(leftPSeg, tmpL.x(), GasAlgorithms::handleSlopeSegment(segment, tmpL));
-                            addPolygon(tmpL ,*itR, rightPSeg, leftPSeg);
-                            updateNeighbors(cg3::Segment2d(tmpL, *itR), cg3::Segment2d(leftPSeg, rightPSeg), tmpL, *itR);
+                            addPolygon(tmpL ,trap.getRightP(), rightPSeg, leftPSeg, tmpL, trap.getRightP(), cg3::Segment2d(tmpL, trap.getRightP()), cg3::Segment2d(leftPSeg, rightPSeg));
                         }
 
                     }
-                    if(countNonBoxUp >= 1 && foundTrapezoids[i][2].y() == -(1e+6)){
-                        downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(deletSegBottom.begin()->first, p2));
-                        leftPSeg = GasAlgorithms::createPoint(leftPSeg, itL->x(), GasAlgorithms::handleSlopeSegment(segment, *itL));
-                        addPolygon(leftPSeg, p2, downsecond, foundTrapezoids[i][3]);
-                        updateNeighbors(cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(foundTrapezoids[i][3], downsecond), *itL, p2);
+                    if(countNonBoxUp >= 1 && trap.getTrapezoid()[2].y() == -(1e+6)){
+                        downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p2));
+                        leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
+                        addPolygon(leftPSeg, p2, downsecond, trap.getTrapezoid()[3], trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getTrapezoid()[3], downsecond));
                     }
-
                 }
             }
 
@@ -512,10 +458,10 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
     }
 }
 
-/**
- * @brief Method to update the neighbors of each trapezoid
- * @param[in] Segment top and bottom, Segment left and right (pleft, pright)
- */
+/*
+  @brief Method to update the neighbors of each trapezoid
+  @param[in] Segment top and bottom, Segment left and right (pleft, pright)
+
 void TrapezoidalMap::updateNeighbors(cg3::Segment2d top, cg3::Segment2d bottom, cg3::Point2d left, cg3::Point2d right){
     size_t id2 = std::numeric_limits<size_t>::max();
     topMap.insert(std::make_pair(cg3::Segment2d(top), id2));
@@ -523,32 +469,37 @@ void TrapezoidalMap::updateNeighbors(cg3::Segment2d top, cg3::Segment2d bottom, 
     leftpList.push_back(left);
     rightpList.push_back(right);
 }
+*/
 
-/**
+
+/*
  * @brief Method to add polygon in the structures of trapezoidal map
  * @param[in] 4 points Point for the new polygon
  */
-void TrapezoidalMap::addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p3, cg3::Point2d p4){
+void TrapezoidalMap::addPolygon(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
+                    const cg3::Point2d leftp, const cg3::Point2d rightp, const cg3::Segment2d top, const cg3::Segment2d bottom){
     size_t id;
 
-    std::array<cg3::Point2d, 4> trapezoid = {p1, p2, p3, p4};
+    trapezoid trapez = trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom);
 
     id = std::numeric_limits<size_t>::max();
 
-    trapezoidsMap.insert(std::make_pair(Trapezoid(trapezoid), id));
-    update();
+    trapezoidsMap.insert(std::make_pair(trapez, id));
 
-    dag.setTrapezoidToInsert(trapezoid, trapezoids.size());
+    trapezoids.push_back(trapez);
+
+    dag.setTrapezoidToInsert(trapez, trapezoids.size());
 }
+
 
 /**
  * @brief Method to find trapezoid in the map
  * @param[in] t Trapezoid, found bool
  * @param[out] map of <Trapezoid, unsigned_int>
  */
-std::map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findTrapezoid(const Trapezoid t, bool& found){
+std::map<trapezoid, size_t> TrapezoidalMap::findTrapezoid(const trapezoid t, bool& found){
     found = false;
-    return findIndexedTrapezoid(Trapezoid(t), found);
+    return findIndexedTrapezoid(trapezoid(t), found);
 }
 
 /**
@@ -556,10 +507,10 @@ std::map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findTrapezoid(cons
  * @param[in] indexedTrapezoid Trapezoid, found bool
  * @param[out] map of <Trapezoid, unsigned_int>
  */
-std::map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findIndexedTrapezoid(const Trapezoid& indexedTrapezoid, bool& found){
-    std::map<Trapezoid, size_t>::iterator it = trapezoidsMap.find(indexedTrapezoid);
+std::map<trapezoid, size_t> TrapezoidalMap::findIndexedTrapezoid(const trapezoid& indexedTrapezoid, bool& found){
+    std::map<trapezoid, size_t>::iterator it = trapezoidsMap.find(indexedTrapezoid);
 
-    std::map<std::array<cg3::Point2d, 4>, size_t> map;
+    std::map<trapezoid, size_t> map;
 
     if (it != trapezoidsMap.end()) {
         found = true;
@@ -572,7 +523,7 @@ std::map<std::array<cg3::Point2d, 4>, size_t> TrapezoidalMap::findIndexedTrapezo
  * @brief Method to return the trapezoids
  * @param[out] vector of trapezoids
  */
-std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::getTrapezoids() const{
+std::vector<trapezoid> TrapezoidalMap::getTrapezoids() const{
     return trapezoids;
 }
 
@@ -581,7 +532,7 @@ std::vector<std::array<cg3::Point2d, 4>> TrapezoidalMap::getTrapezoids() const{
  */
 void TrapezoidalMap::update(){
     trapezoids.clear();
-    for (std::map<Trapezoid, size_t>::iterator it=trapezoidsMap.begin(); it!=trapezoidsMap.end(); ++it){
+    for (std::map<trapezoid, size_t>::iterator it=trapezoidsMap.begin(); it!=trapezoidsMap.end(); ++it){
         trapezoids.push_back(it->first);
     }
 }
@@ -591,7 +542,7 @@ void TrapezoidalMap::update(){
  * @param[in] point Point
  */
 void TrapezoidalMap::queryPoint(cg3::Point2d point){
-    found = dag.findTrapezoid(point, true, dag.getDag());
+    queryPointTrap = dag.findTrapezoid(point, true, dag.getDag()).getTrapezoid();
 }
 
 /**
@@ -599,7 +550,7 @@ void TrapezoidalMap::queryPoint(cg3::Point2d point){
  * @param[out] found Trapezoid
  */
 std::array<cg3::Point2d, 4> TrapezoidalMap::getFoundTrapezoid() const{
-    return found;
+    return queryPointTrap;
 }
 
 /**
@@ -611,10 +562,6 @@ void TrapezoidalMap::clearMap()
     boundingBox.setMax(cg3::Point2d(0,0));
     trapezoids.clear();
     trapezoidsMap.clear();
-    rightpList.clear();
-    leftpList.clear();
-    topMap.clear();
-    bottomMap.clear();
 }
 
 

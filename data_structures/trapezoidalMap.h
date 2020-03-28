@@ -10,6 +10,7 @@
 #include <data_structures/dag.h>
 #include "data_structures/trapezoidalmap_dataset.h"
 #include "data_structures/segment_intersection_checker.h"
+#include "data_structures/trapezoid.h"
 
 
 /**
@@ -24,18 +25,19 @@ public:
 
     void inizialize();
 
-    void addPolygon(cg3::Point2d p1, cg3::Point2d p2, cg3::Point2d p3, cg3::Point2d p4);
-    std::map<Trapezoid, size_t> findTrapezoid(const Trapezoid t, bool& found);
-    std::map<Trapezoid, size_t> findIndexedTrapezoid(const Trapezoid& indexedTrapezoid, bool& found);
+    void addPolygon(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
+                    const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom);
+    std::map<trapezoid, size_t> findTrapezoid(const trapezoid t, bool& found);
+    std::map<trapezoid, size_t> findIndexedTrapezoid(const trapezoid& indexedTrapezoid, bool& found);
 
     void update();
-    std::vector<Trapezoid> getTrapezoids() const;
+    std::vector<trapezoid> getTrapezoids() const;
 
     //methods to update dag e trapezoidal map
     void trapezoidalMapAlgorithm(cg3::Segment2d segment);
-    void CompletelyInsideTrapezoid(Trapezoid t, const cg3::Segment2d& segment);
-    void multipleTrapezoid(const cg3::Segment2d& segment, std::vector<Trapezoid> foundTrapezoid);
-    void updateNeighbors(cg3::Segment2d top, cg3::Segment2d bottom, cg3::Point2d left, cg3::Point2d right);
+    void CompletelyInsideTrapezoid(trapezoid t, const cg3::Segment2d& segment);
+    void multipleTrapezoid(const cg3::Segment2d& segment, std::vector<trapezoid> foundTrapezoid);
+    //void updateNeighbors(cg3::Segment2d top, cg3::Segment2d bottom, cg3::Point2d left, cg3::Point2d right);
 
     //methods for point location
     void queryPoint(cg3::Point2d point);
@@ -46,14 +48,17 @@ public:
 private:
     cg3::BoundingBox2 boundingBox;
 
-    Trapezoid found;
-    std::vector<Trapezoid> trapezoids;
-    std::map<Trapezoid, size_t> trapezoidsMap;
+    Trapezoid queryPointTrap;
 
+    std::vector<trapezoid> trapezoids;
+    std::map<trapezoid, size_t> trapezoidsMap;
+
+    /*
     std::list<cg3::Point2d> leftpList;
     std::list<cg3::Point2d> rightpList;
     std::map<cg3::Segment2d, size_t> topMap;
     std::map<cg3::Segment2d, size_t> bottomMap;
+    */
 };
 
 #endif // TRAPEZOIDALMAP_H

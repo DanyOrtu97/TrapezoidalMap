@@ -2,6 +2,7 @@
 
 #include <cg3/geometry/point2.h>
 #include <cg3/geometry/segment2.h>
+#include <data_structures/trapezoid.h>
 
 /**
  * @brief This method return the pointer at the left child
@@ -79,8 +80,8 @@ long double nodeDag::determinant(const cg3::Segment2d segment, const cg3::Point2
 X::X(cg3::Point2d p, bool right){
     this->point = p;
     this->setValueEndpoint(right);
-    this->setLeftChild(new Leaf());
-    this->setRightChild(new Leaf());
+    this->setLeftChild(nullptr);
+    this->setRightChild(nullptr);
 }
 
 /**
@@ -144,8 +145,8 @@ void X::setValueEndpoint(bool value){
  */
 Y::Y(cg3::Segment2d s){
     this->segment = s;
-    this->setLeftChild(new Leaf());
-    this->setRightChild(new Leaf());
+    this->setLeftChild(nullptr);
+    this->setRightChild(nullptr);
 }
 
 /**
@@ -193,11 +194,12 @@ nodeDag** Y::pointToSegment(const cg3::Point2d point){
  * @brief Constructor of node of type Leaf(trapezoid)
  * @param[in] t Trapezoid
  */
-Leaf::Leaf(Trapezoid t){
+Leaf::Leaf(trapezoid t){
     setTrapezoid(t);
     this->setLeftChild(nullptr);
     this->setRightChild(nullptr);
 }
+
 
 /**
  * @brief Return the type of the node
@@ -212,14 +214,14 @@ std::string  Leaf::getType() const{
  * @brief Return the trapezoid on Leaf node
  * @param[out] t Trapezoid
  */
-std::array<cg3::Point2d, 4> Leaf::getTrapezoid() const{
-    return trapezoid;
+trapezoid Leaf::getTrapezoid(){
+    return trapezoide;
 }
 
 /**
  * @brief Set the trapezoid in a Leaf node
  * @param[in] trapezoid Trapezoid
  */
-void Leaf::setTrapezoid(Trapezoid trapezoid){
-    this->trapezoid = trapezoid;
+void Leaf::setTrapezoid(trapezoid trapezoid){
+    this->trapezoide = trapezoid;
 }

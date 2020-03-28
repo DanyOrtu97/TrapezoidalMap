@@ -44,6 +44,7 @@ SOURCES +=  \
     data_structures/dag.cpp \
     data_structures/nodedag.cpp \
     data_structures/segment_intersection_checker.cpp \
+    data_structures/trapezoid.cpp \
     data_structures/trapezoidalMap.cpp \
     data_structures/trapezoidalmap_dataset.cpp \
     drawables/drawableTrapezoidalMap.cpp \
@@ -60,6 +61,7 @@ HEADERS += \
     data_structures/dag.h \
     data_structures/nodedag.h \
     data_structures/segment_intersection_checker.h \
+    data_structures/trapezoid.h \
     data_structures/trapezoidalMap.h \
     data_structures/trapezoidalmap_dataset.h \
     drawables/drawableTrapezoidalMap.h \
