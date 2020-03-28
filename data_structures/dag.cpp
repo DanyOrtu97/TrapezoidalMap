@@ -104,7 +104,8 @@ void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* t
     }
     else{      
         if((temp)->getType() == "PK1Y"){
-            if(temp->determinant(segment, ((Y*)(*tmp))->getSegment().p1()) < 0 || temp->determinant(segment, ((Y*)(*tmp))->getSegment().p2()) < 0){
+            if(((temp)->determinant(((Y*)(temp))->getSegment(), p1) > 0 && (temp)->determinant(((Y*)(temp))->getSegment(), p2) > 0) ||
+                    ((temp)->determinant(segment, ((Y*)(temp))->getSegment().p1()) < 0 || (temp)->determinant(segment, ((Y*)(temp))->getSegment().p2()) < 0)){
                 addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
             }
             else{
