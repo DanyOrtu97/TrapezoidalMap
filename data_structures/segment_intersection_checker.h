@@ -9,6 +9,7 @@ class SegmentIntersectionChecker {
 
 public:
 
+
     typedef cg3::AABBTree<2, cg3::Segment2d> AABBTree;
     typedef AABBTree::KeyOverlapChecker KeyOverlapChecker;
 
