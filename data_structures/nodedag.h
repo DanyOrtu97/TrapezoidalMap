@@ -35,7 +35,7 @@ class X: public nodeDag{
 
 public:
     X() = default;
-    explicit X(cg3::Point2d p);
+    explicit X(cg3::Point2d p, bool right);
     ~X() override = default;
 
     std::string  getType() const override;
@@ -43,9 +43,12 @@ public:
     void setPoint(cg3::Point2d point);
     nodeDag** pointToPoint(const cg3::Point2d point);
 
+    bool getValueEndpoint();
+    void setValueEndpoint(bool value);
 
 private:
     cg3::Point2d point;
+    bool rightEndpoint;
 };
 
 

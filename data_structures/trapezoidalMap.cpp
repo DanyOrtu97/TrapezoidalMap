@@ -80,8 +80,9 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
     else{
         //split node
         nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, dag.getDag());
-        //dag.findSplitNode(segment);
+
         dag.findTrapezoids(segment, splitNode, nullptr);
+
 
         std::vector<std::array<cg3::Point2d, 4>> foundTrapezoids;
 

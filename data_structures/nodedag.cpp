@@ -76,8 +76,9 @@ long double nodeDag::determinant(const cg3::Segment2d segment, const cg3::Point2
  * @brief Constructor of node of type X(point)
  * @param[in] p Point
  */
-X::X(cg3::Point2d p){
+X::X(cg3::Point2d p, bool right){
     this->point = p;
+    this->setValueEndpoint(right);
     this->setLeftChild(new Leaf());
     this->setRightChild(new Leaf());
 }
@@ -116,11 +117,26 @@ nodeDag** X::pointToPoint(const cg3::Point2d point){
     if (point.x() < this->getPoint().x()){
         return this->getLeftChildP();
     }
-    else{
+    else if (point.x() > this->getPoint().x()){
         return this->getRightChildP();
+    }
+    else{
+        if(this->rightEndpoint){
+            return this->getLeftChildP();
+        }
+        else{
+            return this->getRightChildP();
+        }
     }
 }
 
+bool X::getValueEndpoint(){
+    return rightEndpoint;
+}
+
+void X::setValueEndpoint(bool value){
+    this->rightEndpoint=value;
+}
 
 /**
  * @brief Constructor of node of type Y(segment)

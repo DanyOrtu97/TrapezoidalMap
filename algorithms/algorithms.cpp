@@ -5,6 +5,7 @@
 
 namespace GasAlgorithms {
 
+
     /**
      * @brief Method to find the split node in the dag structure
      * @param[in] segment Segment

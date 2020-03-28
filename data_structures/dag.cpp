@@ -32,7 +32,6 @@ void Dag::updateDag(const cg3::Segment2d segment){
 
     //split node
     nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, this->getDag());
-            //findSplitNode(segment);
 
     if(firstTrapezoid == lastTrapezoid){
         insertSingleTrapezoid(segment);
@@ -93,17 +92,19 @@ void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* t
             }
         }
         else if((*tmp)->getType() == "PK1Y"){
-            if((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) > 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) > 0){
+            if(((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) > 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) > 0) ||
+                   ((*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p1()) < 0 || (*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p2()) < 0)){
                 findTrapezoids(segment, (*tmp)->getLeftChild(), temp);
             }
-            else if((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) < 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) < 0){
+            else if(((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) < 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) < 0) ||
+                   ((*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p1()) > 0 || (*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p2()) > 0)){
                 findTrapezoids(segment, (*tmp)->getRightChild(), temp);
             }
         }
     }
-    else{
+    else{      
         if((temp)->getType() == "PK1Y"){
-            if((temp)->determinant(((Y*)(temp))->getSegment(), p1) > 0 && (temp)->determinant(((Y*)(temp))->getSegment(), p2) > 0){
+            if(temp->determinant(segment, ((Y*)(*tmp))->getSegment().p1()) < 0 || temp->determinant(segment, ((Y*)(*tmp))->getSegment().p2()) < 0){
                 addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
             }
             else{
@@ -129,8 +130,8 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 
-    nodeDag* point1 = new X(p1);
-    nodeDag* point2 = new X(p2);
+    nodeDag* point1 = new X(p1, false);
+    nodeDag* point2 = new X(p2, true);
     nodeDag* segment1 = new Y(segment);
 
 
@@ -164,8 +165,8 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
 void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitNode){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
-    nodeDag* point1 = new X(p1);
-    nodeDag* point2 = new X(p2);
+    nodeDag* point1 = new X(p1, false);
+    nodeDag* point2 = new X(p2, true);
     nodeDag* segment1a = new Y(segment);
     bool up, invert=false, upInitial=false, downInitial=false;
 
@@ -331,7 +332,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                         invert=!invert;
                         contaInvert++;
                     }
-                    else if(it->first[3].y() == -(1e+6)){
+                    else if(it->first[3].y() == -(1e+6) && contaInvert>1){
                         invert=!invert;
                         contaInvert++;
                     }
@@ -351,7 +352,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                         invert=!invert;
                         contaInvert++;
                     }
-                    else if(it->first[0].y() == (1e+6)){
+                    else if(it->first[0].y() == (1e+6) && contaInvert>1){
                         invert=!invert;
                         contaInvert++;
                     }
