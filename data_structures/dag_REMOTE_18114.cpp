@@ -3,7 +3,6 @@
 #include <data_structures/trapezoidalMap.h>
 #include <typeinfo>
 #include <algorithms/algorithms.h>
-#include <data_structures/trapezoid.h>
 
 /**
  * @brief Constructor of dag
@@ -17,8 +16,8 @@ Dag::Dag(){
  * @brief Method to inzialize dag with the leaf for the bounding box
  * @param[in] boundingBox Trapezoid
  */
-void Dag::inizializeDag(trapezoid boundingBox){
-    Leaf* trap = new Leaf(boundingBox);
+void Dag::inizializeDag(std::array<cg3::Point2d, 4> boundingBox){
+    class Leaf* trap = new class Leaf(boundingBox);
     dag = trap;
 }
 
@@ -28,13 +27,13 @@ void Dag::inizializeDag(trapezoid boundingBox){
  */
 void Dag::updateDag(const cg3::Segment2d segment){
 
-    trapezoid firstTrapezoid = findTrapezoid(segment.p1(), false, this->getDag());
-    trapezoid lastTrapezoid = findTrapezoid(segment.p2(), false, this->getDag());
+    std::array<cg3::Point2d, 4> firstTrapezoid = findTrapezoid(segment.p1(), false, this->getDag());
+    std::array<cg3::Point2d, 4> lastTrapezoid = findTrapezoid(segment.p2(), false, this->getDag());
 
     //split node
     nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, this->getDag());
 
-    if(firstTrapezoid.getTrapezoid() == lastTrapezoid.getTrapezoid()){
+    if(firstTrapezoid == lastTrapezoid){
         insertSingleTrapezoid(segment);
         pointersMap.clear();
     }
@@ -49,7 +48,7 @@ void Dag::updateDag(const cg3::Segment2d segment){
  * @param[in] point Point, queryPoint bool, root nodeDag*
  * @param[out] trapezoid Trapezoid
  */
-trapezoid  Dag::findTrapezoid(cg3::Point2d point, bool queryPoint, nodeDag* root){
+std::array<cg3::Point2d, 4>  Dag::findTrapezoid(cg3::Point2d point, bool queryPoint, nodeDag* root){
     nodeDag** tmp = &root;
 
     while((*tmp)->getType() != "PK4Leaf"){
@@ -65,7 +64,7 @@ trapezoid  Dag::findTrapezoid(cg3::Point2d point, bool queryPoint, nodeDag* root
 
     }
     if(!queryPoint){
-        pointersMap.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), tmp));
+        addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), tmp));
     }
 
     return ((Leaf*)*tmp)->getTrapezoid();
@@ -107,22 +106,18 @@ void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* t
         if((temp)->getType() == "PK1Y"){
             if(((temp)->determinant(((Y*)(temp))->getSegment(), p1) > 0 && (temp)->determinant(((Y*)(temp))->getSegment(), p2) > 0) ||
                     ((temp)->determinant(segment, ((Y*)(temp))->getSegment().p1()) < 0 || (temp)->determinant(segment, ((Y*)(temp))->getSegment().p2()) < 0)){
-<<<<<<< HEAD
-                pointersMap.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
-=======
                 addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
->>>>>>> d10414be72c27c6d408e9bb316b3940399b77363
             }
             else{
-                pointersMap.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
+                addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
             }
         }
         else if((temp)->getType() == "PK1X"){
             if(temp->getLeftChild()->getType() == "PK4Leaf"){
-                pointersMap.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
+                addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
             }
             else{
-                pointersMap.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
+                addMapElement(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
             }
         }
     }
@@ -153,10 +148,10 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
         dag = point1;
     }
     else{
-        trapezoid trap = pointersMap.begin()->first;
+        std::array<cg3::Point2d, 4> trap = pointersMap.begin()->first;
         ((*(pointersMap.begin()->second)))=point1;
         pointersMap.clear();
-        if(trap.getTrapezoid() == (findTrapezoid(segment.p2(), false, this->getDag())).getTrapezoid()){
+        if(trap == (findTrapezoid(segment.p2(), false, this->getDag()))){
             ((*(pointersMap.begin()->second)))=point1;
         }
     }
@@ -181,11 +176,10 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
 
     int contaStep=0, contaInvert=0;
 
-    /*
     //sort traps (n log n) I need it
     if(pointersMap.size() > 2){
-        std::sort(traps.begin(), traps.end(), [](const trapezoid a, const trapezoid b){
-            if(a.trapezoid::getTrapezoid()[0].x() < b[0].x()){
+        std::sort(traps.begin(), traps.end(), [](const std::array<cg3::Point2d, 4> a, const std::array<cg3::Point2d, 4> b){
+            if(a[0].x() < b[0].x()){
                 return true;
             }
             else if(a[0].x() == b[0].x()){
@@ -201,10 +195,8 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
             }
         });
     }
-    */
 
-    for(std::map<trapezoid, nodeDag**>::iterator it = pointersMap.begin(); it!=pointersMap.end(); it++){
-        trapezoid trap=it->first;
+    for(std::map<std::array<cg3::Point2d, 4>, nodeDag**>::iterator it = pointersMap.begin(); it!=pointersMap.end(); it++){
         if(it == pointersMap.begin()){
             if(splitNode->getType() == "PK1X"){
                 if(dag->determinant(segment, (((X*)splitNode))->getPoint()) < 0){
@@ -214,11 +206,10 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                     up=false;
                 }
             }
-
-            if(trap.getTrapezoid()[0].y() == (1e+6)){
+            if(it->first[0].y() == (1e+6)){
                 upInitial=true;
             }
-            if(trap.getTrapezoid()[3].y() == -(1e+6)){
+            if(it->first[3].y() == -(1e+6)){
                 downInitial=true;
             }
             point1->setRightChild(segment1a);
@@ -247,11 +238,11 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
             }
             else{
                 if(up){
-                    if(trap.getTrapezoid()[0].y() != (1e+6)){
+                    if(it->first[0].y() != (1e+6)){
                         invert=!invert;
                     }
                     if(contaInvert > 1){
-                        if(trap.getTrapezoid()[3].y() == -(1e+6)){
+                        if(it->first[3].y() == -(1e+6)){
                             invert=!invert;
                         }
                     }
@@ -267,11 +258,11 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                     }
                 }
                 else{
-                    if(trap.getTrapezoid()[3].y() != -(1e+6)){
+                    if(it->first[3].y() != -(1e+6)){
                         invert=!invert;
                     }
                     if(contaInvert > 1){
-                        if(trap.getTrapezoid()[0].y() == (1e+6)){
+                        if(it->first[0].y() == (1e+6)){
                             invert=!invert;
                         }
                     }
@@ -293,7 +284,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
             if(pointersMap.size() > 2 && it == ++pointersMap.begin()){
                 segmentInner = new Y(segment);
                 if(up){
-                    if(downInitial && trap.getTrapezoid()[3].y() != -(1e+6)){
+                    if(downInitial && it->first[3].y() != -(1e+6)){
                         segmentInner->setLeftChild(segment1a->getLeftChild());
                         segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
                         contaStep++;
@@ -303,17 +294,17 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                         contaStep++;
                         segmentInner->setRightChild(segment1a->getRightChild());
                     }
-                    if(trap.getTrapezoid()[0].y() != (1e+6)){
+                    if(it->first[0].y() != (1e+6)){
                         invert=!invert;
                         contaInvert++;
                     }
-                    else if(trap.getTrapezoid()[3].y() == -(1e+6)){
+                    else if(it->first[3].y() == -(1e+6)){
                         invert=!invert;
                         contaInvert++;
                     }
                 }
                 else{
-                    if(upInitial && trap.getTrapezoid()[0].y() != (1e+6)){
+                    if(upInitial && it->first[0].y() != (1e+6)){
                         segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
                         contaStep++;
                         segmentInner->setRightChild(segment1a->getRightChild());
@@ -324,11 +315,11 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                         contaStep++;
 
                     }
-                    if(trap.getTrapezoid()[3].y() != -(1e+6)){
+                    if(it->first[3].y() != -(1e+6)){
                         invert=!invert;
                         contaInvert++;
                     }
-                    else if(trap.getTrapezoid()[0].y() == (1e+6)){
+                    else if(it->first[0].y() == (1e+6)){
                         invert=!invert;
                         contaInvert++;
                     }
@@ -338,11 +329,11 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
             else{
                 segmentInner1 = new Y(segment);
                 if(up){
-                    if(trap.getTrapezoid()[0].y() != (1e+6)){
+                    if(it->first[0].y() != (1e+6)){
                         invert=!invert;
                         contaInvert++;
                     }
-                    else if(trap.getTrapezoid()[3].y() == -(1e+6) && contaInvert>1){
+                    else if(it->first[3].y() == -(1e+6) && contaInvert>1){
                         invert=!invert;
                         contaInvert++;
                     }
@@ -358,11 +349,11 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                     }
                 }
                 else{
-                    if(trap.getTrapezoid()[3].y() != -(1e+6)){
+                    if(it->first[3].y() != -(1e+6)){
                         invert=!invert;
                         contaInvert++;
                     }
-                    else if(trap.getTrapezoid()[0].y() == (1e+6) && contaInvert>1){
+                    else if(it->first[0].y() == (1e+6) && contaInvert>1){
                         invert=!invert;
                         contaInvert++;
                     }
@@ -384,12 +375,19 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
     }
 }
 
+/**
+ * @brief Method to add an element in a map of <trapezoids, address in the dag>
+ * @param[in] element Map<Trapezoid, nodeDag**>
+ */
+void Dag::addMapElement(const std::pair<std::array<cg3::Point2d, 4>, nodeDag**> element){
+    pointersMap.insert(element);
+}
 
 /**
  * @brief Method to retrieve the trapezoids for insertion
  * @param[in] trapezoid Trapezoid, num Int
  */
-void Dag::setTrapezoidToInsert (trapezoid trapezoid, int num){
+void Dag::setTrapezoidToInsert (std::array<cg3::Point2d, 4> trapezoid, int num){
     nTrapezoids = num;
     traps.push_back(trapezoid);
 }
@@ -404,7 +402,7 @@ nodeDag* Dag::getDag(){
 /**
  * @brief Method to get the pointer map
  */
-std::map<trapezoid, nodeDag**> Dag::getPointerMap(){
+std::map<std::array<cg3::Point2d, 4>, nodeDag**> Dag::getPointerMap(){
     return pointersMap;
 }
 
