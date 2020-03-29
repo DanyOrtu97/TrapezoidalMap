@@ -18,8 +18,8 @@ namespace GasAlgorithms {
     cg3::Point2d createPoint(cg3::Point2d p, double x, double y);
     double handleSlopeSegment(cg3::Segment2d s, cg3::Point2d p);
 
-    bool degeneratedTrapezoid(const Trapezoid t);
-    std::array<cg3::Point2d, 3> findTriangleByQuad(const Trapezoid trap);
+    bool degeneratedTrapezoid(trapezoid t);
+    std::array<cg3::Point2d, 3> findTriangleByQuad(trapezoid trap);
 
 
 

@@ -29,8 +29,8 @@ void DrawableTrapezoidalMap::draw() const
     int i =0;
     for (trapezoid trap : getTrapezoids()){
         if (getFoundTrapezoid().size()>1 && trap.getTrapezoid() == getFoundTrapezoid()){
-            if(GasAlgorithms::degeneratedTrapezoid(trap.getTrapezoid())){
-                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap.getTrapezoid()), (cg3::Color(0,20,255)).hue(), 1, true);
+            if(GasAlgorithms::degeneratedTrapezoid(trap)){
+                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), (cg3::Color(0,20,255)).hue(), 1, true);
             }
             else{
                 cg3::opengl::drawQuad2(trap.getTrapezoid(), (cg3::Color(0,20,255)).hue(), 1, true);
@@ -39,14 +39,14 @@ void DrawableTrapezoidalMap::draw() const
 
         }
         else{
-            if(GasAlgorithms::degeneratedTrapezoid(trap.getTrapezoid())){
-                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap.getTrapezoid()), this->trapezoidsColor[i], 2, true);
+            if(GasAlgorithms::degeneratedTrapezoid(trap)){
+                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), this->trapezoidsColor[i], 2, true);
             }
             else{
                 cg3::opengl::drawQuad2(trap.getTrapezoid(), this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
             }
-            if(GasAlgorithms::degeneratedTrapezoid(trap.getTrapezoid())){
-                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap.getTrapezoid()), this->trapezoidsColor[i], 2, false);
+            if(GasAlgorithms::degeneratedTrapezoid(trap)){
+                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), this->trapezoidsColor[i], 2, false);
             }
             else{
                 cg3::opengl::drawQuad2(trap.getTrapezoid(), this->trapezoidsColor[i%trapezoidsColor.size()], 2, false);

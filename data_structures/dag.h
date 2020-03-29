@@ -19,6 +19,7 @@ public:
 
     void insertSingleTrapezoid(const cg3::Segment2d segment);
     void insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitNode);
+    void findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp);
 
     void setTrapezoidToInsert(trapezoid trap, int num);
 
@@ -35,6 +36,7 @@ private:
     nodeDag* dag;
     std::vector<trapezoid> traps;
     std::map<trapezoid, nodeDag**> pointersMap;
+    std::map<trapezoid, nodeDag**> multipleAdresses;
 
 };
 #endif // DAG_H

@@ -151,12 +151,19 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
     else{
         trapezoid trap = pointersMap.begin()->first;
         ((*(pointersMap.begin()->second)))=point1;
-        pointersMap.clear();
+
+        findMultipleTrapezoids(trap, this->getDag(), nullptr);
+        /*
         if(trap.getTrapezoid() == (findTrapezoid(segment.p2(), false, this->getDag())).getTrapezoid()){
             ((*(pointersMap.begin()->second)))=point1;
+        }*/
+        for(std::map<trapezoid, nodeDag**>::iterator it = multipleAdresses.begin(); it!=multipleAdresses.end(); it++){
+            *(it->second)=point1;
         }
+
     }
     pointersMap.erase(pointersMap.begin());
+    multipleAdresses.clear();
 }
 
 
@@ -177,15 +184,15 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
 
     int contaStep=0, contaInvert=0;
 
-    /*
+
     //sort traps (n log n) I need it
     if(pointersMap.size() > 2){
-        std::sort(traps.begin(), traps.end(), [](const trapezoid a, const trapezoid b){
-            if(a.trapezoid::getTrapezoid()[0].x() < b[0].x()){
+        std::sort(traps.begin(), traps.end(), [](trapezoid a, trapezoid b){
+            if(a.trapezoid::getTrapezoid()[0].x() < b.trapezoid::getTrapezoid()[0].x()){
                 return true;
             }
-            else if(a[0].x() == b[0].x()){
-                if(a[0].y() > b[0].y()){
+            else if(a.trapezoid::getTrapezoid()[0].x() == b.trapezoid::getTrapezoid()[0].x()){
+                if(a.trapezoid::getTrapezoid()[0].y() > b.trapezoid::getTrapezoid()[0].y()){
                     return true;
                 }
                 else{
@@ -197,10 +204,15 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
             }
         });
     }
-    */
+
 
     for(std::map<trapezoid, nodeDag**>::iterator it = pointersMap.begin(); it!=pointersMap.end(); it++){
         trapezoid trap=it->first;
+
+
+        findMultipleTrapezoids(trap, this->getDag(), nullptr);
+
+
         if(it == pointersMap.begin()){
             if(splitNode->getType() == "PK1X"){
                 if(dag->determinant(segment, (((X*)splitNode))->getPoint()) < 0){
@@ -225,6 +237,10 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
             segment1a->setRightChild(new Leaf(*(traps.begin()+contaStep)));
             contaStep++;
             (*it->second)=point1;
+
+            for(std::map<trapezoid, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
+                *(it2->second)=point1;
+            }
         }
         else if(it == --(pointersMap.end())){
             nodeDag* segment1b = new Y(segment);
@@ -240,6 +256,10 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                     segment1b->setRightChild(segment1a->getRightChild());
                 }
                 (*it->second)=point2;
+
+                for(std::map<trapezoid, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
+                    *(it2->second)=point2;
+                }
             }
             else{
                 if(up){
@@ -283,6 +303,10 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                     }
                 }
                 (*it->second)=point2;
+
+                for(std::map<trapezoid, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
+                    *(it2->second)=point2;
+                }
             }
         }
         else{ //more than two traps
@@ -330,6 +354,10 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                     }
                 }
                 (*it->second)=segmentInner;
+
+                for(std::map<trapezoid, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
+                    *(it2->second)=segmentInner;
+                }
             }
             else{
                 segmentInner1 = new Y(segment);
@@ -375,11 +403,60 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
                 }
                 segmentInner = segmentInner1;
                 (*it->second)=segmentInner;
+
+                for(std::map<trapezoid, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
+                    *(it2->second)=segmentInner;
+                }
+            }
+        }
+        multipleAdresses.clear();
+    }
+}
+
+
+void Dag::findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp){
+
+    nodeDag** tmp= &node;
+
+    if((*tmp)->getType() != "PK4Leaf"){
+        temp=*tmp;
+
+        findMultipleTrapezoids(trap, (*tmp)->getLeftChild(), temp);
+
+        findMultipleTrapezoids(trap, (*tmp)->getRightChild(), temp);
+
+    }
+    else{
+        if(((Leaf*)*tmp)->getTrapezoid().getTrapezoid() == trap.getTrapezoid()){
+            if((temp)->getType() == "PK1Y"){
+                if((temp)->getLeftChild()->getType() == "PK4Leaf"){
+                    if(((Leaf*)(temp)->getLeftChild())->getTrapezoid().getTrapezoid() == trap.getTrapezoid()){
+                        multipleAdresses.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
+                    }
+                }
+
+                if((temp)->getRightChild()->getType() == "PK4Leaf"){
+                    if(((Leaf*)(temp)->getRightChild())->getTrapezoid().getTrapezoid() == trap.getTrapezoid()){
+                        multipleAdresses.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
+                    }
+                }
+            }
+            else if((temp)->getType() == "PK1X"){
+                if((temp)->getLeftChild()->getType() == "PK4Leaf"){
+                    if(((Leaf*)(temp)->getLeftChild())->getTrapezoid().getTrapezoid() == trap.getTrapezoid()){
+                        multipleAdresses.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
+                    }
+                }
+
+                if((temp)->getRightChild()->getType() == "PK4Leaf"){
+                    if(((Leaf*)(temp)->getRightChild())->getTrapezoid().getTrapezoid() == trap.getTrapezoid()){
+                        multipleAdresses.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
+                    }
+                }
             }
         }
     }
 }
-
 
 /**
  * @brief Method to retrieve the trapezoids for insertion
@@ -418,5 +495,6 @@ void Dag::clearDag(){
     traps.clear();
     dag = nullptr;
     pointersMap.clear();
+    multipleAdresses.clear();
 }
 

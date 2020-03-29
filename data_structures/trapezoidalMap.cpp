@@ -260,27 +260,27 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                 midpointR = trap.getRightP();
                 upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p1));
                 downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p1));
-                addPolygon(topLeft, upfirst, downfirst, bottomLeft, topLeft, p1, cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst));
+                addPolygon(topLeft, upfirst, downfirst, bottomLeft, trap.getLeftP(), p1, cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst));
             }
             else if(i == (int)foundTrapezoids.size()-1){
                 upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p2));
                 downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p2));
                 leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
-                addPolygon(upsecond, topRight, bottomRight, downsecond, p2, topRight, cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
+                addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
 
                 if(dag.getDag()->determinant(segment, trap.getLeftP()) < 0){
                     addPolygon(leftPSeg, p2, downsecond, trap.getTrapezoid()[3], trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getTrapezoid()[3], downsecond));
                 }
                 else{
-                    addPolygon(trap.getTrapezoid()[0], upsecond, p2, leftPSeg, trap.getTrapezoid()[0], p2, cg3::Segment2d(trap.getTrapezoid()[0], upsecond), cg3::Segment2d(leftPSeg, p2));
+                    addPolygon(trap.getTrapezoid()[0], upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getTrapezoid()[0], upsecond), cg3::Segment2d(leftPSeg, p2));
                 }
             }
             if(p2.x() > trap.getRightP().x()){
                 if(dag.getDag()->determinant(segment, trap.getRightP()) < 0){
                     rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
-                    upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getBottom(), p2));
+                    upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p2));
                     addPolygon(upfirst, upsecond, p2, p1, p1, p2, cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2));
-                    addPolygon(p1, rightPSeg, trap.getTrapezoid()[2], downfirst, p1, trap.getRightP(),cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, trap.getTrapezoid()[2]) );
+                    addPolygon(p1, rightPSeg, trap.getTrapezoid()[2], downfirst, p1, trap.getRightP(),cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, trap.getTrapezoid()[2]));
                 }
                 else{
                     rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
@@ -331,7 +331,7 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                 if(trap.getBottom().p1().y() != -(1e+6)){
                     countNonBoxDown++;
                 }
-
+                /*
                 if(dag.getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
                     upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p2));
                     rightPSeg = GasAlgorithms::createPoint(rightPSeg, trap.getRightP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getRightP()));
@@ -451,9 +451,8 @@ void TrapezoidalMap::multipleTrapezoid(const cg3::Segment2d& segment, std::vecto
                         leftPSeg = GasAlgorithms::createPoint(leftPSeg, trap.getLeftP().x(), GasAlgorithms::handleSlopeSegment(segment, trap.getLeftP()));
                         addPolygon(leftPSeg, p2, downsecond, trap.getTrapezoid()[3], trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getTrapezoid()[3], downsecond));
                     }
-                }
+                }*/
             }
-
         }
     }
 }

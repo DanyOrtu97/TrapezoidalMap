@@ -1,6 +1,7 @@
 #include "algorithms.h"
 
 #include <data_structures/dag.h>
+#include <data_structures/trapezoid.h>
 
 
 namespace GasAlgorithms {
@@ -75,17 +76,17 @@ namespace GasAlgorithms {
      * @param[in] t Trapezoid
      * @param[out] true if the trapezoid is a triangle, false otherwise
      */
-    bool degeneratedTrapezoid(const Trapezoid t){
-        if(t[0] == t[1]){
+    bool degeneratedTrapezoid(trapezoid t){
+        if(t.getTrapezoid()[0] == t.getTrapezoid()[1]){
             return true;
         }
-        else if(t[1] == t[2]){
+        else if(t.getTrapezoid()[1] == t.getTrapezoid()[2]){
             return true;
         }
-        else if(t[2] == t[3]){
+        else if(t.getTrapezoid()[2] == t.getTrapezoid()[3]){
             return true;
         }
-        else if(t[3] == t[0]){
+        else if(t.getTrapezoid()[3] == t.getTrapezoid()[0]){
             return true;
         }
         else{
@@ -98,19 +99,19 @@ namespace GasAlgorithms {
      * @param[in] t Trapezoid
      * @param[out] triangle Triangle formed by the input trapezoid
      */
-    std::array<cg3::Point2d, 3> findTriangleByQuad(const Trapezoid t){
+    std::array<cg3::Point2d, 3> findTriangleByQuad(trapezoid t){
         std::array<cg3::Point2d, 3> triangle;
-        if(t[0] == t[1]){
-            triangle = {t[1], t[2], t[3]};
+        if(t.getTrapezoid()[0] == t.getTrapezoid()[1]){
+            triangle = {t.getTrapezoid()[1], t.getTrapezoid()[2], t.getTrapezoid()[3]};
         }
-        else if(t[1] == t[2]){
-            triangle = {t[2], t[3], t[0]};
+        else if(t.getTrapezoid()[1] == t.getTrapezoid()[2]){
+            triangle = {t.getTrapezoid()[2], t.getTrapezoid()[3], t.getTrapezoid()[0]};
         }
-        else if(t[2] == t[3]){
-            triangle = {t[3], t[0], t[1]};
+        else if(t.getTrapezoid()[2] == t.getTrapezoid()[3]){
+            triangle = {t.getTrapezoid()[3], t.getTrapezoid()[0], t.getTrapezoid()[1]};
         }
-        else if(t[3] == t[0]){
-            triangle = {t[0], t[1], t[2]};
+        else if(t.getTrapezoid()[3] == t.getTrapezoid()[0]){
+            triangle = {t.getTrapezoid()[0], t.getTrapezoid()[1], t.getTrapezoid()[2]};
         }
         return triangle;
     }
