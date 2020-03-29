@@ -22,6 +22,7 @@ void Dag::inizializeDag(trapezoid boundingBox){
     dag = trap;
 }
 
+
 /**
  * @brief Method to update the dag with the new subtrees and the new trapezoids
  * @param[in] segment Segment
@@ -153,10 +154,6 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
         ((*(pointersMap.begin()->second)))=point1;
 
         findMultipleTrapezoids(trap, this->getDag(), nullptr);
-        /*
-        if(trap.getTrapezoid() == (findTrapezoid(segment.p2(), false, this->getDag())).getTrapezoid()){
-            ((*(pointersMap.begin()->second)))=point1;
-        }*/
         for(std::map<trapezoid, nodeDag**>::iterator it = multipleAdresses.begin(); it!=multipleAdresses.end(); it++){
             *(it->second)=point1;
         }
@@ -188,11 +185,12 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
     //sort traps (n log n) I need it
     if(pointersMap.size() > 2){
         std::sort(traps.begin(), traps.end(), [](trapezoid a, trapezoid b){
-            if(a.trapezoid::getTrapezoid()[0].x() < b.trapezoid::getTrapezoid()[0].x()){
+            if(a.getTrapezoid()[0].x() < b.getTrapezoid()[0].x()){
                 return true;
+
             }
-            else if(a.trapezoid::getTrapezoid()[0].x() == b.trapezoid::getTrapezoid()[0].x()){
-                if(a.trapezoid::getTrapezoid()[0].y() > b.trapezoid::getTrapezoid()[0].y()){
+            else if(a.getTrapezoid()[0].x() == b.getTrapezoid()[0].x()){
+                if(a.getTrapezoid()[0].y() > b.getTrapezoid()[0].y()){
                     return true;
                 }
                 else{
@@ -246,13 +244,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
             nodeDag* segment1b = new Y(segment);
             point2->setLeftChild(segment1b);
             if(pointersMap.size() == 2){
-                point2->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
                 if(up){
                     segment1b->setLeftChild(segment1a->getLeftChild());
-                    segment1b->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                    segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
                 }
                 else{
-                    segment1b->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                    segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
                     segment1b->setRightChild(segment1a->getRightChild());
                 }
                 (*it->second)=point2;

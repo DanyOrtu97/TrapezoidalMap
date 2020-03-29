@@ -35,6 +35,7 @@ private:
     int nTrapezoids;
     nodeDag* dag;
     std::vector<trapezoid> traps;
+
     std::map<trapezoid, nodeDag**> pointersMap;
     std::map<trapezoid, nodeDag**> multipleAdresses;
 

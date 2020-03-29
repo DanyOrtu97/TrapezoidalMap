@@ -19,6 +19,8 @@ public:
 
     bool operator<(const trapezoid &other) const;
 
+    bool operator==(const trapezoid &other) const;
+
     void setTrapezoid(Trapezoid trapezoid);
     Trapezoid getTrapezoid();
 
@@ -42,6 +44,13 @@ private:
     cg3::Point2d rightp;
     cg3::Segment2d tops;
     cg3::Segment2d bottoms;
+
+    /*
+    trapezoid* upleft;
+    trapezoid* downleft;
+    trapezoid* upright;
+    trapezoid* downright;
+    */
 
 };
 

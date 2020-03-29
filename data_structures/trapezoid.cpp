@@ -32,6 +32,16 @@ bool trapezoid::operator<(const trapezoid &other) const{
     }
 }
 
+bool trapezoid::operator==(const trapezoid &other) const{
+    if(this->trapezoide == other.trapezoide && this->tops == other.tops && this->bottoms == other.bottoms && this->leftp == other.leftp && this->rightp == other.rightp){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+
 void trapezoid::setTrapezoid(Trapezoid trapezoid){
     this->trapezoide=trapezoid;
 }
