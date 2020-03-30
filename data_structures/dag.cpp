@@ -181,7 +181,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
 
     int contaStep=0, contaInvert=0;
 
-
+    /*
     //sort traps (n log n) I need it
     if(pointersMap.size() > 2){
         std::sort(traps.begin(), traps.end(), [](trapezoid a, trapezoid b){
@@ -202,6 +202,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
             }
         });
     }
+    */
 
 
     for(std::map<trapezoid, nodeDag**>::iterator it = pointersMap.begin(); it!=pointersMap.end(); it++){

@@ -32,8 +32,7 @@ public:
 
     //methods to update dag e trapezoidal map
     void trapezoidalMapAlgorithm(cg3::Segment2d segment);
-    void CompletelyInsideTrapezoid(trapezoid t, const cg3::Segment2d& segment);
-    void multipleTrapezoid(const cg3::Segment2d& segment, std::vector<trapezoid> foundTrapezoid);
+    void updateTrapezoid(const cg3::Segment2d& segment, std::vector<trapezoid> foundTrapezoid);
 
     //methods for point location
     void queryPoint(cg3::Point2d point);
