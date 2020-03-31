@@ -114,7 +114,7 @@ void X::setPoint(cg3::Point2d point){
  * @param[in] point Point
  * @param[out] pointer nodeDag**
  */
-nodeDag** X::pointToPoint(const cg3::Point2d point){
+nodeDag** X::pointToPoint(const cg3::Point2d point, const cg3::Point2d point2){
     if (point.x() < this->getPoint().x()){
         return this->getLeftChildP();
     }
@@ -123,10 +123,20 @@ nodeDag** X::pointToPoint(const cg3::Point2d point){
     }
     else{
         if(this->rightEndpoint){
-            return this->getLeftChildP();
+            if(point2.x() > this->getPoint().x()){
+                return this->getRightChildP();
+            }
+            else{
+                return this->getLeftChildP();
+            }
         }
         else{
-            return this->getRightChildP();
+            if(point2.x() < this->getPoint().x()){
+                return this->getLeftChildP();
+            }
+            else{
+                return this->getRightChildP();
+            }
         }
     }
 }
@@ -180,12 +190,30 @@ void Y::setSegment(cg3::Segment2d segment){
  * @param[in] point Point
  * @param[out] pointer nodeDag**
  */
-nodeDag** Y::pointToSegment(const cg3::Point2d point){
-    if(determinant(this->getSegment(), point) > 0){
-        return this->getLeftChildP();
+nodeDag** Y::pointToSegment(const cg3::Point2d point, const cg3::Point2d point2){
+    if(this->getSegment().p1() == point){
+        if(determinant(this->getSegment(), point2) > 0){ //sopra
+            return this->getLeftChildP();
+        }
+        else{ //sotto
+            return this->getRightChildP();
+        }
+    }
+    else if(this->getSegment().p2() == point){
+        if(determinant(this->getSegment(), point2) > 0){ //sopra
+            return this->getLeftChildP();
+        }
+        else{ //sotto
+            return this->getRightChildP();
+        }
     }
     else{
-        return this->getRightChildP();
+        if(determinant(this->getSegment(), point) > 0){
+            return this->getLeftChildP();
+        }
+        else{
+            return this->getRightChildP();
+        }
     }
 }
 

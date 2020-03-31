@@ -29,8 +29,8 @@ void Dag::inizializeDag(trapezoid boundingBox){
  */
 void Dag::updateDag(const cg3::Segment2d segment){
 
-    trapezoid firstTrapezoid = findTrapezoid(segment.p1(), false, this->getDag());
-    trapezoid lastTrapezoid = findTrapezoid(segment.p2(), false, this->getDag());
+    trapezoid firstTrapezoid = findTrapezoid(segment.p1(), segment.p2(), false, this->getDag());
+    trapezoid lastTrapezoid = findTrapezoid(segment.p2(), segment.p1(), false, this->getDag());
 
     //split node
     nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, this->getDag());
@@ -50,18 +50,18 @@ void Dag::updateDag(const cg3::Segment2d segment){
  * @param[in] point Point, queryPoint bool, root nodeDag*
  * @param[out] trapezoid Trapezoid
  */
-trapezoid  Dag::findTrapezoid(cg3::Point2d point, bool queryPoint, nodeDag* root){
+trapezoid Dag::findTrapezoid(cg3::Point2d point, cg3::Point2d auxiliaryPoint, bool queryPoint, nodeDag* root){
     nodeDag** tmp = &root;
 
     while((*tmp)->getType() != "PK4Leaf"){
         if((*tmp)->getType() == "PK1X"){
 
-            tmp = ((X*)*tmp)->pointToPoint(point);
+            tmp = ((X*)*tmp)->pointToPoint(point, auxiliaryPoint);
 
         }
         else if((*tmp)->getType() == "PK1Y"){
 
-            tmp = ((Y*)*tmp)->pointToSegment(point);
+            tmp = ((Y*)*tmp)->pointToSegment(point, auxiliaryPoint);
         }
 
     }
@@ -94,20 +94,29 @@ void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* t
             }
         }
         else if((*tmp)->getType() == "PK1Y"){
-            if(((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) > 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) > 0) ||
-                   ((*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p1()) < 0 || (*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p2()) < 0)){
+            if(((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) > 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) > 0)){
                 findTrapezoids(segment, (*tmp)->getLeftChild(), temp);
             }
-            else if(((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) < 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) < 0) ||
-                   ((*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p1()) > 0 || (*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p2()) > 0)){
+            else if(((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) < 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) < 0)){
+                findTrapezoids(segment, (*tmp)->getRightChild(), temp);
+            }
+            else if(((*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p1()) < 0 || (*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p2()) < 0)){
+                findTrapezoids(segment, (*tmp)->getLeftChild(), temp);
+            }
+            else{
                 findTrapezoids(segment, (*tmp)->getRightChild(), temp);
             }
         }
     }
     else{      
         if((temp)->getType() == "PK1Y"){
-            if(((temp)->determinant(((Y*)(temp))->getSegment(), p1) > 0 && (temp)->determinant(((Y*)(temp))->getSegment(), p2) > 0) ||
-                    ((temp)->determinant(segment, ((Y*)(temp))->getSegment().p1()) < 0 || (temp)->determinant(segment, ((Y*)(temp))->getSegment().p2()) < 0)){
+            if(((temp)->determinant(((Y*)(temp))->getSegment(), p1) > 0 && (temp)->determinant(((Y*)(temp))->getSegment(), p2) > 0)){
+                pointersMap.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
+            }
+            else if(((temp)->determinant(((Y*)(temp))->getSegment(), p1) < 0 && (temp)->determinant(((Y*)(temp))->getSegment(), p2) < 0)){
+                pointersMap.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getRightChildP()));
+            }
+            else if(((temp)->determinant(segment, ((Y*)(temp))->getSegment().p1()) < 0 || (temp)->determinant(segment, ((Y*)(temp))->getSegment().p2()) < 0)){
                 pointersMap.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), temp->getLeftChildP()));
             }
             else{

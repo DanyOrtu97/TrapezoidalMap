@@ -25,12 +25,12 @@ namespace GasAlgorithms {
              */
             if(leftPoint->getType() == "PK1X"){
 
-                leftPoint = *((X*)leftPoint)->pointToPoint(segment.p1());
+                leftPoint = *((X*)leftPoint)->pointToPoint(segment.p1(), segment.p2());
 
             }
             else if(leftPoint->getType() == "PK1Y"){
 
-                leftPoint = *((Y*)leftPoint)->pointToSegment(segment.p1());
+                leftPoint = *((Y*)leftPoint)->pointToSegment(segment.p1(), segment.p2());
             }
 
             /*
@@ -38,12 +38,12 @@ namespace GasAlgorithms {
              */
             if(rightPoint->getType() == "PK1X"){
 
-                rightPoint = *((X*)rightPoint)->pointToPoint(segment.p2());
+                rightPoint = *((X*)rightPoint)->pointToPoint(segment.p2(), segment.p1());
 
             }
             else if(rightPoint->getType() == "PK1Y"){
 
-                rightPoint = *((Y*)rightPoint)->pointToSegment(segment.p2());
+                rightPoint = *((Y*)rightPoint)->pointToSegment(segment.p2(), segment.p1());
             }
         }
 

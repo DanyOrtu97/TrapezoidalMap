@@ -41,7 +41,7 @@ public:
     std::string  getType() const override;
     cg3::Point2d getPoint() const;
     void setPoint(cg3::Point2d point);
-    nodeDag** pointToPoint(const cg3::Point2d point);
+    nodeDag** pointToPoint(const cg3::Point2d point, const cg3::Point2d point2);
 
     bool getValueEndpoint();
     void setValueEndpoint(bool value);
@@ -61,7 +61,7 @@ public:
     std::string  getType() const override;
     cg3::Segment2d getSegment() const;
     void setSegment(cg3::Segment2d segment);
-    nodeDag** pointToSegment(const cg3::Point2d point);
+    nodeDag** pointToSegment(const cg3::Point2d point, const cg3::Point2d point2);
 
 private:
     cg3::Segment2d segment;

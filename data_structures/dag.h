@@ -14,7 +14,7 @@ public:
     void inizializeDag(const trapezoid boundingBox);
     void updateDag(const cg3::Segment2d segment);
 
-    trapezoid findTrapezoid(const cg3::Point2d point, bool queryPoint, nodeDag* root);
+    trapezoid findTrapezoid(const cg3::Point2d point, const cg3::Point2d auxiliaryPoint, bool queryPoint, nodeDag* root);
     void findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* temp);
 
     void insertSingleTrapezoid(const cg3::Segment2d segment);
