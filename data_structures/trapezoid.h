@@ -17,6 +17,10 @@ public:
     trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
               const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom);
 
+    trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
+              const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom,
+              trapezoid* oneR, trapezoid* twoR, trapezoid* oneL, trapezoid* twoL);
+
     bool operator<(const trapezoid &other) const;
 
     bool operator==(const trapezoid &other) const;
@@ -36,6 +40,13 @@ public:
     void setBottom(const cg3::Segment2d bottom);
     cg3::Segment2d getBottom();
 
+    void setNeighboors(trapezoid* oneR, trapezoid* twoR, trapezoid* oneL, trapezoid* twoL);
+
+    trapezoid* getOneRight();
+    trapezoid* getTwoRight();
+    trapezoid* getOneLeft();
+    trapezoid* getTwoLeft();
+
 
 private:
     Trapezoid trapezoide;
@@ -45,12 +56,11 @@ private:
     cg3::Segment2d tops;
     cg3::Segment2d bottoms;
 
-    /*
-    trapezoid* upleft;
-    trapezoid* downleft;
-    trapezoid* upright;
-    trapezoid* downright;
-    */
+
+    trapezoid* oneRight;
+    trapezoid* twoRight;
+    trapezoid* oneLeft;
+    trapezoid* twoLeft;
 
 };
 

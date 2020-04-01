@@ -21,7 +21,7 @@ public:
     void insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitNode);
     void findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp);
 
-    void setTrapezoidToInsert(trapezoid trap, int num);
+    void setTrapezoidToInsert(const trapezoid trap, int num);
 
     nodeDag* getDag();
 

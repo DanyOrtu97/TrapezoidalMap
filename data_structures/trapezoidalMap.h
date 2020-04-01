@@ -28,6 +28,8 @@ public:
     void addPolygon(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
                     const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom);
 
+    void updateNeighboors(trapezoid* a, trapezoid* oneR, trapezoid* twoR, trapezoid* oneL, trapezoid* twoL);
+
     std::list<trapezoid> getTrapezoids() const;
 
     //methods to update dag e trapezoidal map
