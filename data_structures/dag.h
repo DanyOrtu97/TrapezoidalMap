@@ -24,12 +24,10 @@ public:
     void setTrapezoidToInsert(const trapezoid trap, int num);
 
     nodeDag* getDag();
-
     std::map<trapezoid, nodeDag**> getPointerMap();
 
     void clearDag();
     void clearTraps();
-
 
 private:
     int nTrapezoids;

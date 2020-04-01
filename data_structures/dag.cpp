@@ -28,16 +28,11 @@ void Dag::inizializeDag(trapezoid boundingBox){
  * @param[in] segment Segment
  */
 void Dag::updateDag(const cg3::Segment2d segment){
-
-    //trapezoid firstTrapezoid = findTrapezoid(segment.p1(), segment.p2(), false, this->getDag());
-    //trapezoid lastTrapezoid = findTrapezoid(segment.p2(), segment.p1(), false, this->getDag());
-
     if(pointersMap.size()==1){
-        insertSingleTrapezoid(segment);
-        pointersMap.clear();
+        //insertSingleTrapezoid(segment);
+        //pointersMap.clear();
     }
     else{
-        //split node
         nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, this->getDag());
         insertMultipleTrapezoids(segment, splitNode);
         pointersMap.clear();
@@ -54,20 +49,15 @@ trapezoid Dag::findTrapezoid(cg3::Point2d point, cg3::Point2d auxiliaryPoint, bo
 
     while((*tmp)->getType() != "PK4Leaf"){
         if((*tmp)->getType() == "PK1X"){
-
             tmp = ((X*)*tmp)->pointToPoint(point, auxiliaryPoint);
-
         }
         else if((*tmp)->getType() == "PK1Y"){
-
             tmp = ((Y*)*tmp)->pointToSegment(point, auxiliaryPoint);
         }
-
     }
     if(!queryPoint){
         pointersMap.insert(std::make_pair(((Leaf*)*tmp)->getTrapezoid(), tmp));
     }
-
     return ((Leaf*)*tmp)->getTrapezoid();
 }
 
@@ -210,8 +200,6 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
 
         }
     }
-
-
     pointersMap.erase(pointersMap.begin());
     multipleAdresses.clear();
 }
