@@ -12,7 +12,7 @@ public:
     Dag();
 
     void inizializeDag(const trapezoid boundingBox);
-    void updateDag(const cg3::Segment2d segment);
+    void updateDag(const cg3::Segment2d segment, nodeDag* splitNode);
 
     trapezoid findTrapezoid(const cg3::Point2d point, const cg3::Point2d auxiliaryPoint, bool queryPoint, nodeDag* root);
     void findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* temp);
@@ -25,17 +25,19 @@ public:
 
     nodeDag* getDag();
     std::map<trapezoid, nodeDag**> getPointerMap();
+    std::map<trapezoid, nodeDag**> getMultipleAdressesMap();
 
     void clearDag();
     void clearTraps();
-
 private:
     int nTrapezoids;
     nodeDag* dag;
+
     std::vector<trapezoid> traps;
 
     std::map<trapezoid, nodeDag**> pointersMap;
     std::map<trapezoid, nodeDag**> multipleAdresses;
+
 
 };
 #endif // DAG_H

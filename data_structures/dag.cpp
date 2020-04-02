@@ -27,13 +27,12 @@ void Dag::inizializeDag(trapezoid boundingBox){
  * @brief Method to update the dag with the new subtrees and the new trapezoids
  * @param[in] segment Segment
  */
-void Dag::updateDag(const cg3::Segment2d segment){
+void Dag::updateDag(const cg3::Segment2d segment, nodeDag* splitNode){
     if(pointersMap.size()==1){
-        //insertSingleTrapezoid(segment);
-        //pointersMap.clear();
+        insertSingleTrapezoid(segment);
+        pointersMap.clear();
     }
     else{
-        nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, this->getDag());
         insertMultipleTrapezoids(segment, splitNode);
         pointersMap.clear();
     }
@@ -212,6 +211,7 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
 void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitNode){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
+
     nodeDag* point1 = new X(p1, false);
     nodeDag* point2 = new X(p2, true);
     nodeDag* segment1a = new Y(segment);
@@ -220,7 +220,8 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitN
 
     bool up, invert=false, upInitial=false, downInitial=false;
 
-    int contaStep=0, contaInvert=0;
+    int contaStep=0;
+    int contaInvert=0;
 
     for(std::map<trapezoid, nodeDag**>::iterator it = pointersMap.begin(); it!=pointersMap.end(); it++){
         trapezoid trap=it->first;
@@ -529,12 +530,17 @@ std::map<trapezoid, nodeDag**> Dag::getPointerMap(){
     return pointersMap;
 }
 
+std::map<trapezoid, nodeDag**> Dag::getMultipleAdressesMap(){
+    return multipleAdresses;
+}
+
 /**
  * @brief Method to clear the vector with the new traps for the insertion
  */
 void Dag::clearTraps(){
     traps.clear();
 }
+
 
 /**
  * @brief Method to clear the structures

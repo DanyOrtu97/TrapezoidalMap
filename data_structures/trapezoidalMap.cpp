@@ -28,7 +28,7 @@ void TrapezoidalMap::inizialize(){
     //inizialize the trapezoidal map with the bounding box
     std::array<cg3::Point2d, 4> trap = {topLeft, topRight, bottomRight, bottomLeft};
     trapezoid trapez = trapezoid(topLeft, topRight, bottomRight, bottomLeft, topLeft, topRight, cg3::Segment2d(trap[0], trap[1]), cg3::Segment2d(trap[3],trap[2]));
-    trapezoids.push_back(trapez);
+    trapezoidsList.push_back(trapez);
 
     //inizialize the dag with the pointer of the first polygon (the bounding box)
     dag.inizializeDag(trapez);
@@ -40,82 +40,27 @@ void TrapezoidalMap::inizialize(){
  * @param[in] segment Segment
  */
 void TrapezoidalMap::trapezoidalMapAlgorithm(cg3::Segment2d segment){
-
-    /*
-    trapezoid firstTrapezoid = dag.findTrapezoid(segment.p1(), segment.p2(), false, dag.getDag());
-
-    /////
-    cg3::Point2d p1 = segment.p1();
-    cg3::Point2d p2 = segment.p2();
-
-    cg3::Point2d upfirst, upsecond, downfirst, downsecond;
-
-    cg3::Point2d rightPSeg, leftPSeg;
-
-    upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(firstTrapezoid.getTop(), p1));
-    downfirst=GasAlgorithms::createPoint(downfirst, p1.x(), GasAlgorithms::handleSlopeSegment(firstTrapezoid.getBottom(), p1));
-    upsecond=GasAlgorithms::createPoint(upsecond, p2.x(), GasAlgorithms::handleSlopeSegment(firstTrapezoid.getTop(), p2));
-    downsecond=GasAlgorithms::createPoint(downsecond, p2.x(), GasAlgorithms::handleSlopeSegment(firstTrapezoid.getBottom(), p2));
-
-    int j=0;
-    trapezoid trap = firstTrapezoid;
-    while(segment.p2()>trap.getRightP()){
-        trapezoids.remove(trap);
-        if(dag.getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
-            trap = *trap.getOneRight();
-            trapezoids.remove(trap);
-        }
-        else{
-            if(trap.getTwoRight() == nullptr){
-                trap = *trap.getOneRight();
-                trapezoids.remove(trap);
-            }
-            else{
-                trap = *trap.getTwoRight();
-                trapezoids.remove(trap);
-            }
-        }
-        j++;
-    }
-    if(j==0){
-        trapezoids.remove(trap);
-        int dim=trapezoids.size();
-        addPolygon(topLeft, upfirst, downfirst, bottomLeft, trap.getLeftP(), p1, cg3::Segment2d(topLeft, upfirst), cg3::Segment2d(bottomLeft, downfirst));
-        addPolygon(upfirst, upsecond, p2, p1, p1, p2, cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2));
-        addPolygon(p1, p2, downsecond, downfirst, p1, p2, cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond));
-        addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
-
-
-        updateNeighboors(&(*trapezoids.begin())+dim, (&(*trapezoids.begin())+dim+1), &(*trapezoids.begin())+dim+2, nullptr, nullptr);
-        updateNeighboors(&(*trapezoids.begin())+dim+1, &(*trapezoids.end())-1, nullptr, &(*trapezoids.begin())+dim, nullptr);
-        updateNeighboors(&(*trapezoids.begin())+dim+2, &(*trapezoids.end())-1, nullptr, &(*trapezoids.begin())+dim, nullptr);
-        updateNeighboors(&(*trapezoids.begin())+dim+3, nullptr, nullptr, &(*trapezoids.begin())+dim+1, &(*trapezoids.begin())+dim+2);
-    }
-    dag.updateDag(segment);
-    */
-
     trapezoid firstTrapezoid = dag.findTrapezoid(segment.p1(), segment.p2(), false, dag.getDag());
     trapezoid lastTrapezoid = dag.findTrapezoid(segment.p2(), segment.p1(), false, dag.getDag());
+    nodeDag* splitNode;
 
     if(firstTrapezoid.getTrapezoid() == lastTrapezoid.getTrapezoid()){
         dag.clearTraps();
         updateTrapezoid(segment);
     }
     else{
-        nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, dag.getDag());
+        splitNode= GasAlgorithms::findSplitNode(segment, dag.getDag());
         dag.findTrapezoids(segment, splitNode, nullptr);
         dag.clearTraps();
         updateTrapezoid(segment);
     }
-
-    dag.updateDag(segment);
+    dag.updateDag(segment, splitNode);
 }
 
 /**
  * @brief Method to update the trapezoids in the trapezoidal map
  * @param[in] segment Segment, vector of Trapezoid: foundTrapezoids
  */
-
 void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
@@ -132,7 +77,7 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
     bool insertionAfterInner=false;
 
     int i=0;
-    for (std::map<trapezoid, nodeDag**>::iterator it = TrapMapDag.begin(); it!=TrapMapDag.end(); it++){
+    for (std::map<trapezoid, nodeDag**>::iterator it =  TrapMapDag.begin(); it!= TrapMapDag.end(); it++){
         trapezoid trap=it->first;
 
         topLeft = trap.getTrapezoid()[0];
@@ -140,7 +85,7 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
         topRight = trap.getTrapezoid()[1];
         bottomRight = trap.getTrapezoid()[2];
 
-        trapezoids.remove(trap);
+        trapezoidsList.remove(trap);
 
         if(i==0){
             upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p1));
@@ -614,7 +559,7 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                             insertionAfterInner=true;
                         }
                     }
-                    else{     
+                    else{
                         if(i==0){
                             innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
                             insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
@@ -781,8 +726,9 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
     }
 }
 
+void TrapezoidalMap::singleTrapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d upfirst, const cg3::Point2d upsecond, const cg3::Point2d downfirst,
+                                     const cg3::Point2d downsecond, trapezoid trap){
 
-void TrapezoidalMap::singleTrapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d upfirst, const cg3::Point2d upsecond, const cg3::Point2d downfirst, const cg3::Point2d downsecond, trapezoid trap){
     topLeft = trap.getTrapezoid()[0];
     bottomLeft = trap.getTrapezoid()[3];
     topRight = trap.getTrapezoid()[1];
@@ -821,21 +767,18 @@ void TrapezoidalMap::singleTrapezoid(const cg3::Point2d p1, const cg3::Point2d p
 void TrapezoidalMap::addPolygon(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4, const cg3::Point2d leftp, const cg3::Point2d rightp,
                                 const cg3::Segment2d top, const cg3::Segment2d bottom){
 
-    trapezoids.push_back(trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom));
-    dag.setTrapezoidToInsert(trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom), trapezoids.size());
+    trapezoidsList.push_back(trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom));
+    dag.setTrapezoidToInsert(trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom), trapezoidsList.size());
 }
 
 
-void TrapezoidalMap::updateNeighboors(trapezoid* a, trapezoid* oneR, trapezoid* twoR, trapezoid* oneL, trapezoid* twoL){
-    (*a).setNeighboors(oneR, twoR, oneL, twoL);
-}
 
 /**
  * @brief Method to return the trapezoids
  * @param[out] vector of trapezoids
  */
 std::list<trapezoid> TrapezoidalMap::getTrapezoids() const{
-    return trapezoids;
+    return trapezoidsList;
 }
 
 
@@ -862,7 +805,7 @@ void TrapezoidalMap::clearMap()
 {
     boundingBox.setMin(cg3::Point2d(0,0));
     boundingBox.setMax(cg3::Point2d(0,0));
-    trapezoids.clear();
+    trapezoidsList.clear();
 }
 
 
