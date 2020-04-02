@@ -646,7 +646,7 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     else{
                         if(i==0){
                             addPolygon(upfirst, topRight, rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                            innerTrap = trapezoid(p1, rightPSeg, bottomRight, bottomLeft, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight));
+                            innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight));
                         }
                         else if(i==(int)TrapMapDag.size()-1){ //last trap
                             if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
