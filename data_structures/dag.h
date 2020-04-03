@@ -12,20 +12,20 @@ public:
     Dag();
 
     void inizializeDag(const trapezoid boundingBox);
-    void updateDag(const cg3::Segment2d segment, nodeDag* splitNode);
+    void updateDag(const cg3::Segment2d segment);
 
     trapezoid findTrapezoid(const cg3::Point2d point, const cg3::Point2d auxiliaryPoint, bool queryPoint, nodeDag* root);
     void findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* temp);
 
     void insertSingleTrapezoid(const cg3::Segment2d segment);
-    void insertMultipleTrapezoids(const cg3::Segment2d segment, nodeDag* splitNode);
-    void findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp);
+    void insertMultipleTrapezoids(const cg3::Segment2d segment);
+    void findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp, long int indexTrap);
 
     void setTrapezoidToInsert(const trapezoid trap, int num);
 
     nodeDag* getDag();
     std::map<trapezoid, nodeDag**> getPointerMap();
-    std::map<trapezoid, nodeDag**> getMultipleAdressesMap();
+    std::map<long int, nodeDag**> getMultipleAdressesMap();
 
     void clearDag();
     void clearTraps();
@@ -36,7 +36,7 @@ private:
     std::vector<trapezoid> traps;
 
     std::map<trapezoid, nodeDag**> pointersMap;
-    std::map<trapezoid, nodeDag**> multipleAdresses;
+    std::map<long int, nodeDag**> multipleAdresses;
 
 
 };

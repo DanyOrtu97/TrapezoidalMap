@@ -38,13 +38,13 @@ void DrawableTrapezoidalMap::draw() const
         }
         else{
             if(GasAlgorithms::degeneratedTrapezoid(trap)){
-                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), this->trapezoidsColor[i], 2, true);
+                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
             }
             else{
                 cg3::opengl::drawQuad2(trap.getTrapezoid(), this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
             }
             if(GasAlgorithms::degeneratedTrapezoid(trap)){
-                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), this->trapezoidsColor[i], 2, true);
+                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
             }
             else{
                 cg3::opengl::drawQuad2(trap.getTrapezoid(), this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);

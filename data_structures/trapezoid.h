@@ -17,10 +17,6 @@ public:
     trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
               const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom);
 
-    trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
-              const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom,
-              const int oneR, const int twoR, const int oneL, const int twoL);
-
     bool operator<(const trapezoid &other) const;
 
     bool operator==(const trapezoid &other) const;
@@ -40,13 +36,6 @@ public:
     void setBottom(const cg3::Segment2d bottom);
     cg3::Segment2d getBottom();
 
-    void setNeighboors(const int oneR, const int twoR, const int oneL, const int twoL);
-
-    int getOneRight();
-    int getTwoRight();
-    int getOneLeft();
-    int getTwoLeft();
-
 
 private:
     Trapezoid trapezoide;
@@ -55,12 +44,6 @@ private:
     cg3::Point2d rightp;
     cg3::Segment2d tops;
     cg3::Segment2d bottoms;
-
-    int oneRight;
-    int twoRight;
-    int oneLeft;
-    int twoLeft;
-
 };
 
 #endif // TRAPEZOID_H

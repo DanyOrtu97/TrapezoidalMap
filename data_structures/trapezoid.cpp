@@ -15,20 +15,6 @@ trapezoid::trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Po
     this->setBottom(bottom);
 }
 
-trapezoid::trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
-          const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom,
-          const int oneR, const int twoR, const int oneL, const int twoL){
-    Trapezoid trap = {p1, p2, p3, p4};
-    this->setTrapezoid(trap);
-    this->setLeftP(left);
-    this->setRightP(right);
-    this->setTop(top);
-    this->setBottom(bottom);
-    this->oneRight = oneR;
-    this->twoRight = twoR;
-    this->oneLeft = oneL;
-    this->twoLeft = twoL;
-}
 
 bool trapezoid::operator<(const trapezoid &other) const{
     if(this->trapezoide[0].x() < other.trapezoide[0].x()){
@@ -97,26 +83,4 @@ cg3::Segment2d trapezoid::getBottom(){
     return this->bottoms;
 }
 
-void trapezoid::setNeighboors(const int oneR, const int twoR, const int oneL, const int twoL){
-    this->oneRight = oneR;
-    this->twoRight = twoR;
-    this->oneLeft = oneL;
-    this->twoLeft = twoL;
-}
-
-int trapezoid::getOneRight(){
-    return this->oneRight;
-}
-
-int trapezoid::getTwoRight(){
-    return this->twoRight;
-}
-
-int trapezoid::getOneLeft(){
-    return this->oneLeft;
-}
-
-int trapezoid::getTwoLeft(){
-    return this->twoLeft;
-}
 
