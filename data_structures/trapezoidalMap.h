@@ -28,18 +28,18 @@ public:
     void addPolygon(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
                     const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom);
 
-    std::list<trapezoid> getTrapezoids() const;
 
     //methods to update dag e trapezoidal map
-    void trapezoidalMapAlgorithm(cg3::Segment2d segment);
+    void trapezoidalMapAlgorithm(const cg3::Segment2d segment);
     void updateTrapezoid(const cg3::Segment2d& segment);
     void singleTrapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d upfirst, const cg3::Point2d upsecond, const cg3::Point2d downfirst,
                          const cg3::Point2d downsecond, trapezoid trap);
 
 
-    //methods for point location
+    //methods for point location and to return the drawable trapezoids
     void queryPoint(cg3::Point2d point);
     Trapezoid getFoundTrapezoid() const;
+    std::list<trapezoid> getTrapezoids() const;
 
     void clearMap();
 

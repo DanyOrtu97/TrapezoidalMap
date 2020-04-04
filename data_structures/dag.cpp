@@ -1110,7 +1110,10 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
     }
 }
 
-
+/**
+ * @brief Method to find all the addresses of a given trapezoid
+ * @param[in] trapezoid trap, nodeDag *node, nodeDag *temp, long int indexTrap (to avoid duplicates in the map)
+ */
 void Dag::findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp, long int indexTrap){
 
     nodeDag** tmp= &node;;
@@ -1178,6 +1181,9 @@ std::map<trapezoid, nodeDag**> Dag::getPointerMap(){
     return pointersMap;
 }
 
+/**
+ * @brief Method to get the multiple addresses map
+ */
 std::map<long int, nodeDag**> Dag::getMultipleAdressesMap(){
     return multipleAdresses;
 }
