@@ -34,7 +34,7 @@ public:
     void updateTrapezoid(const cg3::Segment2d& segment);
     void singleTrapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d upfirst, const cg3::Point2d upsecond, const cg3::Point2d downfirst,
                          const cg3::Point2d downsecond, trapezoid trap);
-
+    void insertInnerTraps(bool& insertionAfterInner, std::vector<trapezoid> insertAfterInner);
 
     //methods for point location and to return the drawable trapezoids
     void queryPoint(cg3::Point2d point);

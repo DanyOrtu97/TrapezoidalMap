@@ -14,6 +14,7 @@ TrapezoidalMap::TrapezoidalMap() :
  * @brief Method to inizialize the trapezoidal map
  */
 void TrapezoidalMap::inizialize(){
+
     cg3::Point2d topLeft, bottomLeft, topRight, bottomRight;
 
     topLeft = GasAlgorithms::createPoint(topLeft, -(1e+6), (1e+6));
@@ -23,7 +24,7 @@ void TrapezoidalMap::inizialize(){
 
     //inizialize the trapezoidal map with the bounding box
     std::array<cg3::Point2d, 4> trap = {topLeft, topRight, bottomRight, bottomLeft};
-    trapezoid trapez = trapezoid(topLeft, topRight, bottomRight, bottomLeft, topLeft, topRight, cg3::Segment2d(trap[0], trap[1]), cg3::Segment2d(trap[3],trap[2]));
+    trapezoid trapez = trapezoid(topLeft, topRight, bottomRight, bottomLeft, topLeft, topRight, cg3::Segment2d(trap[0], trap[1]), cg3::Segment2d(trap[3],trap[2]), (cg3::Color(rand()%210, rand()%200, rand()%180)).fromHsv(rand()%359, rand()%128, 172 + rand()%63));
     trapezoidsList.push_back(trapez);
 
     //inizialize the dag with the pointer of the first polygon (the bounding box)
@@ -61,9 +62,7 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
     cg3::Point2d p2 = segment.p2();
 
     cg3::Point2d topLeft, bottomLeft, topRight, bottomRight;
-
     cg3::Point2d upfirst, upsecond, downfirst, downsecond;
-
     cg3::Point2d rightPSeg, leftPSeg;
 
     std::map<trapezoid, nodeDag**> TrapMapDag = dag.getPointerMap();
@@ -111,44 +110,44 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                 }
                 else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
                     addPolygon(upfirst, topRight, rightPSeg, p1, p1, topRight, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                    innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                    innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                 }
                 else if(trap.getRightP() == bottomRight){ //C3R
-                    insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
-                    innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, topRight, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
+                    insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
+                    innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, topRight, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
                     insertionAfterInner=true;
                 }
                 else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
                     if(dag.getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
-                        insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
-                        innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
+                        insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
+                        innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
                         insertionAfterInner=true;
                     }
                     else{
                         addPolygon(upfirst, topRight, rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                        innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                        innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                     }
                 }
             }
             else if(topLeft == bottomLeft){ //C1L
                 if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
                     addPolygon(upfirst, topRight, rightPSeg, p1, p1, topRight, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                    innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                    innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                 }
                 else if(trap.getRightP() == bottomRight){ //C3R
-                    insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
-                    innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, topRight, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
+                    insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
+                    innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, topRight, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
                     insertionAfterInner=true;
                 }
                 else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
                     if(dag.getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
-                        insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
-                        innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
+                        insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
+                        innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
                         insertionAfterInner=true;
                     }
                     else{
                         addPolygon(upfirst, topRight, rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                        innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                        innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, bottomRight, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                     }
                 }
             }
@@ -158,13 +157,8 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                         addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                     }
-                    if(insertionAfterInner){
-                        for(int j=0; j<(int)insertAfterInner.size();j++){
-                            addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                        }
-                        insertionAfterInner=false;
-                        insertAfterInner.clear();
-                    }
+                    insertInnerTraps(insertionAfterInner, insertAfterInner);
+                    insertAfterInner.clear();
                     addPolygon(trap.getLeftP(), upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getLeftP(), upsecond), cg3::Segment2d(leftPSeg, p2));
                     if(p2 != trap.getRightP()){
                         addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -173,19 +167,14 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                 else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
                     if(i==0){
                         addPolygon(upfirst, topRight, rightPSeg, p1, p1, topRight, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                        innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                        innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                     }
                     else if(i==(int)TrapMapDag.size()-1){ //last trap
                         if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
                         addPolygon(trap.getLeftP(), upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getLeftP(), upsecond), cg3::Segment2d(leftPSeg, p2));
                         if(p2 != trap.getRightP()){
                             addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -193,29 +182,24 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     }
                     else{
                         if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
-                            innerTrap = trapezoid(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight));
+                            innerTrap = trapezoid(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight), cg3::Color());
                         }
-                        insertAfterInner.push_back(trapezoid(topLeft, topRight, rightPSeg, leftPSeg, topLeft, topRight, cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg)));
+                        insertAfterInner.push_back(trapezoid(topLeft, topRight, rightPSeg, leftPSeg, topLeft, topRight, cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Color()));
                         insertionAfterInner=true;
                     }
                 }
                 else if(trap.getRightP() == bottomRight){ //C3R
                     if(i==0){
-                        insertAfterInner.push_back(trapezoid(p1, rightPSeg, trap.getRightP(), downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, trap.getRightP())));
+                        insertAfterInner.push_back(trapezoid(p1, rightPSeg, trap.getRightP(), downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, trap.getRightP()), cg3::Color()));
                         insertionAfterInner=true;
-                        innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
+                        innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
                     }
                     else if(i==(int)TrapMapDag.size()-1){ //last trap
                         if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
                         addPolygon(trap.getLeftP(), upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getLeftP(), upsecond), cg3::Segment2d(leftPSeg, p2));
                         if(p2 != trap.getRightP()){
                             addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -225,14 +209,11 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), trap.getRightP(), cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
-                        innerTrap = trapezoid(topLeft, topRight, rightPSeg, leftPSeg, topLeft, topRight, cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg));
+
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
+
+                        innerTrap = trapezoid(topLeft, topRight, rightPSeg, leftPSeg, topLeft, topRight, cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Color());
                     }
                 }
                 else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
@@ -240,13 +221,8 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
                         addPolygon(trap.getLeftP(), upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getLeftP(), upsecond), cg3::Segment2d(leftPSeg, p2));
                         if(p2 != trap.getRightP()){
                             addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -255,34 +231,29 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     else{
                         if(dag.getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
                             if(i==0){
-                                innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                                insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
+                                innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
+                                insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
                                 insertionAfterInner=true;
                             }
                             else{
                                 if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                     addPolygon(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), trap.getRightP(), cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight));
                                 }
-                                if(insertionAfterInner){
-                                    for(int j=0; j<(int)insertAfterInner.size();j++){
-                                        addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                    }
-                                    insertionAfterInner=false;
-                                    insertAfterInner.clear();
-                                }
-                                innerTrap = trapezoid(trap.getLeftP(), topRight, rightPSeg, leftPSeg, trap.getLeftP(), rightPSeg, cg3::Segment2d(trap.getLeftP(), topRight), cg3::Segment2d(leftPSeg, rightPSeg));
+                                insertInnerTraps(insertionAfterInner, insertAfterInner);
+                                insertAfterInner.clear();
+                                innerTrap = trapezoid(trap.getLeftP(), topRight, rightPSeg, leftPSeg, trap.getLeftP(), rightPSeg, cg3::Segment2d(trap.getLeftP(), topRight), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Color());
                             }
                         }
                         else{
                             if(i==0){
                                 addPolygon(upfirst, topRight, rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                                innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                                innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                             }
                             else{
                                 if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
-                                    innerTrap = trapezoid(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight));
+                                    innerTrap = trapezoid(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight), cg3::Color());
                                 }
-                                insertAfterInner.push_back(trapezoid(topLeft, topRight, rightPSeg, leftPSeg, topLeft, trap.getRightP(), cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg)));
+                                insertAfterInner.push_back(trapezoid(topLeft, topRight, rightPSeg, leftPSeg, topLeft, trap.getRightP(), cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Color()));
                                 insertionAfterInner=true;
                             }
                         }
@@ -293,13 +264,8 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                         addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                     }
-                    if(insertionAfterInner){
-                        for(int j=0; j<(int)insertAfterInner.size();j++){
-                            addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                        }
-                        insertionAfterInner=false;
-                        insertAfterInner.clear();
-                    }
+                    insertInnerTraps(insertionAfterInner, insertAfterInner);
+                    insertAfterInner.clear();
                     addPolygon(trap.getLeftP(), upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getLeftP(), upsecond), cg3::Segment2d(leftPSeg, p2));
                     if(p2 != trap.getRightP()){
                         addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -312,13 +278,8 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                         addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                     }
-                    if(insertionAfterInner){
-                        for(int j=0; j<(int)insertAfterInner.size();j++){
-                            addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                        }
-                        insertionAfterInner=false;
-                        insertAfterInner.clear();
-                    }
+                    insertInnerTraps(insertionAfterInner, insertAfterInner);
+                    insertAfterInner.clear();
                     addPolygon(leftPSeg, p2, downsecond, trap.getLeftP(), trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getLeftP(), downsecond));
                     if(p2 != trap.getRightP()){
                         addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -327,19 +288,14 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                 else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
                     if(i==0){
                         addPolygon(upfirst, trap.getRightP(), rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, trap.getRightP()), cg3::Segment2d(p1, rightPSeg));
-                        innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                        innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                     }
                     else if(i==(int)TrapMapDag.size()-1){ //last trap
                         if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
                         addPolygon(leftPSeg, p2, downsecond, trap.getLeftP(), trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getLeftP(), downsecond));
                         if(p2 != trap.getRightP()){
                             addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -349,26 +305,23 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), trap.getRightP(), cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg));
                         }
-                        innerTrap = trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, bottomLeft, rightPSeg, cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight));
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
+                        innerTrap = trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, bottomLeft, rightPSeg, cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight), cg3::Color());
                     }
                 }
                 else if(trap.getRightP() == bottomRight){ //C3R
                     if(i==0){
-                        innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                        insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
+                        innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
+                        insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
                         insertionAfterInner=true;
                     }
                     else if(i==(int)TrapMapDag.size()-1){ //last trap
                         if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
                         addPolygon(leftPSeg, p2, downsecond, trap.getLeftP(), trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getLeftP(), downsecond));
                         if(p2 != trap.getRightP()){
                             addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -376,9 +329,9 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     }
                     else{
                         if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
-                            innerTrap = trapezoid(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg));
+                            innerTrap = trapezoid(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg), cg3::Color());
                         }
-                        insertAfterInner.push_back(trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, bottomLeft, trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight)));
+                        insertAfterInner.push_back(trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, bottomLeft, trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight), cg3::Color()));
                         insertionAfterInner=true;
                     }
                 }
@@ -387,13 +340,8 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
                         addPolygon(leftPSeg, p2, downsecond, trap.getLeftP(), trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getLeftP(), downsecond));
                         if(p2 != trap.getRightP()){
                             addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -402,35 +350,30 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     else{
                         if(dag.getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
                             if(i==0){
-                                innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                                insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
+                                innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
+                                insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
                                 insertionAfterInner=true;
                             }
                             else{
                                 if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
-                                    innerTrap = trapezoid(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg));
+                                    innerTrap = trapezoid(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg), cg3::Color());
                                 }
-                                insertAfterInner.push_back(trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, bottomLeft, trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight)));
+                                insertAfterInner.push_back(trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, bottomLeft, trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight), cg3::Color()));
                                 insertionAfterInner=true;
                             }
                         }
                         else{
                             if(i==0){
                                 addPolygon(upfirst, topRight, rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                                innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                                innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                             }
                             else{
                                 if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                     addPolygon(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), trap.getRightP(), cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg));
                                 }
-                                if(insertionAfterInner){
-                                    for(int j=0; j<(int)insertAfterInner.size();j++){
-                                        addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                    }
-                                    insertionAfterInner=false;
-                                    insertAfterInner.clear();
-                                }
-                                innerTrap = trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, trap.getLeftP(), rightPSeg, cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight));
+                                insertInnerTraps(insertionAfterInner, insertAfterInner);
+                                insertAfterInner.clear();
+                                innerTrap = trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, trap.getLeftP(), rightPSeg, cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight), cg3::Color());
                             }
                         }
                     }
@@ -440,13 +383,8 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                         addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                     }
-                    if(insertionAfterInner){
-                        for(int j=0; j<(int)insertAfterInner.size();j++){
-                            addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                        }
-                        insertionAfterInner=false;
-                        insertAfterInner.clear();
-                    }
+                    insertInnerTraps(insertionAfterInner, insertAfterInner);
+                    insertAfterInner.clear();
                     addPolygon(leftPSeg, p2, downsecond, bottomLeft, trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(bottomLeft, downsecond));
                     if(p2 != trap.getRightP()){
                         addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -459,26 +397,16 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
-                        addPolygon(leftPSeg, p2, downsecond, trap.getLeftP(), trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(trap.getLeftP(), downsecond));
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
+                        addPolygon(leftPSeg, p2, downsecond, bottomLeft, trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(bottomLeft, downsecond));
                     }
                     else{
                         if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
                         addPolygon(topLeft, upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(topLeft, upsecond), cg3::Segment2d(leftPSeg, p2));
                     }
                     if(p2 != trap.getRightP()){
@@ -489,19 +417,14 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                     if(dag.getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
                         if(i==0){
                             addPolygon(upfirst, topRight, rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                            innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                            innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                         }
                         else if(i==(int)TrapMapDag.size()-1){ //last trap
                             if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                 addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                             }
-                            if(insertionAfterInner){
-                                for(int j=0; j<(int)insertAfterInner.size();j++){
-                                    addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                }
-                                insertionAfterInner=false;
-                                insertAfterInner.clear();
-                            }
+                            insertInnerTraps(insertionAfterInner, insertAfterInner);
+                            insertAfterInner.clear();
                             addPolygon(leftPSeg, p2, downsecond, bottomLeft, trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(bottomLeft, downsecond));
                             if(p2 != trap.getRightP()){
                                 addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -511,32 +434,22 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                             if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                 addPolygon(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), trap.getRightP(), cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg));
                             }
-                            if(insertionAfterInner){
-                                for(int j=0; j<(int)insertAfterInner.size();j++){
-                                    addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                }
-                                insertionAfterInner=false;
-                                insertAfterInner.clear();
-                            }
-                            innerTrap = trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, bottomLeft, rightPSeg, cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight));
+                            insertInnerTraps(insertionAfterInner, insertAfterInner);
+                            insertAfterInner.clear();
+                            innerTrap = trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, trap.getLeftP(), rightPSeg, cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight), cg3::Color());
                         }
                     }
                     else{
                         if(i==0){
                             addPolygon(upfirst, trap.getRightP(), rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, trap.getRightP()), cg3::Segment2d(p1, rightPSeg));
-                            innerTrap = trapezoid(p1, rightPSeg, bottomRight, bottomLeft, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight));
+                            innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                         }
                         else if(i==(int)TrapMapDag.size()-1){ //last trap
                             if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                 addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                             }
-                            if(insertionAfterInner){
-                                for(int j=0; j<(int)insertAfterInner.size();j++){
-                                    addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                }
-                                insertionAfterInner=false;
-                                insertAfterInner.clear();
-                            }
+                            insertInnerTraps(insertionAfterInner, insertAfterInner);
+                            insertAfterInner.clear();
                             addPolygon(topLeft, upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(trap.getLeftP(), upsecond), cg3::Segment2d(leftPSeg, p2));
                             if(p2 != trap.getRightP()){
                                 addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -544,9 +457,9 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         }
                         else{
                             if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
-                                innerTrap = trapezoid(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight));
+                                innerTrap = trapezoid(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight), cg3::Color());
                             }
-                            insertAfterInner.push_back(trapezoid(topLeft, topRight, rightPSeg, leftPSeg, trap.getLeftP(), trap.getRightP(), cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg)));
+                            insertAfterInner.push_back(trapezoid(topLeft, topRight, rightPSeg, leftPSeg, trap.getLeftP(), trap.getRightP(), cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Color()));
                             insertionAfterInner=true;
                         }
                     }
@@ -554,21 +467,16 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                 else if(trap.getRightP() == bottomRight){ //C3R
                     if(dag.getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
                         if(i==0){
-                            innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                            insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
+                            innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
+                            insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
                             insertionAfterInner=true;
                         }
                         else if(i==(int)TrapMapDag.size()-1){ //last trap
                             if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                 addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                             }
-                            if(insertionAfterInner){
-                                for(int j=0; j<(int)insertAfterInner.size();j++){
-                                    addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                }
-                                insertionAfterInner=false;
-                                insertAfterInner.clear();
-                            }
+                            insertInnerTraps(insertionAfterInner, insertAfterInner);
+                            insertAfterInner.clear();
                             addPolygon(leftPSeg, p2, downsecond, bottomLeft, trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(bottomLeft, downsecond));
                             if(p2 != trap.getRightP()){
                                 addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -576,29 +484,24 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         }
                         else{
                             if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
-                                innerTrap = trapezoid(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg));
+                                innerTrap = trapezoid(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg), cg3::Color());
                             }
-                            insertAfterInner.push_back(trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, trap.getLeftP(), trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight)));
+                            insertAfterInner.push_back(trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, trap.getLeftP(), trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight), cg3::Color()));
                             insertionAfterInner=true;
                         }
                     }
                     else{
                         if(i==0){
-                            innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                            insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
+                            innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
+                            insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
                             insertionAfterInner=true;
                         }
                         else if(i==(int)TrapMapDag.size()-1){ //last trap
                             if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                 addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                             }
-                            if(insertionAfterInner){
-                                for(int j=0; j<(int)insertAfterInner.size();j++){
-                                    addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                }
-                                insertionAfterInner=false;
-                                insertAfterInner.clear();
-                            }
+                            insertInnerTraps(insertionAfterInner, insertAfterInner);
+                            insertAfterInner.clear();
                             addPolygon(topLeft, upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(topLeft, upsecond), cg3::Segment2d(leftPSeg, p2));
                             if(p2 != trap.getRightP()){
                                 addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -608,14 +511,9 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                             if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                 addPolygon(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), trap.getRightP(), cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight));
                             }
-                            if(insertionAfterInner){
-                                for(int j=0; j<(int)insertAfterInner.size();j++){
-                                    addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                }
-                                insertionAfterInner=false;
-                                insertAfterInner.clear();
-                            }
-                            innerTrap = trapezoid(topLeft, topRight, rightPSeg, leftPSeg, trap.getLeftP(), rightPSeg, cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg));
+                            insertInnerTraps(insertionAfterInner, insertAfterInner);
+                            insertAfterInner.clear();
+                            innerTrap = trapezoid(topLeft, topRight, rightPSeg, leftPSeg, trap.getLeftP(), rightPSeg, cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Color());
                         }
                     }
                 }
@@ -625,13 +523,8 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                             if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                 addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                             }
-                            if(insertionAfterInner){
-                                for(int j=0; j<(int)insertAfterInner.size();j++){
-                                    addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                }
-                                insertionAfterInner=false;
-                                insertAfterInner.clear();
-                            }
+                            insertInnerTraps(insertionAfterInner, insertAfterInner);
+                            insertAfterInner.clear();
                             addPolygon(leftPSeg, p2, downsecond, bottomLeft, trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(bottomLeft, downsecond));
                             if(p2 != trap.getRightP()){
                                 addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -640,35 +533,30 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         else{
                             if(dag.getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
                                 if(i==0){
-                                    innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                                    insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
+                                    innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
+                                    insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
                                     insertionAfterInner=true;
                                 }
                                 else{
                                     if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
-                                        innerTrap = trapezoid(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg));
+                                        innerTrap = trapezoid(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg), cg3::Color());
                                     }
-                                    insertAfterInner.push_back(trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, trap.getLeftP(), trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight)));
+                                    insertAfterInner.push_back(trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, trap.getLeftP(), trap.getRightP(), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight), cg3::Color()));
                                     insertionAfterInner=true;
                                 }
                             }
                             else{
                                 if(i==0){
                                     addPolygon(upfirst, topRight, rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                                    innerTrap = trapezoid(p1, rightPSeg, bottomRight, bottomLeft, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight));
+                                    innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                                 }
                                 else{
                                     if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                         addPolygon(innerTrap.getTrapezoid()[0], topRight, rightPSeg, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), trap.getRightP(), cg3::Segment2d(innerTrap.getTrapezoid()[0], topRight), cg3::Segment2d(innerTrap.getTrapezoid()[3], rightPSeg));
                                     }
-                                    if(insertionAfterInner){
-                                        for(int j=0; j<(int)insertAfterInner.size();j++){
-                                            addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                        }
-                                        insertionAfterInner=false;
-                                        insertAfterInner.clear();
-                                    }
-                                    innerTrap = trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, trap.getLeftP(), rightPSeg, cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight));
+                                    insertInnerTraps(insertionAfterInner, insertAfterInner);
+                                    insertAfterInner.clear();
+                                    innerTrap = trapezoid(leftPSeg, rightPSeg, bottomRight, bottomLeft, trap.getLeftP(), rightPSeg, cg3::Segment2d(leftPSeg, rightPSeg), cg3::Segment2d(bottomLeft, bottomRight), cg3::Color());
                                 }
                             }
                         }
@@ -678,13 +566,8 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                             if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                 addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                             }
-                            if(insertionAfterInner){
-                                for(int j=0; j<(int)insertAfterInner.size();j++){
-                                    addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                }
-                                insertionAfterInner=false;
-                                insertAfterInner.clear();
-                            }
+                            insertInnerTraps(insertionAfterInner, insertAfterInner);
+                            insertAfterInner.clear();
                             addPolygon(topLeft, upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(topLeft, upsecond), cg3::Segment2d(leftPSeg, p2));
                             if(p2 != trap.getRightP()){
                                 addPolygon(upsecond, topRight, bottomRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, bottomRight));
@@ -693,33 +576,29 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         else{
                             if(dag.getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
                                 if(i==0){
-                                    innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                                    insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight)));
+                                    innerTrap = trapezoid(upfirst, topRight, rightPSeg, p1, p1, rightPSeg, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg), cg3::Color());
+                                    insertAfterInner.push_back(trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, trap.getRightP(), cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color()));
+                                    insertionAfterInner = true;
                                 }
                                 else{
                                     if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                                         addPolygon(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), trap.getRightP(), cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight));
                                     }
-                                    if(insertionAfterInner){
-                                        for(int j=0; j<(int)insertAfterInner.size();j++){
-                                            addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                                        }
-                                        insertionAfterInner=false;
-                                        insertAfterInner.clear();
-                                    }
-                                    innerTrap = trapezoid(topLeft, topRight, rightPSeg, leftPSeg, trap.getLeftP(), rightPSeg, cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg));
+                                    insertInnerTraps(insertionAfterInner, insertAfterInner);
+                                    insertAfterInner.clear();
+                                    innerTrap = trapezoid(topLeft, topRight, rightPSeg, leftPSeg, trap.getLeftP(), rightPSeg, cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Color());
                                 }
                             }
                             else{
                                 if(i==0){
                                     addPolygon(upfirst, topRight, rightPSeg, p1, p1, trap.getRightP(), cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, rightPSeg));
-                                    innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight));
+                                    innerTrap = trapezoid(p1, rightPSeg, bottomRight, downfirst, p1, rightPSeg, cg3::Segment2d(p1, rightPSeg), cg3::Segment2d(downfirst, bottomRight), cg3::Color());
                                 }
                                 else{
                                     if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
-                                        innerTrap = trapezoid(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight));
+                                        innerTrap = trapezoid(innerTrap.getTrapezoid()[0], rightPSeg, bottomRight, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), rightPSeg, cg3::Segment2d(innerTrap.getTrapezoid()[0], rightPSeg), cg3::Segment2d(innerTrap.getTrapezoid()[3], bottomRight), cg3::Color());
                                     }
-                                    insertAfterInner.push_back(trapezoid(topLeft, topRight, rightPSeg, leftPSeg, trap.getLeftP(), trap.getRightP(), cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg)));
+                                    insertAfterInner.push_back(trapezoid(topLeft, topRight, rightPSeg, leftPSeg, trap.getLeftP(), trap.getRightP(), cg3::Segment2d(topLeft, topRight), cg3::Segment2d(leftPSeg, rightPSeg), cg3::Color()));
                                     insertionAfterInner=true;
                                 }
                             }
@@ -731,26 +610,16 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
                         if(cg3::Segment2d(topLeft, leftPSeg) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], upsecond, p2, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], upsecond), cg3::Segment2d(innerTrap.getTrapezoid()[3], p2));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
                         addPolygon(leftPSeg, p2, downsecond, bottomLeft, trap.getLeftP(), p2, cg3::Segment2d(leftPSeg, p2), cg3::Segment2d(bottomLeft, downsecond));
                     }
                     else{
                         if(cg3::Segment2d(leftPSeg, bottomLeft) == cg3::Segment2d(innerTrap.getTrapezoid()[1], innerTrap.getTrapezoid()[2])){ //se i due lati coincidenti sono uguali
                             addPolygon(innerTrap.getTrapezoid()[0], p2, downsecond, innerTrap.getTrapezoid()[3], innerTrap.getLeftP(), p2, cg3::Segment2d(innerTrap.getTrapezoid()[0], p2), cg3::Segment2d(innerTrap.getTrapezoid()[3], downsecond));
                         }
-                        if(insertionAfterInner){
-                            for(int j=0; j<(int)insertAfterInner.size();j++){
-                                addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3], insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
-                            }
-                            insertionAfterInner=false;
-                            insertAfterInner.clear();
-                        }
+                        insertInnerTraps(insertionAfterInner, insertAfterInner);
+                        insertAfterInner.clear();
                         addPolygon(topLeft, upsecond, p2, leftPSeg, trap.getLeftP(), p2, cg3::Segment2d(topLeft, upsecond), cg3::Segment2d(leftPSeg, p2));
                     }
                     if(p2 != trap.getRightP()){
@@ -802,6 +671,20 @@ void TrapezoidalMap::singleTrapezoid(const cg3::Point2d p1, const cg3::Point2d p
     }
 }
 
+/**
+ * @brief Method to insert the inner trapezoids
+ * @param[in] bool insertionAfterInner, vector of trapezoids to insert after inner trapezoid
+ */
+void TrapezoidalMap::insertInnerTraps(bool& insertionAfterInner, std::vector<trapezoid> insertAfterInner){
+    if(insertionAfterInner){
+        for(int j=0; j<(int)insertAfterInner.size();j++){
+            addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3],
+                    insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
+        }
+        insertionAfterInner=false;
+    }
+}
+
 
 /**
  * @brief Method to add polygon in the structures of trapezoidal map
@@ -809,9 +692,9 @@ void TrapezoidalMap::singleTrapezoid(const cg3::Point2d p1, const cg3::Point2d p
  */
 void TrapezoidalMap::addPolygon(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4, const cg3::Point2d leftp, const cg3::Point2d rightp,
                                 const cg3::Segment2d top, const cg3::Segment2d bottom){
-
-    trapezoidsList.push_back(trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom));
-    dag.setTrapezoidToInsert(trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom), trapezoidsList.size());
+    cg3::Color color = (cg3::Color(rand()%210, rand()%200, rand()%180)).fromHsv(rand()%359, rand()%128, 170 + rand()%20);
+    trapezoidsList.push_back(trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom, color));
+    dag.setTrapezoidToInsert(trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom, color), trapezoidsList.size());
 }
 
 

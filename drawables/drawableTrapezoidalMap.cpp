@@ -15,7 +15,6 @@
 
 
 DrawableTrapezoidalMap::DrawableTrapezoidalMap():
-    trapezoidsColor(),
     verticalLineColor(255,0,0),
     verticalLineSize(4)
 {
@@ -38,16 +37,16 @@ void DrawableTrapezoidalMap::draw() const
         }
         else{
             if(GasAlgorithms::degeneratedTrapezoid(trap)){
-                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
+                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), trap.getColor(), 2, true);
             }
             else{
-                cg3::opengl::drawQuad2(trap.getTrapezoid(), this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
+                cg3::opengl::drawQuad2(trap.getTrapezoid(), trap.getColor(), 2, true);
             }
             if(GasAlgorithms::degeneratedTrapezoid(trap)){
-                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
+                cg3::opengl::drawTriangle2(GasAlgorithms::findTriangleByQuad(trap), trap.getColor(), 2, true);
             }
             else{
-                cg3::opengl::drawQuad2(trap.getTrapezoid(), this->trapezoidsColor[i%trapezoidsColor.size()], 2, true);
+                cg3::opengl::drawQuad2(trap.getTrapezoid(), trap.getColor(), 2, true);
             }
             cg3::opengl::drawLine2(trap.getTrapezoid()[0], trap.getTrapezoid()[3], verticalLineColor, static_cast<int>(verticalLineSize));
             cg3::opengl::drawLine2(trap.getTrapezoid()[1], trap.getTrapezoid()[2], verticalLineColor, static_cast<int>(verticalLineSize));
@@ -92,23 +91,6 @@ void DrawableTrapezoidalMap::setVerticalLineSize(unsigned int value)
     verticalLineSize = value;
 }
 
-/**
- * @brief Method to generate some colors for the trapezoids
- */
-void DrawableTrapezoidalMap::setTrapezoidsColor(){
-    for(int i=0;i<25;i++){
-        trapezoidsColor.push_back((cg3::Color(rand()%210, rand()%200, rand()%180)).fromHsv(rand()%359, rand()%128, 172 + rand()%63));
-    }
-}
-
-
-/**
- * @brief Method to return the vector of colors for the trapezoids
- * @param[out] Vector of colors
- */
-std::vector<cg3::Color> DrawableTrapezoidalMap::getTrapezoidsColor(){
-    return trapezoidsColor;
-}
 
 
 

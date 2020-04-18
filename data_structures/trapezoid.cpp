@@ -10,13 +10,14 @@ trapezoid::trapezoid(){
  * @param[in] 4 points for the trapezoid, leftp, rightp, top and bottom
  */
 trapezoid::trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
-                     const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom){
+                     const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom, const cg3::Color color){
     Trapezoid trap = {p1, p2, p3, p4};
     this->setTrapezoid(trap);
     this->setLeftP(left);
     this->setRightP(right);
     this->setTop(top);
     this->setBottom(bottom);
+    this->setColor(color);
 }
 
 /**
@@ -129,4 +130,11 @@ cg3::Segment2d trapezoid::getBottom(){
     return this->bottoms;
 }
 
+void trapezoid::setColor(const cg3::Color color){
+    this->color = color;
+}
+
+cg3::Color trapezoid::getColor(){
+    return this->color;
+}
 

@@ -80,10 +80,8 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
     //the dataset.
 
 
-    drawableTrapezoidalMap.setTrapezoidsColor();
-
-
     //#####################################################################
+    this->clearTrapezoidalMap();
     inzializeStructures();
 
 
@@ -287,8 +285,9 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
     //Clear current data
     drawableTrapezoidalMapDataset.clear();
     drawableTrapezoidalMap.clearMap();
-    inzializeStructures();
     dagManager.clearDag();
+    inzializeStructures();
+
 
     //#####################################################################
 }

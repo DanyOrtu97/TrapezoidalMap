@@ -6,6 +6,7 @@
 
 #include <cg3/geometry/point2.h>
 #include <cg3/geometry/segment2.h>
+#include <cg3/utilities/color.h>
 
 
 class trapezoid{
@@ -15,7 +16,7 @@ public:
     trapezoid();
 
     trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
-              const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom);
+              const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom, const cg3::Color color);
 
     bool operator<(const trapezoid &other) const;
 
@@ -36,6 +37,9 @@ public:
     void setBottom(const cg3::Segment2d bottom);
     cg3::Segment2d getBottom();
 
+    void setColor(const cg3::Color color);
+    cg3::Color getColor();
+
 
 private:
     Trapezoid trapezoide;
@@ -44,6 +48,8 @@ private:
     cg3::Point2d rightp;
     cg3::Segment2d tops;
     cg3::Segment2d bottoms;
+
+    cg3::Color color;
 };
 
 #endif // TRAPEZOID_H

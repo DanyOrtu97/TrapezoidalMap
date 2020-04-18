@@ -28,13 +28,6 @@ public:
     unsigned int getVerticalLineSize() const;
     void setVerticalLineSize(unsigned int value);
 
-    void setTrapezoidsColor();
-    std::vector<cg3::Color> getTrapezoidsColor();
-
-
-protected:
-    std::vector<cg3::Color> trapezoidsColor;
-
 private:
     cg3::Color verticalLineColor;
     unsigned int verticalLineSize;
