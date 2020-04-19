@@ -23,6 +23,7 @@ public:
     void insertMultipleTrapezoids(const cg3::Segment2d segment);
     void findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp, long int indexTrap);
     void setTrapezoidToInsert(const trapezoid trap, int num);
+    void multipleReferences(nodeDag*& node, trapezoid& trap, nodeDag*& segment1b, nodeDag*& point2, cg3::Point2d& p2);
 
     //getter
     nodeDag* getDag();

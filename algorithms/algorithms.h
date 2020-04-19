@@ -2,6 +2,7 @@
 #define ALGORITHMS_H
 
 #include <data_structures/nodedag.h>
+#include <math.h>
 
 namespace GasAlgorithms {
     typedef std::array<cg3::Point2d, 4> Trapezoid;
