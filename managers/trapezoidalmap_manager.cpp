@@ -82,7 +82,6 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
 
     //#####################################################################
     this->clearTrapezoidalMap();
-    inzializeStructures();
 
 
     //Fit the scene

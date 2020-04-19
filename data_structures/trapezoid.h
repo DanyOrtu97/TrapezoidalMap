@@ -16,7 +16,8 @@ public:
     trapezoid();
 
     trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
-              const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom, const cg3::Color color);
+              const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom,
+              const cg3::Color color);
 
     bool operator<(const trapezoid &other) const;
 
@@ -40,6 +41,8 @@ public:
     void setColor(const cg3::Color color);
     cg3::Color getColor();
 
+    void setIter(const std::list<trapezoid>::iterator iterEL);
+    std::list<trapezoid>::iterator getIter();
 
 private:
     Trapezoid trapezoide;
@@ -50,6 +53,7 @@ private:
     cg3::Segment2d bottoms;
 
     cg3::Color color;
+    std::list<trapezoid>::iterator iterEL;
 };
 
 #endif // TRAPEZOID_H

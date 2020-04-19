@@ -10,7 +10,8 @@ trapezoid::trapezoid(){
  * @param[in] 4 points for the trapezoid, leftp, rightp, top and bottom
  */
 trapezoid::trapezoid(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4,
-                     const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom, const cg3::Color color){
+                     const cg3::Point2d left, const cg3::Point2d right, const cg3::Segment2d top, const cg3::Segment2d bottom,
+                     const cg3::Color color){
     Trapezoid trap = {p1, p2, p3, p4};
     this->setTrapezoid(trap);
     this->setLeftP(left);
@@ -138,3 +139,10 @@ cg3::Color trapezoid::getColor(){
     return this->color;
 }
 
+void trapezoid::setIter(const std::list<trapezoid>::iterator iterEL){
+    this->iterEL=iterEL;
+}
+
+std::list<trapezoid>::iterator trapezoid::getIter(){
+    return this->iterEL;
+}
