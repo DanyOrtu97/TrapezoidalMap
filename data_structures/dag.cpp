@@ -144,11 +144,19 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
             trapezoid trap = pointersMap.begin()->first;
             ((*(pointersMap.begin()->second)))=segment1;
 
+            if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                     *(it2->second)=segment1;
+                }
+                multipleAdresses.erase(multipleAdresses.find(trap));
+            }
+
+            /*
             findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
             for(std::map<long int, nodeDag**>::iterator it = multipleAdresses.begin(); it!=multipleAdresses.end(); it++){
                 *(it->second)=segment1;
             }
-
+            */
         }
     }
     else if(traps.size()==3){
@@ -164,10 +172,18 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
                 trapezoid trap = pointersMap.begin()->first;
                 ((*(pointersMap.begin()->second)))=point2;
 
+                 if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                         *(it2->second)=point2;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap));
+                }
+                /*
                 findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                 for(std::map<long int, nodeDag**>::iterator it = multipleAdresses.begin(); it!=multipleAdresses.end(); it++){
                     *(it->second)=point2;
                 }
+                */
             }
         }
         else{
@@ -182,10 +198,18 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
                 trapezoid trap = pointersMap.begin()->first;
                 ((*(pointersMap.begin()->second)))=point1;
 
+                 if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                         *(it2->second)=point1;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap));
+                }
+                /*
                 findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                 for(std::map<long int, nodeDag**>::iterator it = multipleAdresses.begin(); it!=multipleAdresses.end(); it++){
                     *(it->second)=point1;
                 }
+                */
             }
         }
 
@@ -205,15 +229,21 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
             trapezoid trap = pointersMap.begin()->first;
             ((*(pointersMap.begin()->second)))=point1;
 
+             if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                     *(it2->second)=point1;
+                }
+                multipleAdresses.erase(multipleAdresses.find(trap));
+            }
+            /*
             findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
             for(std::map<long int, nodeDag**>::iterator it = multipleAdresses.begin(); it!=multipleAdresses.end(); it++){
                 *(it->second)=point1;
-            }
+            }*/
 
         }
     }
     pointersMap.erase(pointersMap.begin());
-    multipleAdresses.clear();
 }
 
 
@@ -249,10 +279,18 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 contaStep++;
                 (*it->second)=segment1a;
 
+                 if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                         *(it2->second)=segment1a;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap));
+                }
+
+                /*
                 findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                 for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                     *(it2->second)=segment1a;
-                }
+                }*/
             }
             else{
                 point1->setRightChild(segment1a);
@@ -264,16 +302,37 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 contaStep++;
                 (*it->second)=point1;
 
+
+                 if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                         *(it2->second)=point1;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap));
+                }
+
+                /*
                 findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                 for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                     *(it2->second)=point1;
                 }
+                */
+
+            }
+            std::map<int, nodeDag**> insert;
+            if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
+                insert.insert(std::make_pair(i, segment1a->getLeftChildP()));
+                multipleAdresses.insert(std::make_pair(((Leaf*)segment1a->getLeftChild())->getTrapezoid(), insert));
+            }
+            else{
+                insert.insert(std::make_pair(i, segment1a->getRightChildP()));
+                multipleAdresses.insert(std::make_pair(((Leaf*)segment1a->getRightChild())->getTrapezoid(), insert));
             }
             segmentInner = new Y(segment);
             segmentInner->setLeftChild(segment1a->getLeftChild());
             segmentInner->setRightChild(segment1a->getRightChild());
         }
         else if(trap.getLeftP() == topLeft && topLeft != bottomLeft){ //C2L
+            std::map<int, nodeDag**> insert;
             if(topRight == bottomRight){ //C1R
                 nodeDag* segment1b = new Y(segment);
                 point2->setLeftChild(segment1b);
@@ -282,6 +341,14 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 segment1b->setRightChild(segmentInner->getRightChild());
 
                 multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+
+                if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                }
+                else{
+                    insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                }
             }
             else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
                 if(i==(int)pointersMap.size()-1){ //last trap
@@ -292,6 +359,15 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(segmentInner->getRightChild());
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                    }
+
                 }
                 else{
                     segmentInner1 = new Y(segment);
@@ -303,11 +379,30 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     contaStep++;
                     segmentInner->setRightChild(segmentInner1->getRightChild());
 
+
                     (*it->second)=segmentInner;
+
+                    if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                             *(it2->second)=segmentInner;
+                        }
+                        multipleAdresses.erase(multipleAdresses.find(trap));
+                    }
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                    }
+
+
+                    /*
                     findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                     for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                          *(it2->second)=segmentInner;
-                    }
+                    }*/
                 }
             }
             else if(trap.getRightP() == bottomRight){ //C3R
@@ -319,6 +414,14 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(segmentInner->getRightChild());
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                    }
                 }
                 else{
                     segmentInner1 = new Y(segment);
@@ -331,10 +434,26 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segmentInner->setRightChild(segmentInner1->getRightChild());
 
                     (*it->second)=segmentInner;
+
+                     if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                             *(it2->second)=segmentInner;
+                        }
+                        multipleAdresses.erase(multipleAdresses.find(trap));
+                    }
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                    }
+                    /*
                     findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                     for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                          *(it2->second)=segmentInner;
-                    }
+                    }*/
                 }
             }
             else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
@@ -346,6 +465,14 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(segmentInner->getRightChild());
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                    }
                 }
                 else{
                     if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
@@ -359,10 +486,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segmentInner->setRightChild(segmentInner1->getRightChild());
 
                         (*it->second)=segmentInner;
+
+                         if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                 *(it2->second)=segmentInner;
+                            }
+                            multipleAdresses.erase(multipleAdresses.find(trap));
+                        }
+
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                        }
+                        /*
+
                         findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                              *(it2->second)=segmentInner;
-                        }
+                        }*/
                     }
                     else{    
                         segmentInner1 = new Y(segment);
@@ -375,10 +519,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segmentInner->setRightChild(segmentInner1->getRightChild());
 
                         (*it->second)=segmentInner;
+
+                         if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                 *(it2->second)=segmentInner;
+                            }
+                            multipleAdresses.erase(multipleAdresses.find(trap));
+                        }
+
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                        }
+                        /*
+                        (*it->second)=segmentInner;
                         findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                              *(it2->second)=segmentInner;
-                        }
+                        }*/
                     }
                 }
             }
@@ -390,9 +551,18 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 segment1b->setRightChild(segmentInner->getRightChild());
 
                 multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+
+                if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                }
+                else{
+                    insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                }
             }
         }
         else if(trap.getLeftP() == bottomLeft){ //C3L
+            std::map<int, nodeDag**> insert;
             if(topRight == bottomRight){ //C1R
                 nodeDag* segment1b = new Y(segment);
                 point2->setLeftChild(segment1b);
@@ -401,6 +571,14 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                 multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+
+                if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                }
+                else{
+                    insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                }
             }
             else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
                 if(i==(int)pointersMap.size()-1){ //last trap
@@ -411,6 +589,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                    }
                 }
                 else{
                     segmentInner1 = new Y(segment);
@@ -422,11 +607,30 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
                     contaStep++;
 
+
+                    (*it->second)=segmentInner;
+
+                     if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                             *(it2->second)=segmentInner;
+                        }
+                        multipleAdresses.erase(multipleAdresses.find(trap));
+                    }
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                    }
+
+                    /*
                     (*it->second)=segmentInner;
                     findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                     for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                          *(it2->second)=segmentInner;
-                    }
+                    }*/
                 }
             }
             else if(trap.getRightP() == bottomRight){ //C3R
@@ -438,6 +642,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                    }
                 }
                 else{
                     segmentInner1 = new Y(segment);
@@ -450,10 +661,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     contaStep++;
 
                     (*it->second)=segmentInner;
+
+                     if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                             *(it2->second)=segmentInner;
+                        }
+                        multipleAdresses.erase(multipleAdresses.find(trap));
+                    }
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                    }
+                    /*
+                    (*it->second)=segmentInner;
                     findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                     for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                          *(it2->second)=segmentInner;
-                    }
+                    }*/
                 }
             }
             else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
@@ -465,6 +693,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                    }
                 }
                 else{
                     if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
@@ -478,10 +713,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         contaStep++;
 
                         (*it->second)=segmentInner;
+
+                         if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                 *(it2->second)=segmentInner;
+                            }
+                            multipleAdresses.erase(multipleAdresses.find(trap));
+                        }
+
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                        }
+                        /*
+                        (*it->second)=segmentInner;
                         findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                              *(it2->second)=segmentInner;
-                        }
+                        }*/
                     }
                     else{  
                         segmentInner1 = new Y(segment);
@@ -494,10 +746,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         contaStep++;
 
                         (*it->second)=segmentInner;
+
+                         if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                 *(it2->second)=segmentInner;
+                            }
+                            multipleAdresses.erase(multipleAdresses.find(trap));
+                        }
+
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                        }
+                        /*
+                        (*it->second)=segmentInner;
                         findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                              *(it2->second)=segmentInner;
-                        }
+                        }*/
                     }
                 }
             }
@@ -509,9 +778,17 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                 multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                }
+                else{
+                    insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                }
             }
         }
         else if(trap.getLeftP().x() == topLeft.x() && trap.getLeftP() != topLeft && trap.getLeftP() != bottomLeft){ //C4L
+            std::map<int, nodeDag**> insert;
             if(topRight == bottomRight){ //C1R
                 if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
                     nodeDag* segment1b = new Y(segment);
@@ -521,6 +798,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                    }
                 }
                 else{
                     nodeDag* segment1b = new Y(segment);
@@ -530,6 +814,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(segmentInner->getRightChild());
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                    }
                 }
 
             }
@@ -543,6 +834,14 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                         multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                        }
                     }
                     else{
                         segmentInner1 = new Y(segment);
@@ -555,10 +854,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         contaStep++;
 
                         (*it->second)=segmentInner;
+
+                        if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                 *(it2->second)=segmentInner;
+                            }
+                            multipleAdresses.erase(multipleAdresses.find(trap));
+                        }
+
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                        }
+                        /*
+                        (*it->second)=segmentInner;
                         findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                              *(it2->second)=segmentInner;
-                        }
+                        }*/
                     }
                 }
                 else{
@@ -570,6 +886,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segment1b->setRightChild(segmentInner->getRightChild());
 
                         multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                        }
                     }
                     else{
                         segmentInner1 = new Y(segment);
@@ -582,10 +905,28 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segmentInner->setRightChild(segmentInner1->getRightChild());
 
                         (*it->second)=segmentInner;
+
+                         if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                 *(it2->second)=segmentInner;
+                            }
+                            multipleAdresses.erase(multipleAdresses.find(trap));
+                        }
+
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                        }
+
+                        /*
+                        (*it->second)=segmentInner;
                         findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                              *(it2->second)=segmentInner;
-                        }
+                        }*/
                     }
                 }
             }
@@ -599,6 +940,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                         multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                        }
                     }
                     else{
                         segmentInner1 = new Y(segment);
@@ -611,10 +959,28 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         contaStep++;
 
                         (*it->second)=segmentInner;
+
+                         if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                 *(it2->second)=segmentInner;
+                            }
+                            multipleAdresses.erase(multipleAdresses.find(trap));
+                        }
+
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                        }
+
+                        /*
+                        (*it->second)=segmentInner;
                         findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                              *(it2->second)=segmentInner;
-                        }
+                        }*/
                     }
                 }
                 else{
@@ -626,6 +992,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segment1b->setRightChild(segmentInner->getRightChild());
 
                         multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                        }
                     }
                     else{
                         segmentInner1 = new Y(segment);
@@ -638,10 +1011,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segmentInner->setRightChild(segmentInner1->getRightChild());
 
                         (*it->second)=segmentInner;
+
+                         if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                 *(it2->second)=segmentInner;
+                            }
+                            multipleAdresses.erase(multipleAdresses.find(trap));
+                        }
+
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                        }
+                        /*
+                        (*it->second)=segmentInner;
                         findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                              *(it2->second)=segmentInner;
-                        }
+                        }*/
                     }
                 }
             }
@@ -655,6 +1045,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                         multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                        }
                     }
                     else{
                         if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
@@ -668,10 +1065,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                             contaStep++;
 
                             (*it->second)=segmentInner;
+
+                             if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                                for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                     *(it2->second)=segmentInner;
+                                }
+                                multipleAdresses.erase(multipleAdresses.find(trap));
+                            }
+
+                            if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                                multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                            }
+                            else{
+                                insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                                multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                            }
+                            /*
+                            (*it->second)=segmentInner;
                             findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                             for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                                  *(it2->second)=segmentInner;
-                            }
+                            }*/
                         }
                         else{
                             segmentInner1 = new Y(segment);
@@ -684,10 +1098,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                             contaStep++;
 
                             (*it->second)=segmentInner;
+
+                             if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                                for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                     *(it2->second)=segmentInner;
+                                }
+                                multipleAdresses.erase(multipleAdresses.find(trap));
+                            }
+
+                            if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                                multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                            }
+                            else{
+                                insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                                multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                            }
+                            /*
+                            (*it->second)=segmentInner;
                             findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                             for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                                  *(it2->second)=segmentInner;
-                            }
+                            }*/
                         }
                     }
                 }
@@ -700,6 +1131,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         segment1b->setRightChild(segmentInner->getRightChild());
 
                         multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                        }
+                        else{
+                            insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                        }
                     }
                     else{
                         if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
@@ -713,10 +1151,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                             segmentInner->setRightChild(segmentInner1->getRightChild());
 
                             (*it->second)=segmentInner;
+
+                             if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                                for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                     *(it2->second)=segmentInner;
+                                }
+                                multipleAdresses.erase(multipleAdresses.find(trap));
+                            }
+
+                            if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                                multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                            }
+                            else{
+                                insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                                multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                            }
+                            /*
+                            (*it->second)=segmentInner;
                             findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                             for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                                  *(it2->second)=segmentInner;
-                            }
+                            }*/
                         }
                         else{
                             segmentInner1 = new Y(segment);
@@ -729,10 +1184,27 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                             segmentInner->setRightChild(segmentInner1->getRightChild());
 
                             (*it->second)=segmentInner;
+
+                             if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                                for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                                     *(it2->second)=segmentInner;
+                                }
+                                multipleAdresses.erase(multipleAdresses.find(trap));
+                            }
+
+                            if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                                multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                            }
+                            else{
+                                insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                                multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                            }
+                            /*
+                            (*it->second)=segmentInner;
                             findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
                             for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
                                  *(it2->second)=segmentInner;
-                            }
+                            }*/
                         }
                     }
                 }
@@ -746,6 +1218,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid(), insert));
+                    }
                 }
                 else{
                     nodeDag* segment1b = new Y(segment);
@@ -755,11 +1234,17 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(segmentInner->getRightChild());
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                    }
+                    else{
+                        insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid(), insert));
+                    }
                 }
             }
         }
-        i++;
-        multipleAdresses.clear();
+        i++;       
     }
 }
 
@@ -767,6 +1252,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
  * @brief Method to find all the addresses of a given trapezoid
  * @param[in] trapezoid trap, nodeDag *node, nodeDag *temp, long int indexTrap (to avoid duplicates in the map)
  */
+/*
 void Dag::findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp, long int indexTrap){
 
     nodeDag** tmp= &node;;
@@ -810,6 +1296,7 @@ void Dag::findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp, l
         }
     }
 }
+*/
 
 /**
  * @brief Method to retrieve the trapezoids for insertion
@@ -825,19 +1312,44 @@ void Dag::setTrapezoidToInsert (const trapezoid trapezoid, int num){
  * @param[in] nodeDag node to update, trap to find, segment1b to insert, point2 to insert and p2(second endopoint of the segment)
  */
 void Dag::multipleReferences(nodeDag*& node, trapezoid& trap, nodeDag*& segment1b, nodeDag*& point2, cg3::Point2d& p2){
+    bool insertion=false;
+
+    if(multipleAdresses.find(trap) != (multipleAdresses.end())){
+        insertion=true;
+    }
+
     if(p2 == trap.getRightP()){
         node=segment1b;
-        findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
+
+        if(insertion){
+             if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                     *(it2->second)=segment1b;
+                }
+                multipleAdresses.erase(multipleAdresses.find(trap));
+            }
+        }
+
+        /*findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
              *(it2->second)=segment1b;
-        }
+        }*/
     }
     else{
         node=point2;
-        findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
+
+        if(insertion){
+             if(multipleAdresses.size()>=1 && multipleAdresses.find(trap) != (multipleAdresses.end())){
+                for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap)->second).begin(); it2!= (multipleAdresses.find(trap)->second).end(); it2++){
+                     *(it2->second)=point2;
+                }
+                multipleAdresses.erase(multipleAdresses.find(trap));
+            }
+        }
+        /*findMultipleTrapezoids(trap, this->getDag(), nullptr, 0);
         for(std::map<long int, nodeDag**>::iterator it2 = multipleAdresses.begin(); it2!=multipleAdresses.end(); it2++){
              *(it2->second)=point2;
-        }
+        }*/
     }
 }
 
@@ -859,7 +1371,7 @@ std::map<trapezoid, nodeDag**> Dag::getPointerMap(){
  * @brief Method to get the multiple addresses map
  */
 std::map<long int, nodeDag**> Dag::getMultipleAdressesMap(){
-    return multipleAdresses;
+    //return multipleAdresses;
 }
 
 /**

@@ -9,6 +9,8 @@
 class Dag{
 
 public:
+    typedef std::array<cg3::Point2d, 4> Trapezoid;
+
     Dag();
 
     void inizializeDag(const trapezoid boundingBox);
@@ -40,8 +42,8 @@ private:
     std::vector<trapezoid> traps;
 
     std::map<trapezoid, nodeDag**> pointersMap;
-    std::map<long int, nodeDag**> multipleAdresses;
-
+    //std::map<long int, nodeDag**> multipleAdresses;
+    std::map<trapezoid, std::map<int, nodeDag**>> multipleAdresses;
 
 };
 #endif // DAG_H
