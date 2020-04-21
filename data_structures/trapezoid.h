@@ -44,6 +44,9 @@ public:
     void setIter(const std::list<trapezoid>::iterator iterEL);
     std::list<trapezoid>::iterator getIter();
 
+    void setId(const long int id);
+    long int getId();
+
 private:
     Trapezoid trapezoide;
 
@@ -54,6 +57,7 @@ private:
 
     cg3::Color color;
     std::list<trapezoid>::iterator iterEL;
+    long int id;
 };
 
 #endif // TRAPEZOID_H

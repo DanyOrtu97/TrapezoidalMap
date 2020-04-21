@@ -146,3 +146,11 @@ void trapezoid::setIter(const std::list<trapezoid>::iterator iterEL){
 std::list<trapezoid>::iterator trapezoid::getIter(){
     return this->iterEL;
 }
+
+void trapezoid::setId(const long int id){
+    this->id = id;
+}
+
+long int trapezoid::getId(){
+    return this->id;
+}
