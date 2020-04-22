@@ -169,6 +169,7 @@ void trapezoid::setId(const long int id){
     this->id = id;
 }
 
+
 /**
  * @brief getter for the id that i used for the map of references
  */

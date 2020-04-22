@@ -278,6 +278,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
             }
 
             insert.clear();
+            std::map<int, nodeDag**> insert;
             if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
                 insert.insert(std::make_pair(i, segment1a->getLeftChildP()));
                 multipleAdresses.insert(std::make_pair(((Leaf*)segment1a->getLeftChild())->getTrapezoid().getId(), insert));
