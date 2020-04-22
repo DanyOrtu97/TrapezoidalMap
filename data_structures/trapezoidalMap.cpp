@@ -80,7 +80,6 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
         bottomRight = trap.getTrapezoid()[2];
 
         trapezoidsList.erase(trap.getIter());
-        //trapezoidsList.remove(trap);
 
         if(i==0){
             upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p1));

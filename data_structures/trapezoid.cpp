@@ -176,3 +176,4 @@ void trapezoid::setId(const long int id){
 long int trapezoid::getId(){
     return this->id;
 }
+

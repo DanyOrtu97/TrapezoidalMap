@@ -57,8 +57,8 @@ nodeDag** nodeDag::getRightChildP(){
  * @brief Destructor of nodeDag
  */
 nodeDag::~nodeDag(){
-    rightChildNode=nullptr;
-    leftChildNode=nullptr;
+    delete rightChildNode;
+    delete leftChildNode;
 }
 
 /**

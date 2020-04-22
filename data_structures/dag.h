@@ -23,26 +23,29 @@ public:
     void updateDag(const cg3::Segment2d segment);
     void insertSingleTrapezoid(const cg3::Segment2d segment);
     void insertMultipleTrapezoids(const cg3::Segment2d segment);
-    void findMultipleTrapezoids(trapezoid trap, nodeDag* node, nodeDag* temp, long int indexTrap);
     void setTrapezoidToInsert(const trapezoid trap, int num);
     void multipleReferences(nodeDag*& node, trapezoid& trap, nodeDag*& segment1b, nodeDag*& point2, cg3::Point2d& p2);
 
     //getter
     nodeDag*& getDag();
     std::map<trapezoid, nodeDag**>& getPointerMap();
-    std::map<long int, nodeDag**> getMultipleAdressesMap();
 
     void clearDag();
     void clearTraps();
+
+    //rules of three and five
+    ~Dag();
+    Dag& operator = (Dag other);
+    void swap(Dag& other);
+    Dag (Dag&& in);
+    Dag& operator = (Dag&& in);
 
 private:
     int nTrapezoids;
     nodeDag* dag;
 
     std::vector<trapezoid> traps;
-
     std::map<trapezoid, nodeDag**> pointersMap;
-    //std::map<long int, nodeDag**> multipleAdresses;
     std::map<long int, std::map<int, nodeDag**>> multipleAdresses;
 
 };
