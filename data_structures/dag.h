@@ -28,8 +28,8 @@ public:
     void multipleReferences(nodeDag*& node, trapezoid& trap, nodeDag*& segment1b, nodeDag*& point2, cg3::Point2d& p2);
 
     //getter
-    nodeDag* getDag();
-    std::map<trapezoid, nodeDag**> getPointerMap();
+    nodeDag*& getDag();
+    std::map<trapezoid, nodeDag**>& getPointerMap();
     std::map<long int, nodeDag**> getMultipleAdressesMap();
 
     void clearDag();
@@ -43,7 +43,7 @@ private:
 
     std::map<trapezoid, nodeDag**> pointersMap;
     //std::map<long int, nodeDag**> multipleAdresses;
-    std::map<trapezoid, std::map<int, nodeDag**>> multipleAdresses;
+    std::map<long int, std::map<int, nodeDag**>> multipleAdresses;
 
 };
 #endif // DAG_H

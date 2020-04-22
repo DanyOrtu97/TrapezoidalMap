@@ -141,10 +141,18 @@ nodeDag** X::pointToPoint(const cg3::Point2d point, const cg3::Point2d point2){
     }
 }
 
+/**
+ * @brief Getter for the bool rightendpoint
+ * @param[out] true if is the right endpoint, else otherwise
+ */
 bool X::getValueEndpoint(){
     return rightEndpoint;
 }
 
+/**
+ * @brief Setter for the bool right endpoint
+ * @param[in] bool value
+ */
 void X::setValueEndpoint(bool value){
     this->rightEndpoint=value;
 }

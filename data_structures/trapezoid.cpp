@@ -131,18 +131,47 @@ cg3::Segment2d trapezoid::getBottom(){
     return this->bottoms;
 }
 
+/**
+ * @brief setter for the color of the trapezoid
+ * @param[in] Color color
+ */
 void trapezoid::setColor(const cg3::Color color){
     this->color = color;
 }
 
+/**
+ * @brief getter for the Color
+ */
 cg3::Color trapezoid::getColor(){
     return this->color;
 }
 
+/**
+ * @brief setter for the iterator in the list
+ * @param[in] const std::list<trapezoid>::iterator iterEL
+ */
 void trapezoid::setIter(const std::list<trapezoid>::iterator iterEL){
     this->iterEL=iterEL;
 }
 
+/**
+ * @brief getter for the iterator for deleting the traps
+ */
 std::list<trapezoid>::iterator trapezoid::getIter(){
     return this->iterEL;
+}
+
+/**
+ * @brief setter for the id
+ * @param[in] const long int id
+ */
+void trapezoid::setId(const long int id){
+    this->id = id;
+}
+
+/**
+ * @brief getter for the id that i used for the map of references
+ */
+long int trapezoid::getId(){
+    return this->id;
 }

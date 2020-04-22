@@ -25,7 +25,7 @@ void TrapezoidalMap::inizialize(){
     std::array<cg3::Point2d, 4> trap = {topLeft, topRight, bottomRight, bottomLeft};  
     trapezoidsList.push_back(trapezoid(topLeft, topRight, bottomRight, bottomLeft, topLeft, topRight, cg3::Segment2d(trap[0], trap[1]), cg3::Segment2d(trap[3],trap[2]), (cg3::Color(rand()%210, rand()%200, rand()%180)).fromHsv(rand()%359, rand()%128, 172 + rand()%63)));
     trapezoidsList.back().setIter(prev(trapezoidsList.end()));
-
+    trapezoidsList.back().setId(trapezoidsList.size());
     //inizialize the dag with the first polygon (the bounding box)
     dag.inizializeDag(trapezoidsList.back());
 }
@@ -37,14 +37,13 @@ void TrapezoidalMap::inizialize(){
 void TrapezoidalMap::trapezoidalMapAlgorithm(const cg3::Segment2d segment){
     trapezoid firstTrapezoid = dag.findTrapezoid(segment.p1(), segment.p2(), false, dag.getDag());
     trapezoid lastTrapezoid = dag.findTrapezoid(segment.p2(), segment.p1(), false, dag.getDag());
-    nodeDag* splitNode;
 
     if(firstTrapezoid.getTrapezoid() == lastTrapezoid.getTrapezoid()){
         dag.clearTraps();
         updateTrapezoid(segment);
     }
     else{
-        splitNode= GasAlgorithms::findSplitNode(segment, dag.getDag());
+        nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, dag.getDag());
         dag.findTrapezoids(segment, splitNode, nullptr);
         dag.clearTraps();
         updateTrapezoid(segment);
@@ -64,8 +63,7 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
     cg3::Point2d upfirst, upsecond, downfirst, downsecond;
     cg3::Point2d rightPSeg, leftPSeg;
 
-    std::map<trapezoid, nodeDag**> TrapMapDag = dag.getPointerMap();
-    std::list<trapezoid>::iterator t;
+    std::map<trapezoid, nodeDag**>& TrapMapDag = dag.getPointerMap();
 
     //this trapezoid is usefull for those trapezoids that are between 1 or more trapezoids
     trapezoid innerTrap;
@@ -82,6 +80,7 @@ void TrapezoidalMap::updateTrapezoid(const cg3::Segment2d& segment){
         bottomRight = trap.getTrapezoid()[2];
 
         trapezoidsList.erase(trap.getIter());
+        //trapezoidsList.remove(trap);
 
         if(i==0){
             upfirst=GasAlgorithms::createPoint(upfirst, p1.x(), GasAlgorithms::handleSlopeSegment(trap.getTop(), p1));
@@ -647,8 +646,10 @@ void TrapezoidalMap::lastTrapNonDegerated(const cg3::Point2d p2, const cg3::Poin
  */
 void TrapezoidalMap::addPolygon(const cg3::Point2d p1, const cg3::Point2d p2, const cg3::Point2d p3, const cg3::Point2d p4, const cg3::Point2d leftp, const cg3::Point2d rightp, const cg3::Segment2d top, const cg3::Segment2d bottom){
     cg3::Color color = (cg3::Color(rand()%210, rand()%200, rand()%180)).fromHsv(rand()%359, rand()%128, 170 + rand()%20);
+    long int id = trapezoidsList.back().getId()+1;
     trapezoidsList.push_back(trapezoid(p1, p2, p3, p4, leftp, rightp, top, bottom, color));
     trapezoidsList.back().setIter(prev(trapezoidsList.end()));
+    trapezoidsList.back().setId(id);
     dag.setTrapezoidToInsert(trapezoidsList.back(), trapezoidsList.size());
 }
 
