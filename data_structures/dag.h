@@ -16,7 +16,7 @@ public:
     void inizializeDag(const trapezoid boundingBox);
 
     //Methods to find trapezoids, single and multiple, the first is used also for the point location query
-    trapezoid findTrapezoid(const cg3::Point2d point, const cg3::Point2d auxiliaryPoint, bool queryPoint, nodeDag* root);
+    trapezoid findTrapezoid(const cg3::Point2d point, const cg3::Point2d auxiliaryPoint, bool queryPoint, nodeDag*& root);
     void findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* temp);
 
     //Methods to update the dag

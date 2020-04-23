@@ -57,8 +57,29 @@ nodeDag** nodeDag::getRightChildP(){
  * @brief Destructor of nodeDag
  */
 nodeDag::~nodeDag(){
+    rightChildNode = nullptr;
+    leftChildNode = nullptr;
     delete rightChildNode;
     delete leftChildNode;
+}
+
+/**
+ * @brief Move constructor
+ */
+nodeDag::nodeDag(nodeDag&& in){
+    this->leftChildNode = in.leftChildNode;
+    this->rightChildNode = in.rightChildNode;
+    in.leftChildNode = nullptr;
+    in.rightChildNode = nullptr;
+}
+
+/**
+ * @brief move "=" operator
+ */
+nodeDag& nodeDag::operator = (nodeDag&& in){
+    std::swap(leftChildNode, in.leftChildNode);
+    std::swap(rightChildNode, in.rightChildNode);
+    return *this;
 }
 
 /**
@@ -140,6 +161,7 @@ nodeDag** X::pointToPoint(const cg3::Point2d point, const cg3::Point2d point2){
         }
     }
 }
+
 
 /**
  * @brief Getter for the bool rightendpoint
@@ -261,3 +283,5 @@ trapezoid Leaf::getTrapezoid(){
 void Leaf::setTrapezoid(trapezoid trapezoid){
     this->trapezoide = trapezoid;
 }
+
+

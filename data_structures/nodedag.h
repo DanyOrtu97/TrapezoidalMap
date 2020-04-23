@@ -24,6 +24,8 @@ public:
     long double determinant(const cg3::Segment2d seg, const cg3::Point2d point);
 
     virtual ~nodeDag();
+    nodeDag (nodeDag&& in);
+    nodeDag& operator = (nodeDag&& in);
 
 protected:
     nodeDag *leftChildNode;

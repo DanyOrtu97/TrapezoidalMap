@@ -25,7 +25,6 @@ DrawableTrapezoidalMap::DrawableTrapezoidalMap():
  */
 void DrawableTrapezoidalMap::draw() const
 {
-    int i =0;
     for (trapezoid trap : getTrapezoids()){
         if (getFoundTrapezoid().size()>1 && trap.getTrapezoid() == getFoundTrapezoid()){
             if(GasAlgorithms::degeneratedTrapezoid(trap)){
@@ -44,7 +43,6 @@ void DrawableTrapezoidalMap::draw() const
             }
             cg3::opengl::drawLine2(trap.getTrapezoid()[0], trap.getTrapezoid()[3], verticalLineColor, static_cast<int>(verticalLineSize));
             cg3::opengl::drawLine2(trap.getTrapezoid()[1], trap.getTrapezoid()[2], verticalLineColor, static_cast<int>(verticalLineSize));
-            i++;
         }
     }
 }

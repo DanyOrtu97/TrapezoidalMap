@@ -296,12 +296,12 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
 
 //---------------------------------------------------------------------
 //Define your private methods here if you need some
+/**
+ * @brief Inizialize the trapezoidal map and the dag with the bounding box
+ */
 void TrapezoidalMapManager::inzializeStructures(){
     drawableTrapezoidalMap.inizialize();
 }
-
-
-
 //#####################################################################
 
 
