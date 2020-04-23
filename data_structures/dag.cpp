@@ -26,7 +26,6 @@ void Dag::inizializeDag(trapezoid boundingBox){
  * @param[in] segment Segment
  */
 void Dag::updateDag(const cg3::Segment2d segment){
-
     if(pointersMap.size()==1){
         insertSingleTrapezoid(segment);
         pointersMap.clear();
