@@ -26,6 +26,7 @@ void TrapezoidalMap::inizialize(){
     trapezoidsList.push_back(trapezoid(topLeft, topRight, bottomRight, bottomLeft, topLeft, topRight, cg3::Segment2d(trap[0], trap[1]), cg3::Segment2d(trap[3],trap[2]), (cg3::Color(rand()%210, rand()%200, rand()%180)).fromHsv(rand()%359, rand()%128, 172 + rand()%63)));
     trapezoidsList.back().setIter(prev(trapezoidsList.end()));
     trapezoidsList.back().setId(trapezoidsList.size());
+
     //inizialize the dag with the first polygon (the bounding box)
     dag.inizializeDag(trapezoidsList.back());
 }
@@ -616,8 +617,8 @@ void TrapezoidalMap::singleTrapezoid(const cg3::Point2d p1, const cg3::Point2d p
 void TrapezoidalMap::insertInnerTraps(bool& insertionAfterInner, std::vector<trapezoid>& insertAfterInner){
     if(insertionAfterInner){
         for(int j=0; j<(int)insertAfterInner.size();j++){
-            addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2],insertAfterInner[j].getTrapezoid()[3],
-                    insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(),insertAfterInner[j].getBottom());
+            addPolygon(insertAfterInner[j].getTrapezoid()[0], insertAfterInner[j].getTrapezoid()[1], insertAfterInner[j].getTrapezoid()[2], insertAfterInner[j].getTrapezoid()[3],
+                    insertAfterInner[j].getLeftP(), insertAfterInner[j].getRightP(), insertAfterInner[j].getTop(), insertAfterInner[j].getBottom());
         }
         insertionAfterInner=false;
         insertAfterInner.clear();

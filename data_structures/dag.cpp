@@ -213,7 +213,6 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
             }
         }
     }
-    pointersMap.erase(pointersMap.begin());
 }
 
 
@@ -275,7 +274,6 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     multipleAdresses.erase(multipleAdresses.find(trap.getId()));
                 }
             }
-
             insert.clear();
             if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
                 insert.insert(std::make_pair(i, segment1a->getLeftChildP()));
@@ -290,7 +288,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
             segmentInner->setRightChild(segment1a->getRightChild());
         }
         else if(trap.getLeftP() == topLeft && topLeft != bottomLeft){ //C2L
-            if(topRight == bottomRight){ //C1R
+            if(i==(int)pointersMap.size()-1){ //last trap
                 nodeDag* segment1b = new Y(segment);
                 point2->setLeftChild(segment1b);
                 point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
@@ -309,7 +307,236 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 }
             }
             else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
-                if(i==(int)pointersMap.size()-1){ //last trap
+                segmentInner1 = new Y(segment);
+                segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                segmentInner1->setRightChild(segmentInner->getRightChild());
+
+                segmentInner = new Y(segment);
+                segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                contaStep++;
+                segmentInner->setRightChild(segmentInner1->getRightChild());
+
+                (*it->second)=segmentInner;
+
+                if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
+                         *(it2->second)=segmentInner;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap.getId()));
+                }
+
+                if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                }
+                else{
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
+                }
+            }
+            else if(trap.getRightP() == bottomRight){ //C3R
+                segmentInner1 = new Y(segment);
+                segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                segmentInner1->setRightChild(segmentInner->getRightChild());
+
+                segmentInner = new Y(segment);
+                segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                contaStep++;
+                segmentInner->setRightChild(segmentInner1->getRightChild());
+
+                (*it->second)=segmentInner;
+
+                if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
+                         *(it2->second)=segmentInner;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap.getId()));
+                }
+
+                if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                }
+                else{
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
+                }
+                insert.clear();
+                insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
+            }
+            else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
+                segmentInner1 = new Y(segment);
+                segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                segmentInner1->setRightChild(segmentInner->getRightChild());
+
+                segmentInner = new Y(segment);
+                segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                contaStep++;
+                segmentInner->setRightChild(segmentInner1->getRightChild());
+
+                (*it->second)=segmentInner;
+
+                if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
+                         *(it2->second)=segmentInner;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap.getId()));
+                }
+
+                if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                }
+                else{
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
+                }
+
+                //adding reference
+                if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
+                }
+            }
+        }
+        else if(trap.getLeftP() == bottomLeft){ //C3L
+            if(i==(int)pointersMap.size()-1){ //last trap
+                nodeDag* segment1b = new Y(segment);
+                point2->setLeftChild(segment1b);
+                point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                segment1b->setLeftChild(segmentInner->getLeftChild());
+                segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+
+                multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                }
+                else{
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
+                }
+            }
+            else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
+                segmentInner1 = new Y(segment);
+                segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                segmentInner1->setRightChild(segmentInner->getRightChild());
+
+                segmentInner = new Y(segment);
+                segmentInner->setLeftChild(segmentInner1->getLeftChild());
+                segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                contaStep++;
+
+                (*it->second)=segmentInner;
+
+                if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
+                         *(it2->second)=segmentInner;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap.getId()));
+                }
+
+                if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                }
+                else{
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
+                }
+                insert.clear();
+                insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
+            }
+            else if(trap.getRightP() == bottomRight){ //C3R              
+                segmentInner1 = new Y(segment);
+                segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                segmentInner1->setRightChild(segmentInner->getRightChild());
+
+                segmentInner = new Y(segment);
+                segmentInner->setLeftChild(segmentInner1->getLeftChild());
+                segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                contaStep++;
+
+                (*it->second)=segmentInner;
+
+                 if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
+                         *(it2->second)=segmentInner;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap.getId()));
+                }
+
+                if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                }
+                else{
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
+                }
+            }
+            else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
+                segmentInner1 = new Y(segment);
+                segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                segmentInner1->setRightChild(segmentInner->getRightChild());
+
+                segmentInner = new Y(segment);
+                segmentInner->setLeftChild(segmentInner1->getLeftChild());
+                segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                contaStep++;
+
+                (*it->second)=segmentInner;
+
+                if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                    for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
+                         *(it2->second)=segmentInner;
+                    }
+                    multipleAdresses.erase(multipleAdresses.find(trap.getId()));
+                }
+
+                if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                    multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                }
+                else{
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
+                }
+
+                //adding reference
+                if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
+
+                }
+                else{
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
+                }
+            }
+        }
+        else if(trap.getLeftP().x() == topLeft.x() && trap.getLeftP() != topLeft && trap.getLeftP() != bottomLeft){ //C4L
+           if(i==(int)pointersMap.size()-1){ //last trap
+                if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
+                    nodeDag* segment1b = new Y(segment);
+                    point2->setLeftChild(segment1b);
+                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                    segment1b->setLeftChild(segmentInner->getLeftChild());
+                    segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+
+                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                    }
+                    else{
+                        insert.clear();
+                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
+                    }
+                }
+                else{
                     nodeDag* segment1b = new Y(segment);
                     point2->setLeftChild(segment1b);
                     point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
@@ -317,7 +544,6 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segment1b->setRightChild(segmentInner->getRightChild());
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-
                     if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
                         multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
                     }
@@ -326,7 +552,40 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                         insert.insert(std::make_pair(i, segment1b->getRightChildP()));
                         multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
                     }
+                }
 
+            }
+            else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
+                if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
+                    segmentInner1 = new Y(segment);
+                    segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                    segmentInner1->setRightChild(segmentInner->getRightChild());
+
+                    segmentInner = new Y(segment);
+                    segmentInner->setLeftChild(segmentInner1->getLeftChild());
+                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                    contaStep++;
+
+                    (*it->second)=segmentInner;
+
+                    if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
+                             *(it2->second)=segmentInner;
+                        }
+                        multipleAdresses.erase(multipleAdresses.find(trap.getId()));
+                    }
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                    }
+                    else{
+                        insert.clear();
+                        insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
+                    }
+                    insert.clear();
+                    insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
+                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
                 }
                 else{
                     segmentInner1 = new Y(segment);
@@ -340,7 +599,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
 
                     (*it->second)=segmentInner;
 
-                    if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                     if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
                         for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
                              *(it2->second)=segmentInner;
                         }
@@ -358,22 +617,32 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 }
             }
             else if(trap.getRightP() == bottomRight){ //C3R
-                if(i==(int)pointersMap.size()-1){ //last trap
-                    nodeDag* segment1b = new Y(segment);
-                    point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                    segment1b->setRightChild(segmentInner->getRightChild());
+                if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
+                    segmentInner1 = new Y(segment);
+                    segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                    segmentInner1->setRightChild(segmentInner->getRightChild());
 
-                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    segmentInner = new Y(segment);
+                    segmentInner->setLeftChild(segmentInner1->getLeftChild());
+                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                    contaStep++;
 
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                    (*it->second)=segmentInner;
+
+                    if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
+                             *(it2->second)=segmentInner;
+                        }
+                        multipleAdresses.erase(multipleAdresses.find(trap.getId()));
+                    }
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
                     }
                     else{
                         insert.clear();
-                        insert.insert(std::make_pair(i, segment1b->getRightChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
+                        insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
                     }
                 }
                 else{
@@ -409,21 +678,41 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 }
             }
             else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
-                if(i==(int)pointersMap.size()-1){ //last trap
-                    nodeDag* segment1b = new Y(segment);
-                    point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                    segment1b->setRightChild(segmentInner->getRightChild());
+                if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
+                    segmentInner1 = new Y(segment);
+                    segmentInner1->setLeftChild(segmentInner->getLeftChild());
+                    segmentInner1->setRightChild(segmentInner->getRightChild());
 
-                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
+                    segmentInner = new Y(segment);
+                    segmentInner->setLeftChild(segmentInner1->getLeftChild());
+                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                    contaStep++;
 
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
+                    (*it->second)=segmentInner;
+
+                    if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
+                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
+                             *(it2->second)=segmentInner;
+                        }
+                        multipleAdresses.erase(multipleAdresses.find(trap.getId()));
+                    }
+
+                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
+                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
                     }
                     else{
                         insert.clear();
-                        insert.insert(std::make_pair(i, segment1b->getRightChildP()));
+                        insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
+                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
+                    }
+
+                    //update reference
+                    if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
+
+                    }
+                    else{
+                        insert.clear();
+                        insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
                         multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
                     }
                 }
@@ -457,609 +746,13 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
 
                     //adding reference
                     if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
+
                         insert.clear();
                         insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
                         multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
                     }
                 }
-            }
-            else if(topRight == cg3::Point2d((1e+6), (1e+6))){ //CR(Right)
-                nodeDag* segment1b = new Y(segment);
-                point2->setLeftChild(segment1b);
-                point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                segment1b->setRightChild(segmentInner->getRightChild());
-
-                multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-
-                if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                    multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
-                }
-                else{
-                    insert.clear();
-                    insert.insert(std::make_pair(i, segment1b->getRightChildP()));
-                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                }
-            }
-        }
-        else if(trap.getLeftP() == bottomLeft){ //C3L
-            if(topRight == bottomRight){ //C1R
-                nodeDag* segment1b = new Y(segment);
-                point2->setLeftChild(segment1b);
-                point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                segment1b->setLeftChild(segmentInner->getLeftChild());
-                segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-
-                if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                    multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                }
-                else{
-                    insert.clear();
-                    insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                }
-            }
-            else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
-                if(i==(int)pointersMap.size()-1){ //last trap
-                    nodeDag* segment1b = new Y(segment);
-                    point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(segmentInner->getLeftChild());
-                    segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-                else{
-                    segmentInner1 = new Y(segment);
-                    segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                    segmentInner1->setRightChild(segmentInner->getRightChild());
-
-                    segmentInner = new Y(segment);
-                    segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-                    contaStep++;
-
-                    (*it->second)=segmentInner;
-
-                    if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
-                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
-                             *(it2->second)=segmentInner;
-                        }
-                        multipleAdresses.erase(multipleAdresses.find(trap.getId()));
-                    }
-
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                    }
-                    insert.clear();
-                    insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                }
-            }
-            else if(trap.getRightP() == bottomRight){ //C3R
-                if(i==(int)pointersMap.size()-1){ //last trap
-                    nodeDag* segment1b = new Y(segment);
-                    point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(segmentInner->getLeftChild());
-                    segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-                else{
-                    segmentInner1 = new Y(segment);
-                    segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                    segmentInner1->setRightChild(segmentInner->getRightChild());
-
-                    segmentInner = new Y(segment);
-                    segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-                    contaStep++;
-
-                    (*it->second)=segmentInner;
-
-                     if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
-                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
-                             *(it2->second)=segmentInner;
-                        }
-                        multipleAdresses.erase(multipleAdresses.find(trap.getId()));
-                    }
-
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-            }
-            else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
-                if(i==(int)pointersMap.size()-1){ //last trap
-                    nodeDag* segment1b = new Y(segment);
-                    point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(segmentInner->getLeftChild());
-                    segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-                else{
-                    segmentInner1 = new Y(segment);
-                    segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                    segmentInner1->setRightChild(segmentInner->getRightChild());
-
-                    segmentInner = new Y(segment);
-                    segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-                    contaStep++;
-
-                    (*it->second)=segmentInner;
-
-                    if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
-                        for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
-                             *(it2->second)=segmentInner;
-                        }
-                        multipleAdresses.erase(multipleAdresses.find(trap.getId()));
-                    }
-
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                    }
-
-                    //adding reference
-                    if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
-
-                    }
-                    else{  
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-            }
-            else if(topRight == cg3::Point2d((1e+6), (1e+6))){ //CR(Right)
-                nodeDag* segment1b = new Y(segment);
-                point2->setLeftChild(segment1b);
-                point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                segment1b->setLeftChild(segmentInner->getLeftChild());
-                segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                    multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                }
-                else{
-                    insert.clear();
-                    insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                    multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                }
-            }
-        }
-        else if(trap.getLeftP().x() == topLeft.x() && trap.getLeftP() != topLeft && trap.getLeftP() != bottomLeft){ //C4L
-            if(topRight == bottomRight){ //C1R
-                if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
-                    nodeDag* segment1b = new Y(segment);
-                    point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(segmentInner->getLeftChild());
-                    segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-                else{
-                    nodeDag* segment1b = new Y(segment);
-                    point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                    segment1b->setRightChild(segmentInner->getRightChild());
-
-                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segment1b->getRightChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-
-            }
-            else if(trap.getRightP() == topRight && topRight != cg3::Point2d((1e+6), (1e+6))){ //C2R
-                if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
-                    if(i==(int)pointersMap.size()-1){ //last trap
-                        nodeDag* segment1b = new Y(segment);
-                        point2->setLeftChild(segment1b);
-                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                        segment1b->setLeftChild(segmentInner->getLeftChild());
-                        segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                        multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                    else{
-                        segmentInner1 = new Y(segment);
-                        segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                        segmentInner1->setRightChild(segmentInner->getRightChild());
-
-                        segmentInner = new Y(segment);
-                        segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                        segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-                        contaStep++;
-
-                        (*it->second)=segmentInner;
-
-                        if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
-                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
-                                 *(it2->second)=segmentInner;
-                            }
-                            multipleAdresses.erase(multipleAdresses.find(trap.getId()));
-                        }
-
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                        }
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-                else{
-                    if(i==(int)pointersMap.size()-1){ //last trap
-                        nodeDag* segment1b = new Y(segment);
-                        point2->setLeftChild(segment1b);
-                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                        segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                        segment1b->setRightChild(segmentInner->getRightChild());
-
-                        multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segment1b->getRightChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                    else{
-                        segmentInner1 = new Y(segment);
-                        segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                        segmentInner1->setRightChild(segmentInner->getRightChild());
-
-                        segmentInner = new Y(segment);
-                        segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                        contaStep++;
-                        segmentInner->setRightChild(segmentInner1->getRightChild());
-
-                        (*it->second)=segmentInner;
-
-                         if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
-                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
-                                 *(it2->second)=segmentInner;
-                            }
-                            multipleAdresses.erase(multipleAdresses.find(trap.getId()));
-                        }
-
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                }
-            }
-            else if(trap.getRightP() == bottomRight){ //C3R
-                if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
-                    if(i==(int)pointersMap.size()-1){ //last trap
-                        nodeDag* segment1b = new Y(segment);
-                        point2->setLeftChild(segment1b);
-                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                        segment1b->setLeftChild(segmentInner->getLeftChild());
-                        segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                        multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                    else{
-                        segmentInner1 = new Y(segment);
-                        segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                        segmentInner1->setRightChild(segmentInner->getRightChild());
-
-                        segmentInner = new Y(segment);
-                        segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                        segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-                        contaStep++;
-
-                        (*it->second)=segmentInner;
-
-                        if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
-                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
-                                 *(it2->second)=segmentInner;
-                            }
-                            multipleAdresses.erase(multipleAdresses.find(trap.getId()));
-                        }
-
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                }
-                else{
-                    if(i==(int)pointersMap.size()-1){ //last trap
-                        nodeDag* segment1b = new Y(segment);
-                        point2->setLeftChild(segment1b);
-                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                        segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                        segment1b->setRightChild(segmentInner->getRightChild());
-
-                        multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segment1b->getRightChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                    else{
-                        segmentInner1 = new Y(segment);
-                        segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                        segmentInner1->setRightChild(segmentInner->getRightChild());
-
-                        segmentInner = new Y(segment);
-                        segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                        contaStep++;
-                        segmentInner->setRightChild(segmentInner1->getRightChild());
-
-                        (*it->second)=segmentInner;
-
-                        if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
-                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
-                                 *(it2->second)=segmentInner;
-                            }
-                            multipleAdresses.erase(multipleAdresses.find(trap.getId()));
-                        }
-
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                        }
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-            }
-            else if(trap.getRightP().x() == topRight.x() && trap.getRightP() != topRight && trap.getRightP() != bottomRight){ //C4R
-                if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
-                    if(i==(int)pointersMap.size()-1){ //last trap
-                        nodeDag* segment1b = new Y(segment);
-                        point2->setLeftChild(segment1b);
-                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                        segment1b->setLeftChild(segmentInner->getLeftChild());
-                        segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                        multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                    else{
-                        segmentInner1 = new Y(segment);
-                        segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                        segmentInner1->setRightChild(segmentInner->getRightChild());
-
-                        segmentInner = new Y(segment);
-                        segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                        segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-                        contaStep++;
-
-                        (*it->second)=segmentInner;
-
-                        if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
-                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
-                                 *(it2->second)=segmentInner;
-                            }
-                            multipleAdresses.erase(multipleAdresses.find(trap.getId()));
-                        }
-
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                        }
-
-                        //update reference
-                        if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
-
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                }
-                else{
-                    if(i==(int)pointersMap.size()-1){ //last trap
-                        nodeDag* segment1b = new Y(segment);
-                        point2->setLeftChild(segment1b);
-                        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                        segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                        segment1b->setRightChild(segmentInner->getRightChild());
-
-                        multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segment1b->getRightChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                    else{
-                        segmentInner1 = new Y(segment);
-                        segmentInner1->setLeftChild(segmentInner->getLeftChild());
-                        segmentInner1->setRightChild(segmentInner->getRightChild());
-
-                        segmentInner = new Y(segment);
-                        segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                        contaStep++;
-                        segmentInner->setRightChild(segmentInner1->getRightChild());
-
-                        (*it->second)=segmentInner;
-
-                        if(multipleAdresses.size()>=1 && multipleAdresses.find(trap.getId()) != (multipleAdresses.end())){
-                            for(std::map<int, nodeDag**>::iterator it2 = (multipleAdresses.find(trap.getId())->second).begin(); it2!= (multipleAdresses.find(trap.getId())->second).end(); it2++){
-                                 *(it2->second)=segmentInner;
-                            }
-                            multipleAdresses.erase(multipleAdresses.find(trap.getId()));
-                        }
-
-                        if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                            multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                        }
-                        else{
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segmentInner->getRightChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                        }
-
-                        //adding reference
-                        if(getDag()->determinant(segment, trap.getRightP()) < 0 ){ //sopra
-
-                            insert.clear();
-                            insert.insert(std::make_pair(i, segmentInner->getLeftChildP()));
-                            multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                        }
-                    }
-                }
-            }
-            else if(topRight == cg3::Point2d((1e+6), (1e+6))){ //CR(Right)
-                if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
-                    nodeDag* segment1b = new Y(segment);
-                    point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(segmentInner->getLeftChild());
-                    segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
-
-                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segment1b->getLeftChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getLeftChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-                else{
-                    nodeDag* segment1b = new Y(segment);
-                    point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
-                    segment1b->setRightChild(segmentInner->getRightChild());
-
-                    multipleReferences((*(it->second)), trap, segment1b, point2, p2);
-                    if(multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
-                        multipleAdresses.find((((Leaf*)segmentInner->getRightChild()))->getTrapezoid().getId())->second.insert(std::make_pair(i, segment1b->getRightChildP()));
-                    }
-                    else{
-                        insert.clear();
-                        insert.insert(std::make_pair(i, segment1b->getRightChildP()));
-                        multipleAdresses.insert(std::make_pair(((Leaf*)segmentInner->getRightChild())->getTrapezoid().getId(), insert));
-                    }
-                }
-            }
+            } 
         }
         i++;       
     }
