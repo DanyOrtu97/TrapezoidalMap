@@ -252,8 +252,7 @@ nodeDag** Y::pointToSegment(const cg3::Point2d point, const cg3::Point2d point2)
  * @brief Constructor of node of type Leaf(trapezoid)
  * @param[in] t Trapezoid
  */
-Leaf::Leaf(trapezoid t){
-    setTrapezoid(t);
+Leaf::Leaf(trapezoid& t): trapezoide(t){
     this->setLeftChild(nullptr);
     this->setRightChild(nullptr);
 }
@@ -272,7 +271,7 @@ std::string  Leaf::getType() const{
  * @brief Return the trapezoid on Leaf node
  * @param[out] t Trapezoid
  */
-trapezoid Leaf::getTrapezoid(){
+trapezoid& Leaf::getTrapezoid(){
     return trapezoide;
 }
 
@@ -280,7 +279,7 @@ trapezoid Leaf::getTrapezoid(){
  * @brief Set the trapezoid in a Leaf node
  * @param[in] trapezoid Trapezoid
  */
-void Leaf::setTrapezoid(trapezoid trapezoid){
+void Leaf::setTrapezoid(trapezoid& trapezoid){
     this->trapezoide = trapezoid;
 }
 

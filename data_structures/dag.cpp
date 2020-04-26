@@ -15,7 +15,7 @@ Dag::Dag(){
  * @brief Method to inzialize dag with the leaf for the bounding box
  * @param[in] boundingBox Trapezoid
  */
-void Dag::inizializeDag(trapezoid boundingBox){
+void Dag::inizializeDag(trapezoid& boundingBox){
     Leaf* trap = new Leaf(boundingBox);
     dag = trap;
 }
@@ -41,7 +41,7 @@ void Dag::updateDag(const cg3::Segment2d segment){
  * @param[in] point Point, queryPoint bool, root nodeDag*&
  * @param[out] trapezoid Trapezoid
  */
-trapezoid Dag::findTrapezoid(cg3::Point2d point, cg3::Point2d auxiliaryPoint, bool queryPoint, nodeDag*& root){
+trapezoid Dag::findTrapezoid(const cg3::Point2d point, const cg3::Point2d auxiliaryPoint, bool queryPoint, nodeDag*& root){
     nodeDag** tmp = &root;
 
     while((*tmp)->getType() != "PK4Leaf"){
@@ -136,8 +136,8 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
 
     //if traps==2 means that the first and the secocond endpoint of the segment are equals to leftp and rightp respectively
     if(traps.size()==2){
-        segment1->setLeftChild(new Leaf(*(traps.begin()+0)));
-        segment1->setRightChild(new Leaf(*(traps.begin()+1)));
+        segment1->setLeftChild(new Leaf(traps[0]));
+        segment1->setRightChild(new Leaf(traps[1]));
         if(nTrapezoids <= 2){
             dag = segment1;
         }
@@ -155,9 +155,9 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
     else if(traps.size()==3){ //if is equal to 3 one of left/right endpoint is equal to leftp or rightp
         if(p1 == trap.getLeftP()){
             point2->setLeftChild(segment1);
-            point2->setRightChild(new Leaf(*(traps.begin()+2)));
-            segment1->setLeftChild(new Leaf(*(traps.begin()+0)));
-            segment1->setRightChild(new Leaf(*(traps.begin()+1)));
+            point2->setRightChild(new Leaf(traps[2]));
+            segment1->setLeftChild(new Leaf(traps[0]));
+            segment1->setRightChild(new Leaf(traps[1]));
             if(nTrapezoids <= 3){
                 dag = point2;
             }
@@ -173,10 +173,10 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
             }
         }
         else{
-            point1->setLeftChild(new Leaf(*(traps.begin()+0)));
+            point1->setLeftChild(new Leaf(traps[0]));
             point1->setRightChild(segment1);
-            segment1->setLeftChild(new Leaf(*(traps.begin()+1)));
-            segment1->setRightChild(new Leaf(*(traps.begin()+2)));
+            segment1->setLeftChild(new Leaf(traps[1]));
+            segment1->setRightChild(new Leaf(traps[2]));
             if(nTrapezoids <= 3){
                 dag = point1;
             }
@@ -193,12 +193,12 @@ void Dag::insertSingleTrapezoid(const cg3::Segment2d segment){
         }
     }
     else{ //standard behaviour
-        point1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-4))));
+        point1->setLeftChild(new Leaf(traps[0]));
         point1->setRightChild(point2);
         point2->setLeftChild(segment1);
-        point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-        segment1->setLeftChild(new Leaf(*(traps.begin()+((traps).size()-3))));
-        segment1->setRightChild(new Leaf(*(traps.begin()+((traps).size()-2))));
+        point2->setRightChild(new Leaf(traps[3]));
+        segment1->setLeftChild(new Leaf(traps[1]));
+        segment1->setRightChild(new Leaf(traps[2]));
         if(nTrapezoids <= 4){
             dag = point1;
         }
@@ -244,9 +244,9 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
 
         if(i==0){
             if(p1 == trap.getLeftP()){
-                segment1a->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                segment1a->setLeftChild(new Leaf(traps[contaStep]));
                 contaStep++;
-                segment1a->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                segment1a->setRightChild(new Leaf(traps[contaStep]));
                 contaStep++;
                 (*it->second)=segment1a;
 
@@ -259,11 +259,11 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
             }
             else{
                 point1->setRightChild(segment1a);
-                point1->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                point1->setLeftChild(new Leaf(traps[contaStep]));
                 contaStep++;
-                segment1a->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                segment1a->setLeftChild(new Leaf(traps[contaStep]));
                 contaStep++;
-                segment1a->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                segment1a->setRightChild(new Leaf(traps[contaStep]));
                 contaStep++;
                 (*it->second)=point1;
 
@@ -291,8 +291,8 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
             if(i==(int)pointersMap.size()-1){ //last trap
                 nodeDag* segment1b = new Y(segment);
                 point2->setLeftChild(segment1b);
-                point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                point2->setRightChild(new Leaf(traps[(traps).size()-1]));
+                segment1b->setLeftChild(new Leaf(traps[contaStep]));
                 segment1b->setRightChild(segmentInner->getRightChild());
 
                 multipleReferences((*(it->second)), trap, segment1b, point2, p2);
@@ -312,7 +312,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 segmentInner1->setRightChild(segmentInner->getRightChild());
 
                 segmentInner = new Y(segment);
-                segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                segmentInner->setLeftChild(new Leaf(traps[contaStep]));
                 contaStep++;
                 segmentInner->setRightChild(segmentInner1->getRightChild());
 
@@ -340,7 +340,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 segmentInner1->setRightChild(segmentInner->getRightChild());
 
                 segmentInner = new Y(segment);
-                segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                segmentInner->setLeftChild(new Leaf(traps[contaStep]));
                 contaStep++;
                 segmentInner->setRightChild(segmentInner1->getRightChild());
 
@@ -371,7 +371,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 segmentInner1->setRightChild(segmentInner->getRightChild());
 
                 segmentInner = new Y(segment);
-                segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                segmentInner->setLeftChild(new Leaf(traps[contaStep]));
                 contaStep++;
                 segmentInner->setRightChild(segmentInner1->getRightChild());
 
@@ -405,9 +405,9 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
             if(i==(int)pointersMap.size()-1){ //last trap
                 nodeDag* segment1b = new Y(segment);
                 point2->setLeftChild(segment1b);
-                point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                point2->setRightChild(new Leaf(traps[(traps).size()-1]));
                 segment1b->setLeftChild(segmentInner->getLeftChild());
-                segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                segment1b->setRightChild(new Leaf(traps[contaStep]));
 
                 multipleReferences((*(it->second)), trap, segment1b, point2, p2);
                 if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
@@ -426,7 +426,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
 
                 segmentInner = new Y(segment);
                 segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                segmentInner->setRightChild(new Leaf(traps[contaStep]));
                 contaStep++;
 
                 (*it->second)=segmentInner;
@@ -457,7 +457,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
 
                 segmentInner = new Y(segment);
                 segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                segmentInner->setRightChild(new Leaf(traps[contaStep]));
                 contaStep++;
 
                 (*it->second)=segmentInner;
@@ -485,7 +485,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
 
                 segmentInner = new Y(segment);
                 segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                segmentInner->setRightChild(new Leaf(traps[contaStep]));
                 contaStep++;
 
                 (*it->second)=segmentInner;
@@ -522,9 +522,9 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 if(getDag()->determinant(segment, trap.getLeftP()) < 0 ){ //sopra
                     nodeDag* segment1b = new Y(segment);
                     point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
+                    point2->setRightChild(new Leaf(traps[(traps).size()-1]));
                     segment1b->setLeftChild(segmentInner->getLeftChild());
-                    segment1b->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                    segment1b->setRightChild(new Leaf(traps[contaStep]));
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
                     if(multipleAdresses.find((((Leaf*)segmentInner->getLeftChild()))->getTrapezoid().getId()) != (multipleAdresses.end())){
@@ -539,8 +539,8 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                 else{
                     nodeDag* segment1b = new Y(segment);
                     point2->setLeftChild(segment1b);
-                    point2->setRightChild(new Leaf(*(traps.begin()+((traps).size()-1))));
-                    segment1b->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                    point2->setRightChild(new Leaf(traps[(traps).size()-1]));
+                    segment1b->setLeftChild(new Leaf(traps[contaStep]));
                     segment1b->setRightChild(segmentInner->getRightChild());
 
                     multipleReferences((*(it->second)), trap, segment1b, point2, p2);
@@ -563,7 +563,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
 
                     segmentInner = new Y(segment);
                     segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                    segmentInner->setRightChild(new Leaf(traps[contaStep]));
                     contaStep++;
 
                     (*it->second)=segmentInner;
@@ -593,7 +593,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segmentInner1->setRightChild(segmentInner->getRightChild());
 
                     segmentInner = new Y(segment);
-                    segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                    segmentInner->setLeftChild(new Leaf(traps[contaStep]));
                     contaStep++;
                     segmentInner->setRightChild(segmentInner1->getRightChild());
 
@@ -624,7 +624,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
 
                     segmentInner = new Y(segment);
                     segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                    segmentInner->setRightChild(new Leaf(traps[contaStep]));
                     contaStep++;
 
                     (*it->second)=segmentInner;
@@ -651,7 +651,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segmentInner1->setRightChild(segmentInner->getRightChild());
 
                     segmentInner = new Y(segment);
-                    segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                    segmentInner->setLeftChild(new Leaf(traps[contaStep]));
                     contaStep++;
                     segmentInner->setRightChild(segmentInner1->getRightChild());
 
@@ -685,7 +685,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
 
                     segmentInner = new Y(segment);
                     segmentInner->setLeftChild(segmentInner1->getLeftChild());
-                    segmentInner->setRightChild(new Leaf(*(traps.begin()+contaStep)));
+                    segmentInner->setRightChild(new Leaf(traps[contaStep]));
                     contaStep++;
 
                     (*it->second)=segmentInner;
@@ -722,7 +722,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
                     segmentInner1->setRightChild(segmentInner->getRightChild());
 
                     segmentInner = new Y(segment);
-                    segmentInner->setLeftChild(new Leaf(*(traps.begin()+contaStep)));
+                    segmentInner->setLeftChild(new Leaf(traps[contaStep]));
                     contaStep++;
                     segmentInner->setRightChild(segmentInner1->getRightChild());
 
@@ -763,7 +763,7 @@ void Dag::insertMultipleTrapezoids(const cg3::Segment2d segment){
  * @brief Method to retrieve the trapezoids for insertion
  * @param[in] trapezoid Trapezoid, num Int
  */
-void Dag::setTrapezoidToInsert (const trapezoid trapezoid, int num){
+void Dag::setTrapezoidToInsert (trapezoid& trapezoid, int num){
     nTrapezoids = num;
     traps.push_back(trapezoid);
 }

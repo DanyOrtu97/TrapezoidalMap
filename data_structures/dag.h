@@ -13,7 +13,7 @@ public:
 
     Dag();
 
-    void inizializeDag(const trapezoid boundingBox);
+    void inizializeDag(trapezoid& boundingBox);
 
     //Methods to find trapezoids, single and multiple, the first is used also for the point location query
     trapezoid findTrapezoid(const cg3::Point2d point, const cg3::Point2d auxiliaryPoint, bool queryPoint, nodeDag*& root);
@@ -23,7 +23,7 @@ public:
     void updateDag(const cg3::Segment2d segment);
     void insertSingleTrapezoid(const cg3::Segment2d segment);
     void insertMultipleTrapezoids(const cg3::Segment2d segment);
-    void setTrapezoidToInsert(const trapezoid trap, int num);
+    void setTrapezoidToInsert(trapezoid& trap, int num);
     void multipleReferences(nodeDag*& node, trapezoid& trap, nodeDag*& segment1b, nodeDag*& point2, cg3::Point2d& p2);
 
     //getter
@@ -44,7 +44,7 @@ private:
     int nTrapezoids;
     nodeDag* dag;
 
-    std::vector<trapezoid> traps;
+    std::vector<std::reference_wrapper<trapezoid>> traps;
     std::map<trapezoid, nodeDag**> pointersMap;
     std::map<long int, std::map<int, nodeDag**>> multipleAdresses;
 

@@ -73,16 +73,16 @@ private:
 class Leaf: public nodeDag{
 
 public:
-    Leaf() = default;
-    explicit Leaf(trapezoid t);
+    //Leaf() = default;
+    explicit Leaf(trapezoid& t);
     ~Leaf() override = default;
 
     std::string  getType() const override;
-    trapezoid getTrapezoid();
-    void setTrapezoid(trapezoid trapezoid);
+    trapezoid& getTrapezoid();
+    void setTrapezoid(trapezoid& trapezoid);
 
 private:
-    trapezoid trapezoide;
+    trapezoid& trapezoide;
 };
 
 #endif // NODEDAG_H
