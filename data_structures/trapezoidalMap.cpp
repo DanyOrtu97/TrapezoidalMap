@@ -44,8 +44,8 @@ void TrapezoidalMap::trapezoidalMapAlgorithm(const cg3::Segment2d segment){
         updateTrapezoid(segment);
     }
     else{
-        nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, dag.getDag());
-        dag.findTrapezoids(segment, splitNode, nullptr);
+        //nodeDag* splitNode= GasAlgorithms::findSplitNode(segment, dag.getDag());
+        dag.findTrapezoids(segment, dag.getDag(), dag.getDag());
         dag.clearTraps();
         updateTrapezoid(segment);
     }
@@ -569,12 +569,32 @@ void TrapezoidalMap::singleTrapezoid(const cg3::Point2d p1, const cg3::Point2d p
      * control for the triangles / degerated trapezoids
      */
     if(trap.getLeftP() == p1 && trap.getRightP() == p2){
-        addPolygon(upfirst, upsecond, p2, p1, p1, p2, cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2)); //B
-        addPolygon(p1, p2, downsecond, downfirst, p1, p2, cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond)); //C
+        if(topRight == bottomRight){
+            addPolygon(upfirst, topRight, topRight, p1, p1, p2, cg3::Segment2d(upfirst, topRight), cg3::Segment2d(p1, topRight)); //B
+            addPolygon(p1, topRight, topRight, downfirst, p1, p2, cg3::Segment2d(p1, topRight), cg3::Segment2d(downfirst, topRight)); //C
+        }
+        else if(topLeft == bottomLeft){
+            addPolygon(topLeft, upsecond, p2, topLeft, p1, p2, cg3::Segment2d(topLeft, upsecond), cg3::Segment2d(topLeft, p2)); //B
+            addPolygon(topLeft, p2, downsecond, topLeft, p1, p2, cg3::Segment2d(topLeft, p2), cg3::Segment2d(topLeft, downsecond)); //C
+        }
+        else{
+            addPolygon(upfirst, upsecond, p2, p1, p1, p2, cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2)); //B
+            addPolygon(p1, p2, downsecond, downfirst, p1, p2, cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond)); //C
+        }
     }
     else if(trap.getLeftP() == p1){
-        addPolygon(upfirst, upsecond, p2, p1, p1, p2, cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2)); //B
-        addPolygon(p1, p2, downsecond, downfirst, p1, p2, cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond)); //C
+        if(trap.getLeftP() == topLeft){
+            addPolygon(topLeft, upsecond, p2, topLeft, p1, p2, cg3::Segment2d(topLeft, upsecond), cg3::Segment2d(topLeft, p2)); //B
+            addPolygon(topLeft, p2, downsecond, bottomLeft, p1, p2, cg3::Segment2d(topLeft, p2), cg3::Segment2d(bottomLeft, downsecond)); //C
+        }
+        else if(trap.getLeftP() == bottomLeft){
+            addPolygon(topLeft, upsecond, p2, bottomLeft, p1, p2, cg3::Segment2d(topLeft, upsecond), cg3::Segment2d(bottomLeft, p2)); //B
+            addPolygon(bottomLeft, p2, downsecond, bottomLeft, p1, p2, cg3::Segment2d(bottomLeft, p2), cg3::Segment2d(bottomLeft, downsecond)); //C
+        }
+        else{
+            addPolygon(upfirst, upsecond, p2, p1, p1, p2, cg3::Segment2d(upfirst, upsecond), cg3::Segment2d(p1, p2)); //B
+            addPolygon(p1, p2, downsecond, downfirst, p1, p2, cg3::Segment2d(p1, p2), cg3::Segment2d(downfirst, downsecond)); //C
+        }
         if(topRight == bottomRight){
             addPolygon(upsecond, topRight, topRight, downsecond, p2, trap.getRightP(), cg3::Segment2d(upsecond, topRight), cg3::Segment2d(downsecond, topRight)); //D
         }

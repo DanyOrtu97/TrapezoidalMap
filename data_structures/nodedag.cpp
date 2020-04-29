@@ -13,6 +13,14 @@ nodeDag* nodeDag::getLeftChild() const{
 }
 
 /**
+ * @brief This method return a referene at the left child
+ * @param[out] ref at left nodeDag*
+ */
+nodeDag*& nodeDag::getLeftChildRef(){
+    return leftChildNode;
+}
+
+/**
  * @brief This method set the value of the left child
  * @param[in] left nodeDag*
  */
@@ -25,6 +33,14 @@ void nodeDag::setLeftChild(nodeDag *leftChild){
  * @param[out] right nodeDag*
  */
 nodeDag* nodeDag::getRightChild() const{
+    return rightChildNode;
+}
+
+/**
+ * @brief This method return a referene at the right child
+ * @param[out] ref at right nodeDag*
+ */
+nodeDag*& nodeDag::getRightChildRef(){
     return rightChildNode;
 }
 
@@ -61,6 +77,15 @@ nodeDag::~nodeDag(){
     leftChildNode = nullptr;
     delete rightChildNode;
     delete leftChildNode;
+}
+
+/**
+ * @brief Assignement operator
+ */
+nodeDag& nodeDag::operator = (nodeDag& other){
+    std::swap(leftChildNode, other.leftChildNode);
+    std::swap(rightChildNode, other.rightChildNode);
+    return *this;
 }
 
 /**

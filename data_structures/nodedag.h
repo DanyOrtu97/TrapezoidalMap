@@ -14,8 +14,11 @@ public:
     virtual std::string  getType() const=0;
 
     nodeDag *getLeftChild() const;
+    nodeDag*& getLeftChildRef();
     void setLeftChild(nodeDag *leftChild);
+
     nodeDag *getRightChild() const;
+    nodeDag*& getRightChildRef();
     void setRightChild(nodeDag *rightChild);
 
     nodeDag **getLeftChildP();
@@ -23,7 +26,9 @@ public:
 
     long double determinant(const cg3::Segment2d seg, const cg3::Point2d point);
 
+    //rules of three and five
     virtual ~nodeDag();
+    nodeDag& operator = (nodeDag& other);
     nodeDag (nodeDag&& in);
     nodeDag& operator = (nodeDag&& in);
 

@@ -63,34 +63,34 @@ trapezoid Dag::findTrapezoid(const cg3::Point2d point, const cg3::Point2d auxili
  * @brief Method to find multiple trapezoids in which our new segment passes
  * @param[in] segment Segment, node nodeDag*, temp nodeDag*
  */
-void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag* node, nodeDag* temp){
+void Dag::findTrapezoids(const cg3::Segment2d segment, nodeDag*& node, nodeDag*& temp){
     cg3::Point2d p1 = segment.p1();
     cg3::Point2d p2 = segment.p2();
 
     nodeDag** tmp= &node;
 
     if((*tmp)->getType() != "PK4Leaf"){
-        temp=*tmp;
+        //temp=*tmp;
         if((*tmp)->getType() == "PK1X"){
             if(p1.x() < ((X*)(*tmp))->getPoint().x()){
-                findTrapezoids(segment, (*tmp)->getLeftChild(), temp);
+                findTrapezoids(segment, (*tmp)->getLeftChildRef(), node);
             }
             if(p2.x() > ((X*)(*tmp))->getPoint().x()){
-                findTrapezoids(segment, (*tmp)->getRightChild(), temp);
+                findTrapezoids(segment, (*tmp)->getRightChildRef(), node);
             }
         }
         else if((*tmp)->getType() == "PK1Y"){
             if(((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) > 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) > 0)){
-                findTrapezoids(segment, (*tmp)->getLeftChild(), temp);
+                findTrapezoids(segment, (*tmp)->getLeftChildRef(), node);
             }
             else if(((*tmp)->determinant(((Y*)(*tmp))->getSegment(), p1) < 0 && (*tmp)->determinant(((Y*)(*tmp))->getSegment(), p2) < 0)){
-                findTrapezoids(segment, (*tmp)->getRightChild(), temp);
+                findTrapezoids(segment, (*tmp)->getRightChildRef(), node);
             }
             else if(((*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p1()) < 0 || (*tmp)->determinant(segment, ((Y*)(*tmp))->getSegment().p2()) < 0)){
-                findTrapezoids(segment, (*tmp)->getLeftChild(), temp);
+                findTrapezoids(segment, (*tmp)->getLeftChildRef(), node);
             }
             else{
-                findTrapezoids(segment, (*tmp)->getRightChild(), temp);
+                findTrapezoids(segment, (*tmp)->getRightChildRef(), node);
             }
         }
     }
